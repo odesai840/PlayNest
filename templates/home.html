@@ -1,53 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlayNest</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href=""> 
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" id="custom-navbar">
-        <a class="navbar-brand" href="#">PlayNest</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Forum</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Browse Games</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Upload Games</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+{% extends "_layout.html" %}
 
-    <div class="container">
+{% block content %}
+    <div class="sidebar-container">
         <div class="row">
-            <div class="col-md-2">
-                <p>Sidebar Content </p>
-                <p>Hello.</p>
+            <div class="col-md-2 sidebar">
+                <div class="sidebar-content">
+                    <h5>Forum Lobbies</h5>
+                    <p>Individual Games</p>
+                    <p>Classic Games</p>
+                    <p>Events</p>
+                    <p>Developer Discussion</p>
+                    <p>Browse More → </p>
+                </div>
+
+                <div class="sidebar-content">
+                    <h5>Games</h5>
+                    <p>PC</p>
+                    <p>Nintendo</p>
+                    <p>Xbox</p>
+                    <p>PlayStation</p>
+                    <p>Indie</p>
+                </div>
+
+                <div class="sidebar-content">
+                    <h5>Media</h5>
+                    <p>Images</p>
+                    <p>Videos</p>
+                </div>
             </div>
 
             <div class="col-md-10">
-                <p>Main Content</p> 
-                <p>Hello.</p>
-                
+                <div class="main-content"></div>
+                    <div class="hero">
+                        <h2>Welcome To PlayNest!</h2>
+                        <p>Gaming, Connecting and Beyond. Dive into the world of PlayNest. Sign up and explore.</p>
+                        <button class="hero-button">Sign Up Now</button>
+                    </div>
+
+                    <div class="recent-games">
+                        <h2>Recent Games</h2>
+                    </div>
             </div>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+{% endblock %}

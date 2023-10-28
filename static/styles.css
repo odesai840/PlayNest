@@ -1,8 +1,134 @@
-#custom-navbar {
-    background-color: #ac3131;
+body {
+    overflow-x: hidden;
 }
 
 .container {
     margin-top: 50px;
     width: 400px;
+}
+
+.sidebar-container {
+    margin: 0;
+    padding: 0;
+}
+
+.custom-navbar {
+    background-color: #ac3131;
+}
+
+.navbar-custom .navbar-brand:hover {
+    background-color: white;
+    color: #ac3131;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.navbar-custom .navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: #CED4da;
+}
+
+.navbar-nav .nav-item.active .nav-link {
+    color: white;
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: white;
+}
+
+.navbar-toggler {
+    color: white;
+    background-color: white;
+}
+
+.custom-search-input {
+    max-width: 150px;
+    width: auto;
+}
+
+.sidebar {
+    background-color: #d9d9d9;
+    height: 100vh;
+    padding: 20px;
+}
+
+.sidebar h5{
+    padding-bottom: 5px;
+}
+
+.sidebar p {
+    margin: 5px 0;
+}
+
+.sidebar-content {
+    padding: 15px;
+}
+
+.register-buttons {
+    background-color: white;
+    color: #ac3131;
+    font-weight: bold;
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ac3131;
+        color: white;
+        border: 2px solid white;
+    }
+}
+
+.hero {
+    background-color: #ac3131;
+    color: white;
+    text-align: center;
+    margin-top: 3%;
+    margin-left: 50px;
+    margin-right: 50px;
+    padding: 60px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.hero h2 {
+    font-size: 36px;
+    padding-bottom: 10px;
+}
+
+.hero p {
+    font-size: 18px;
+    padding-bottom: 10px;
+}
+
+.hero-button {
+    background-color: white;
+    font-weight: bold;
+    color: #ac3131;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ac3131;
+        border: 2px solid white;
+        color: white;
+    }
+}
+
+.recent-games {
+    margin-top: 3%;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.recent-games h2 {
+    font-size: 30px;
 }

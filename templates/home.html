@@ -1,46 +1,63 @@
 {% extends "_layout.html" %}
 
 {% block content %}
+<div class="responsive-sidebar-container">
     <div class="sidebar-container">
         <div class="row">
             <div class="col-md-2 sidebar">
                 <div class="sidebar-content">
                     <h5>Forum Lobbies</h5>
-                    <p>Individual Games</p>
-                    <p>Classic Games</p>
-                    <p>Events</p>
-                    <p>Developer Discussion</p>
-                    <p>Browse More → </p>
+                    <ul>
+                        <li>Individual Games</li>
+                        <li>Classic Games</li>
+                        <li>Events</li>
+                        <li>Developer Discussion</li>
+                        <li class="browse-more">Browse More →</li>
+                    </ul>
                 </div>
 
                 <div class="sidebar-content">
                     <h5>Games</h5>
-                    <p>PC</p>
-                    <p>Nintendo</p>
-                    <p>Xbox</p>
-                    <p>PlayStation</p>
-                    <p>Indie</p>
+                    <ul>
+                        <li>Games</li>
+                        <li>PC</li>
+                        <li>Nintendo</li>
+                        <li>Xbox</li>
+                        <li>PlayStation</li>
+                        <li>Indie</li>
+                    </ul>
                 </div>
 
                 <div class="sidebar-content">
                     <h5>Media</h5>
-                    <p>Images</p>
-                    <p>Videos</p>
+                    <ul>
+                        <li>Images</li>
+                        <li>Videos</li>
+                    </ul>
                 </div>
             </div>
 
             <div class="col-md-10">
-                <div class="main-content"></div>
+                <div class="main-content">
                     <div class="hero">
                         <h2>Welcome To PlayNest!</h2>
                         <p>Gaming, Connecting and Beyond. Dive into the world of PlayNest. Sign up and explore.</p>
                         <button class="hero-button">Sign Up Now</button>
                     </div>
 
-                    <div class="recent-games">
-                        <h2>Recent Games</h2>
+
+                    <div class="content-below-hero">
+                        <div class="recent-games">
+                            <h2>Recent Games</h2>
+                        </div>
+
+                        <div class="recent-forum-posts">
+                            <h2>Recent Forum Posts</h2>
+                        </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

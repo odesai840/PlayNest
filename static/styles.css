@@ -7,11 +7,6 @@ body {
     width: 400px;
 }
 
-.sidebar-container {
-    margin: 0;
-    padding: 0;
-}
-
 .custom-navbar {
     background-color: #ac3131;
 }
@@ -46,27 +41,57 @@ body {
     background-color: white;
 }
 
-.custom-search-input {
-    max-width: 150px;
-    width: auto;
+.sidebar-container {
+    display: column;
+    flex-direction: row;
+    align-items: flex-start;
 }
 
 .sidebar {
     background-color: #d9d9d9;
-    height: 100vh;
+    height: 100%;
     padding: 20px;
 }
 
-.sidebar h5{
+.sidebar h5 {
     padding-bottom: 5px;
 }
 
-.sidebar p {
+.sidebar li {
     margin: 5px 0;
 }
 
 .sidebar-content {
     padding: 15px;
+}
+
+.sidebar-content li:hover {
+    color: #ac3131;
+    cursor: pointer;
+}
+
+.sidebar-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .sidebar-content {
+        display: inline-block;
+        margin: 0 2%;
+        vertical-align: top;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 45%;
+        text-align: center;
+    }
+}
+
+.browse-more:hover {
+    color: #ac3131;
+    text-decoration: underline;
 }
 
 .register-buttons {
@@ -123,12 +148,12 @@ body {
     }
 }
 
-.recent-games {
+.content-below-hero {
     margin-top: 3%;
     margin-left: 50px;
     margin-right: 50px;
 }
 
-.recent-games h2 {
+.content-below-hero h2 {
     font-size: 30px;
 }

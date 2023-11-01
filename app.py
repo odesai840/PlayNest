@@ -16,7 +16,7 @@ def login():
     else:
         return "Invalid credentials"
 
-@app.route('/settings', methods=['POST', 'GET'])
+@app.route('/settings', methods=['GET'])
 def settings():
     return render_template('settings.html')
 

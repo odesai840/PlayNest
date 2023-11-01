@@ -16,5 +16,9 @@ def login():
     else:
         return "Invalid credentials"
 
+@app.route('/settings', methods=['POST', 'GET'])
+def settings():
+    return render_template('settings.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

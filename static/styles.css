@@ -3,6 +3,11 @@ body {
     background-color: #1d1d1d;
 }
 
+iframe {
+    margin: 0 auto;
+    display: block;
+}
+
 #upload {
     background: #39595f;
     color: white;
@@ -40,6 +45,10 @@ body {
 
 h2 {
     color: #cae9ea;
+}
+
+h3 {
+    color:#CED4da;
 }
 
 h5 {

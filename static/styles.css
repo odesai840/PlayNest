@@ -94,6 +94,12 @@ body {
     }
 }
 
+@media (min-width: 767px) {
+    section h2 {
+        font-size: 30px;
+    }
+}
+
 .browse-more:hover {
     text-decoration: underline;
 }

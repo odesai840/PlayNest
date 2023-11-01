@@ -1,0 +1,45 @@
+{% extends '_layout.html' %} 
+{% block title %}PlayNest | User Settings{% endblock %}
+{% block content %}
+  <div class="container mt-4">
+    <h3 class="mb-3">User Settings</h3>
+    <div class="row">
+      <div class="col-sm">
+        <h6>Personal Details</h6>
+        <label for="name">Name</label>
+        <input type="text" placeholder="Name" id="name">
+        <label for="username">Username</label>
+        <input type="text" placeholder="Username" id="username">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+      <div class="col-sm">
+        <h6>Security</h6>
+        <label for="new-password">New Password</label>
+        <input type="text" placeholder="New Password" id="new-password">
+        <label for="renew-password">Re-type New Password</label>
+        <input type="text" placeholder="Re-type New Password" id="renew-password">
+        <label for="old-password">Old Password</label>
+        <input type="text" placeholder="Old Password" id="old-password">
+        <button type="submit" class="btn btn-primary">Change Password</button>
+      </div>
+      <div class="col-sm">
+        <h6>Account</h6>
+        <p>You must enter your password to make these changes.</p>
+        <div class="card">
+          <div class="card-header">
+            Delete Uploaded Games
+          </div>
+          <input type="text" placeholder="Enter Password">
+          <button type="button" class="btn btn-danger">Delete</button>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            Delete Account
+          </div>
+          <input type="text" placeholder="Enter Password">
+          <button type="button" class="btn btn-danger">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -21,6 +21,9 @@ def login():
 def home():
     return render_template('home.html')
 
+@app.route('/settings', methods=['GET'])
+def settings():
+    return render_template('settings.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
-

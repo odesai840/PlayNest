@@ -12,9 +12,14 @@ def login():
     password = request.form['password']
     # Here you can add authentication logic
     if username == "admin" and password == "password":
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     else:
         return "Invalid credentials"
+
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 @app.route('/settings', methods=['GET'])
 def settings():

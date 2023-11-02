@@ -3,9 +3,68 @@ body {
     background-color: #1d1d1d;
 }
 
-.container {
-    margin-top: 50px;
-    width: 400px;
+iframe {
+    margin: 0 auto;
+    display: block;
+}
+
+#upload {
+    background: #39595f;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+#helper {
+    color: #a5bcbd;
+}
+  
+#file-chosen{
+    margin-left: 0.3rem;
+}
+
+.card {
+    background-color: #39595f;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    color: #273b40;
+    font-weight: bold;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        color: #273b40;
+        border: 2px solid #cae9ea;
+    }
+}
+
+h2 {
+    color: #cae9ea;
+}
+
+h3 {
+    color:#CED4da;
+}
+
+h5 {
+    color: #CED4da;
+}
+
+h6 {
+    color: #CED4da;
+}
+
+label {
+    color: white;
+}
+
+p {
+    color: white;
 }
 
 .custom-navbar {
@@ -13,7 +72,8 @@ body {
 }
 
 .navbar-custom .navbar-brand:hover {
-    color: #8be8b5;
+    background-color: #8be8b5;
+    color: #273b40;
     padding: 4px;
     border-radius: 4px;
     cursor: pointer;
@@ -79,7 +139,7 @@ body {
     padding: 0;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
     .sidebar-content {
         display: inline-block;
         margin: 0 2%;
@@ -101,7 +161,7 @@ body {
     background: linear-gradient(180deg, #cae9ea, #7ebda5);
     color: #273b40;
     font-weight: bold;
-    padding: 10px;
+    padding: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -113,18 +173,16 @@ body {
     }
 }
 
-.col-md-10 {
-    margin: 0;
-    padding: 0;
-}
-
 header {
     text-align: center;
     position: relative;
     color: #fff;
     font-family: 'Roboto', sans-serif;
     border-radius: 5px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    margin-left: 20px;
+    margin-right: 35px;
+    margin-top: 3%;
 }
 
 header img {
@@ -132,7 +190,7 @@ header img {
     max-height: 500px;
     object-fit: cover;
     filter: brightness(0.4);
-    border-radius: 1px;
+    border-radius: 5px;
 }
 
 section {

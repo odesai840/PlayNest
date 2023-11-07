@@ -1,3 +1,5 @@
+# defines data models
+# run pip install flask-sqlalchemy psycopg2-binary to install sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy() 

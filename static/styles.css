@@ -257,6 +257,22 @@ header p {
     }
 }
 
+.dashboard-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
 .content-below-hero {
     margin-top: 3%;
     margin-left: 20px;

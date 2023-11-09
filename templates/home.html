@@ -1,33 +1,24 @@
 {% extends "_layout.html" %}
 
+{% block title %}PlayNest | Home{% endblock %}
+
 {% block content %}
 <div class="responsive-sidebar-container">
     <div class="sidebar-container">
         <div class="row">
             <div class="col-md-2 sidebar">
                 <div class="sidebar-content">
-                    <h5>Forum Lobbies</h5>
+                    <h5>Forum Corners</h5>
                     <ul>
-                        <li>Individual Games</li>
-                        <li>Classic Games</li>
-                        <li>Events</li>
-                        <li>Developer Discussion</li>
-                        <li class="browse-more">Browse More →</li>
-                    </ul>
-                </div>
-
-                <div class="sidebar-content">
-                    <h5>Games</h5>
-                    <ul>
-                        <li>Games</li>
                         <li>PC</li>
                         <li>Nintendo</li>
                         <li>Xbox</li>
                         <li>PlayStation</li>
-                        <li>Indie</li>
+                        <li>Indie Games</li>
+                        <li>Developer Discussions</li>
+                        <li class="browse-all">Browse All →</li>
                     </ul>
                 </div>
-
                 <div class="sidebar-content">
                     <h5>Media</h5>
                     <ul>
@@ -42,9 +33,15 @@
                     <header>
                         <img src="./static/images/game_landscape.jpg">
                         <section>
-                            <h2>Welcome To PlayNest!</h2>
-                            <p>Gaming, Connecting and Beyond. Dive into the world of PlayNest. Sign up and explore.</p>
-                            <button class="hero-button">Sign Up Now</button>
+                            {% if 'username' in session %}
+                                <h2>PlayNest: Connecting Gamers, Empowering Developers</h2>
+                                <p>Welcome back, {{ session['username'] }}!</p>
+                                <a href="{{ url_for('dashboard') }}"><button class="dashboard-button">Go to Dashboard</button></a>
+                            {% else %}
+                                <h2>Welcome to PlayNest!</h2>
+                                <p>Gaming, Connecting and Beyond. Dive into the world of PlayNest. Sign up and explore.</p>
+                                <a href="{{ url_for('signup') }}"><button class="hero-button">Sign Up Now</button></a>
+                            {% endif %}
                         </section>
                     </header>
 

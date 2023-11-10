@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 # attackers wont have access to the actual user passwords
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
-from models import db, User
+from src.models import db, User
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -22,7 +22,7 @@ db.init_app(app) # initializing database with the flask app
 
 bcrypt = Bcrypt(app)
 
-@app.route('/')
+@app.get('/')
 def index():
     return render_template('home.html')
 
@@ -77,28 +77,28 @@ def signup():
 # render the sign up form if GET request
     return render_template('signup.html')
 
-@app.route('/home')
+@app.get('/home')
 def home():
     return render_template('home.html')
 
-@app.route('/logout')
+@app.get('/logout')
 def logout():
     # clear username from session
     session.pop('username', None)
     return redirect(url_for('index'))
 
-@app.route('/dashboard')
+@app.get('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/settings')
+@app.post('/dashboard')
+def create_game():
+    return redirect('/dashboard')
+
+@app.get('/settings')
 def settings():
     return render_template('settings.html')
 
-@app.route('/forum')
+@app.get('/forum')
 def forum():
     return render_template('forum.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
-

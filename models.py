@@ -47,10 +47,14 @@ class Comment(db.Model):
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
     thread_id = db.Column(db.Integer, db.ForeignKey('thread.id'), nullable=False)
     thread = db.relationship('Thread', backref=db.backref('comments', lazy=True))
+    parent_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
+    child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
-    def __init__(self, content, user_id, thread_id):
+    def __init__(self, content, user_id, thread_id, parent_comment_id=None):
         self.content = content
         self.user_id = user_id
         self.thread_id = thread_id
+        self.parent_comment_id = parent_comment_id

@@ -26,10 +26,15 @@ CREATE TABLE thread (
 );
 
 -- comment table:
-CREATE TABLE comment (
+CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     thread_id INTEGER REFERENCES thread(id) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+    parent_comment_id INTEGER REFERENCES comment(id),
+    created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
+    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
+    CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
 );

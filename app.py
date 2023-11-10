@@ -102,18 +102,22 @@ def forum():
 
 @app.route('/forum/<forum_slug>', methods=['GET', 'POST'])
 def forum_threads(forum_slug):
+    # retrieve forum using provided slug from URL 
     forum = Forum.query.filter_by(slug=forum_slug).first()
     
     if request.method == 'POST':
         title = request.form['title']
         content = request.form['content']
         
+        # retrieve user ID of current session user
         user_id = User.query.filter_by(username=session['username']).first().id
         
+        # creating a new thread to add to database
         new_thread = Thread(title=title, content=content, forum_id=forum.id, user_id=user_id)
         db.session.add(new_thread)
         db.session.commit()
-        
+    
+    # attach URLs to each thread for thread details viewing
     threads = Thread.query.filter_by(forum_id=forum.id).all()
     for thread in threads:
         thread.detail_url = url_for('thread_detail', forum_slug=forum.slug, thread_id=thread.id)
@@ -126,14 +130,55 @@ def thread_detail(forum_slug, thread_id):
     thread = Thread.query.get(thread_id)
     
     if request.method == 'POST':
+        # extract comment info from submitted form data
         content = request.form['content']
         user_id = User.query.filter_by(username=session['username']).first().id
         
-        new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id)
+        parent_comment_id = request.form.get('parent_comment_id')
+        
+        # creating a new comment to add to database
+        if parent_comment_id:
+            new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id, parent_comment_id=parent_comment_id)
+        else:
+            new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id)
         db.session.add(new_comment)
         db.session.commit()
         
     return render_template('thread_detail.html', forum=forum, thread=thread)
+
+@app.route('/forum/<forum_slug>/<int:thread_id>/post_reply', methods=['POST'])
+def post_reply(forum_slug, thread_id):
+    if request.method == 'POST':
+        content = request.form.get('content')
+        parent_comment_id = request.form.get('parent_comment_id')
+        
+        user_id = User.query.filter_by(username=session['username']).first().id
+        
+        new_comment = Comment(content=content, user_id=user_id, thread_id=thread_id, parent_comment_id=parent_comment_id)
+        db.session.add(new_comment)
+        db.session.commit()
+    
+        return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+
+
+@app.route('/forum/<forum_slug>/<int:thread_id>/delete_comment/<int:comment_id>', methods=['POST'])
+def delete_comment(forum_slug, thread_id, comment_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    comment = Comment.query.get(comment_id)
+    
+    # check if logged in user is the owner of the comment
+    if comment.user.username == session['username']:
+        # delete child comments first
+        for child_comment in comment.child_comments:
+            db.session.delete(child_comment)
+            
+        db.session.delete(comment)
+        db.session.commit()
+    
+    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

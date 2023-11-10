@@ -158,6 +158,20 @@ body {
     }
 }
 
+.prompt {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.register-link {
+    font-weight: bold;
+    color: #8be8b5;
+
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
 /* ---------------------------------------------------------------HOME PAGE STYLING-----------------------------------------------------------*/
 .sidebar-container {
     display: column;
@@ -371,6 +385,11 @@ iframe {
     flex-direction: column;
 }
 
+.col-md-12 {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+}
+
 /* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
 @media (max-width: 768px) {
     .sidebar-content {
@@ -405,7 +424,12 @@ iframe {
 }
 
 .forum-threads-form-container {
+    background-color: #303030;
+    border: 2px solid #cae9ea;
+    margin-top: 8px;
     margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
 }
 
 .forum-threads-form-container label {
@@ -420,6 +444,10 @@ iframe {
 .card-title {
     font-size: 24px;
     color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+    }
 }
 
 .card-text {
@@ -429,6 +457,11 @@ iframe {
 .card-details {
     font-size: 13px;
     color: #c8c6c6;
+}
+
+.thread-container {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
 }
 
 .thread-button {
@@ -448,8 +481,13 @@ iframe {
     }
 }
 
-.thread-login-prompt {
-    color: #cae9ea;
+.login-link {
+    color: #8be8b5;
+    font-weight: bold;
+
+    &:hover {
+        color: #8be8b5;
+    }
 }
 
 /* ---------------------------------------------------------------THREAD DETAILS STYLING--------------------------------------------------------*/
@@ -458,6 +496,8 @@ iframe {
     background-color: #303030;
     padding: 20px;
     border-radius: 5px;
+    border: 2px solid #cae9ea;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
 }
 
 .thread-comment-form-container label {
@@ -469,8 +509,37 @@ iframe {
     background-color: #222;
 }
 
+.card-body {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
 .comments-heading {
     font-size: 25px;
+    color: #cae9ea;
+    margin-bottom: 15px;
+}
+
+.reply-link {
+    text-decoration: none;
+    color: #cae9ea;
+
+    &:hover {
+        color: #cae9ea;
+        text-decoration: underline;
+    }
+}
+
+.strong-color {
+    color: #8be8b5;
+}
+
+.reply-form textarea {
+    background-color: #222;
+}
+
+.reply-form label {
     color: #cae9ea;
 }
 
@@ -482,6 +551,7 @@ iframe {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
+    margin-bottom: 40px;
 
     &:hover {
         background: linear-gradient(180deg, #8be8b5, #4b9c78);
@@ -490,6 +560,22 @@ iframe {
     }
 }
 
+.delete-comment-button, .edit-comment-button {
+    color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
 hr {
     border-color: white;
+}
+
+.logged-in-user {
+    color: #cae9ea;
+}
+
+.other-user {
+    color: #8be8b5;
 }

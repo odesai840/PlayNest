@@ -1,0 +1,62 @@
+{% extends "_layout.html" %}
+
+{% block title %}PlayNest | {{ forum.title }} Threads{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">{{ forum.title }} Threads</h2>
+
+    <!-- Display existing threads -->
+    {% for thread in forum.threads %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <a href="{{ thread.detail_url }}">
+                    <h5 class="card-title">{{ thread.title }}</h5>
+                </a>
+                <p class="card-text">{{ thread.content }}</p>
+                <p class="card-details">Posted by: {{ thread.user.username }} on {{ thread.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+            </div>
+        </div>
+    {% endfor %}
+
+        <!-- Display a message if the user is not logged in -->
+        {% if 'username' not in session %}
+        <p class="thread-login-prompt">Log in to post a new thread. <a href="{{ url_for('login') }}">Log In</a></p>
+    {% else %}
+        <!-- Button to toggle the form visibility -->
+        <button id="toggleFormBtn" class="toggleFormBtn">Post a Thread</button>
+    {% endif %}
+
+        <!-- Form to add a new thread (initially hidden) -->
+        <div class="forum-threads-form-container">
+            <form id="threadForm" method="POST" style="display: none;">
+                <div class="form-group">
+                    <label for="title">Thread Title:</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">Thread Content:</label>
+                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="thread-button">Post</button>
+            </form>
+        </div>
+</div>
+
+<!-- JavaScript to toggle form visibility -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggleFormBtn = document.getElementById('toggleFormBtn');
+        var threadForm = document.getElementById('threadForm');
+
+        toggleFormBtn.addEventListener('click', function () {
+            if (threadForm.style.display === 'none' || threadForm.style.display === '') {
+                threadForm.style.display = 'block';
+            } else {
+                threadForm.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+{% endblock %}

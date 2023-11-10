@@ -10,13 +10,13 @@
                 <div class="sidebar-content">
                     <h5>Forum Corners</h5>
                     <ul>
-                        <li>PC</li>
-                        <li>Nintendo</li>
-                        <li>Xbox</li>
-                        <li>PlayStation</li>
-                        <li>Indie Games</li>
-                        <li>Developer Discussions</li>
-                        <li class="browse-all">Browse All →</li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='pc-corner') }}">PC</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='nintendo-corner') }}">Nintendo</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='xbox-corner') }}">Xbox</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='playstation-corner') }}">PlayStation</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='indie-games-corner') }}">Indie Games</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='developer-corner') }}">Developer Discussions</a></li>
+                        <li class="browse-all"><a href="{{ url_for('forum') }}">Browse All →</a></li>
                     </ul>
                 </div>
                 <div class="sidebar-content">

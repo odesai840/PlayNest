@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 # attackers wont have access to the actual user passwords
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
-from models import db, User
+from models import db, User, Forum, Thread, Comment
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -97,7 +97,43 @@ def settings():
 
 @app.route('/forum')
 def forum():
-    return render_template('forum.html')
+    forums = Forum.query.all()
+    return render_template('forum.html', forums=forums)
+
+@app.route('/forum/<forum_slug>', methods=['GET', 'POST'])
+def forum_threads(forum_slug):
+    forum = Forum.query.filter_by(slug=forum_slug).first()
+    
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        
+        user_id = User.query.filter_by(username=session['username']).first().id
+        
+        new_thread = Thread(title=title, content=content, forum_id=forum.id, user_id=user_id)
+        db.session.add(new_thread)
+        db.session.commit()
+        
+    threads = Thread.query.filter_by(forum_id=forum.id).all()
+    for thread in threads:
+        thread.detail_url = url_for('thread_detail', forum_slug=forum.slug, thread_id=thread.id)
+
+    return render_template('forum_threads.html', forum=forum, threads=threads)
+
+@app.route('/forum/<forum_slug>/<int:thread_id>', methods=['GET', 'POST'])
+def thread_detail(forum_slug, thread_id):
+    forum = Forum.query.filter_by(slug=forum_slug).first()
+    thread = Thread.query.get(thread_id)
+    
+    if request.method == 'POST':
+        content = request.form['content']
+        user_id = User.query.filter_by(username=session['username']).first().id
+        
+        new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id)
+        db.session.add(new_comment)
+        db.session.commit()
+        
+    return render_template('thread_detail.html', forum=forum, thread=thread)
 
 if __name__ == '__main__':
     app.run(debug=True)

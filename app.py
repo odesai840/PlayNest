@@ -4,9 +4,13 @@ from flask import Flask, render_template, request, redirect, url_for, session
 # attackers wont have access to the actual user passwords
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
+<<<<<<< HEAD
 from sqlalchemy import desc
 from models import db, User, Forum, Thread, Comment
 import requests
+=======
+from src.models import db, User
+>>>>>>> 4a281a1fce36e933fe490836cdca8e2338a0f97d
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -25,6 +29,7 @@ db.init_app(app) # initializing database with the flask app
 bcrypt = Bcrypt(app)
 
 @app.get('/')
+<<<<<<< HEAD
 def home():
     # retrieve most recent threads from all forums
     recent_threads = Thread.query.order_by(desc(Thread.created_at)).limit(10).all()
@@ -33,6 +38,10 @@ def home():
         thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
     
     return render_template('home.html', recent_threads=recent_threads)
+=======
+def index():
+    return render_template('home.html')
+>>>>>>> 4a281a1fce36e933fe490836cdca8e2338a0f97d
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -85,6 +94,13 @@ def signup():
 # render the sign up form if GET request
     return render_template('signup.html')
 
+<<<<<<< HEAD
+=======
+@app.get('/home')
+def home():
+    return render_template('home.html')
+
+>>>>>>> 4a281a1fce36e933fe490836cdca8e2338a0f97d
 @app.get('/logout')
 def logout():
     # clear username from session
@@ -95,12 +111,20 @@ def logout():
 def dashboard():
     return render_template('dashboard.html')
 
+<<<<<<< HEAD
+=======
+@app.post('/dashboard')
+def create_game():
+    return redirect('/dashboard')
+
+>>>>>>> 4a281a1fce36e933fe490836cdca8e2338a0f97d
 @app.get('/settings')
 def settings():
     return render_template('settings.html')
 
 @app.get('/forum')
 def forum():
+<<<<<<< HEAD
     forums = Forum.query.all()
     return render_template('forum.html', forums=forums)
 
@@ -204,3 +228,6 @@ def delete_thread(forum_slug, thread_id):
 if __name__ == '__main__':
     app.run(debug=True)
 
+=======
+    return render_template('forum.html')
+>>>>>>> 4a281a1fce36e933fe490836cdca8e2338a0f97d

@@ -7,6 +7,7 @@ CREATE TABLE users (
     registration_token VARCHAR(255)
 );
 
+<<<<<<< HEAD
 -- forum table:
 CREATE TABLE forum (
     id SERIAL PRIMARY KEY,
@@ -37,4 +38,19 @@ CREATE TABLE Comment (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
     CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
+);
+=======
+-- games table:
+CREATE TABLE games (
+    game_id SERIAL NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    game_cover_url VARCHAR(255),
+    short_description VARCHAR(255),
+    long_description VARCHAR(255),
+    release_date VARCHAR(255) NOT NULL,
+    game_url VARCHAR(255) NOT NULL,
+    author_id INT NOT NULL,
+    PRIMARY KEY (game_id),
+    FOREIGN KEY (author_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+>>>>>>> 4a281a1fce36e933fe490836cdca8e2338a0f97d
 );

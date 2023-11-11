@@ -1,5 +1,6 @@
 body {
     overflow-x: hidden;
+    overflow-y: auto;
     background-color: #1d1d1d;
 }
 
@@ -91,6 +92,10 @@ body {
     }
 }
 
+textarea {
+    white-space: pre-wrap;
+}
+
 /* ---------------------------------------------------------------LOGIN/SIGNUP PAGE STYLING--------------------------------------------------*/
 .form-group label {
     color: white;
@@ -174,14 +179,13 @@ body {
 
 /* ---------------------------------------------------------------HOME PAGE STYLING-----------------------------------------------------------*/
 .sidebar-container {
-    display: column;
-    flex-direction: row;
-    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .sidebar {
     background-color: #3c4748;
-    height: 100vh;
     padding: 20px;
 }
 
@@ -197,7 +201,7 @@ body {
     padding: 15px;
 }
 
-.sidebar-content a, li {
+.sidebar-content a, .sidebar-content li {
     color: #cae9ea;
     text-decoration: none;
 }
@@ -211,6 +215,27 @@ body {
 .sidebar-content ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+}
+
+.threads-home-container {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.main-content {
+    overflow-y: auto;
+}
+
+.forum-home-page-link {
+    text-decoration: none;
+    color: #cae9ea;
+
+    &:hover {
+        color: #cae9ea;
+        text-decoration: underline;
+    }
 }
 
 .browse-all:hover {
@@ -306,6 +331,12 @@ header p {
 
 .recent-forum-posts h2 {
     color: #cae9ea;
+    justify-content: center;
+}
+
+.home-page-thread-cards {
+    margin-right: 40px;
+    margin-left: 5px;
 }
 
 /* ---------------------------------------------------------------DASHBOARD PAGE STYLING-----------------------------------------------------*/
@@ -405,6 +436,16 @@ iframe {
     }
 }
 
+@media screen and (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}
+
 /* ---------------------------------------------------------------FORUM THREADS STYLING--------------------------------------------------------*/
 .toggleFormBtn {
     background: linear-gradient(180deg, #cae9ea, #7ebda5);
@@ -439,6 +480,7 @@ iframe {
 
 .forum-threads-form-container textarea {
     background-color: #222;
+    white-space: pre-wrap;
 }
 
 .card-title {
@@ -452,6 +494,8 @@ iframe {
 
 .card-text {
     font-size: 17px;
+    width: 90%;
+    white-space: pre-line;
 }
 
 .card-details {
@@ -507,9 +551,10 @@ iframe {
 
 .thread-comment-form-container textarea {
     background-color: #222;
+    white-space: pre-wrap;
 }
 
-.card-body {
+.comments {
     border: 2px solid #cae9ea;
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
@@ -537,6 +582,7 @@ iframe {
 
 .reply-form textarea {
     background-color: #222;
+    white-space: pre-wrap;
 }
 
 .reply-form label {
@@ -560,7 +606,7 @@ iframe {
     }
 }
 
-.delete-comment-button, .edit-comment-button {
+.delete-button, .edit-comment-button {
     color: #cae9ea;
 
     &:hover {

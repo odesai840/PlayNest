@@ -16,48 +16,50 @@
 <h3 class="comments-heading">Comments</h3>
 {% for comment in thread.comments %}
     <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex justify-content-between">
-                <div>
-                    {% if comment.parent_comment %}
-                        <div class="parent-comment">
-                            <p><strong class="strong-color">{{ comment.parent_comment.user.username }} said:</strong> {{ comment.parent_comment.content }}</p>
-                        </div>
-                    {% endif %}
-
-                    <p class="card-text">{{ comment.content }}</p>
-                    <p class="card-details">Comment by: 
-                        <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                        {% if 'username' in session %}
-                            • <a href="#" class="reply-link">Reply</a>
+        <div class="comments">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        {% if comment.parent_comment %}
+                            <div class="parent-comment">
+                                <p><strong class="strong-color">{{ comment.parent_comment.user.username }} said:</strong> {{ comment.parent_comment.content }}</p>
+                            </div>
                         {% endif %}
-                    </p>
-                </div>
-
-                <div>
-                    {% if comment.user.username == session['username'] %}
-                        <!-- delete button if the comment belongs to the logged-in user -->
-                        <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
-                            <button type="button" class="btn btn-link edit-comment-button">
-                                <i class="fas fa-pencil-alt"></i>
-                            </button>
-                            <button type="submit" class="btn btn-link delete-comment-button">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </form>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="reply-form" style="display: none;">
-                <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
-                    <div class="form-group">
-                        <label for="content">Your Reply:</label>
-                        <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+    
+                        <p class="card-text">{{ comment.content }}</p>
+                        <p class="card-details">Comment by: 
+                            <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                            {% if 'username' in session %}
+                                • <a href="#" class="reply-link">Reply</a>
+                            {% endif %}
+                        </p>
                     </div>
-                    <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
-                    <button type="submit" class="post-comment-button">Post Reply</button>
-                </form>
+    
+                    <div>
+                        {% if comment.user.username == session['username'] %}
+                            <!-- delete button if the comment belongs to the logged-in user -->
+                            <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
+                                <button type="button" class="btn btn-link edit-comment-button">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button type="submit" class="btn btn-link delete-button">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+    
+                <div class="reply-form" style="display: none;">
+                    <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
+                        <div class="form-group">
+                            <label for="content">Your Reply:</label>
+                            <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                        </div>
+                        <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                        <button type="submit" class="post-comment-button">Post Reply</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -3,7 +3,6 @@
 {% block title %}PlayNest | Home{% endblock %}
 
 {% block content %}
-<div class="responsive-sidebar-container">
     <div class="sidebar-container">
         <div class="row">
             <div class="col-md-2 sidebar">
@@ -52,11 +51,31 @@
 
                         <div class="recent-forum-posts">
                             <h2>Recent Forum Posts</h2>
+                            {% if recent_threads %}
+                                {% for thread in recent_threads %}
+                                    <div class="card mb-3 home-page-thread-cards">
+                                        <div class="threads-home-container">
+                                            <div class="card-body">
+                                                <a href="{{ thread.detail_url }}">
+                                                    <h5 class="card-title">{{ thread.title }}</h5>
+                                                </a>
+                                                <p class="card-text">{{ thread.content }}</p>
+                                                <p class="card-details">
+                                                    Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> 
+                                                    on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }} 
+                                                    in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="forum-home-page-link">{{ thread.forum.title }}</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No recent threads found.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

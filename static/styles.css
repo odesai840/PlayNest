@@ -1,5 +1,6 @@
 body {
     overflow-x: hidden;
+    overflow-y: auto;
     background-color: #1d1d1d;
 }
 
@@ -91,6 +92,10 @@ body {
     }
 }
 
+textarea {
+    white-space: pre-wrap;
+}
+
 /* ---------------------------------------------------------------LOGIN/SIGNUP PAGE STYLING--------------------------------------------------*/
 .form-group label {
     color: white;
@@ -158,16 +163,29 @@ body {
     }
 }
 
+.prompt {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.register-link {
+    font-weight: bold;
+    color: #8be8b5;
+
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
 /* ---------------------------------------------------------------HOME PAGE STYLING-----------------------------------------------------------*/
 .sidebar-container {
-    display: column;
-    flex-direction: row;
-    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .sidebar {
     background-color: #3c4748;
-    height: 100vh;
     padding: 20px;
 }
 
@@ -180,11 +198,15 @@ body {
 }
 
 .sidebar-content {
-    color: #cae9ea;
     padding: 15px;
 }
 
-.sidebar-content li:hover {
+.sidebar-content a, .sidebar-content li {
+    color: #cae9ea;
+    text-decoration: none;
+}
+
+.sidebar-content a:hover {
     color: #8be8b5;
     cursor: pointer;
     font-weight: bold;
@@ -193,6 +215,27 @@ body {
 .sidebar-content ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+}
+
+.threads-home-container {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.main-content {
+    overflow-y: auto;
+}
+
+.forum-home-page-link {
+    text-decoration: none;
+    color: #cae9ea;
+
+    &:hover {
+        color: #cae9ea;
+        text-decoration: underline;
+    }
 }
 
 .browse-all:hover {
@@ -288,6 +331,12 @@ header p {
 
 .recent-forum-posts h2 {
     color: #cae9ea;
+    justify-content: center;
+}
+
+.home-page-thread-cards {
+    margin-right: 40px;
+    margin-left: 5px;
 }
 
 /* ---------------------------------------------------------------DASHBOARD PAGE STYLING-----------------------------------------------------*/
@@ -367,6 +416,11 @@ iframe {
     flex-direction: column;
 }
 
+.col-md-12 {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+}
+
 /* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
 @media (max-width: 768px) {
     .sidebar-content {
@@ -380,4 +434,201 @@ iframe {
         height: 45%;
         text-align: center;
     }
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}
+
+/* ---------------------------------------------------------------FORUM THREADS STYLING--------------------------------------------------------*/
+.toggleFormBtn {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.forum-threads-form-container {
+    background-color: #303030;
+    border: 2px solid #cae9ea;
+    margin-top: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.forum-threads-form-container label {
+    font-size: 20px;
+    color: #cae9ea;
+}
+
+.forum-threads-form-container textarea {
+    background-color: #222;
+    white-space: pre-wrap;
+}
+
+.card-title {
+    font-size: 24px;
+    color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.card-text {
+    font-size: 17px;
+    width: 95%;
+    white-space: pre-line;
+}
+
+.card-details {
+    font-size: 13px;
+    color: #c8c6c6;
+}
+
+.thread-container {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+}
+
+.thread-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.login-link {
+    color: #8be8b5;
+    font-weight: bold;
+
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+/* ---------------------------------------------------------------THREAD DETAILS STYLING--------------------------------------------------------*/
+
+.thread-op-post {
+    background-color: #303030;
+    padding: 20px;
+    border-radius: 5px;
+    border: 2px solid #cae9ea;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.thread-comment-form-container label {
+    font-size: 20px;
+    color: #cae9ea;
+}
+
+.thread-comment-form-container textarea {
+    background-color: #222;
+    white-space: pre-wrap;
+}
+
+.comments {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+.comments-heading {
+    font-size: 25px;
+    color: #cae9ea;
+    margin-bottom: 15px;
+}
+
+.reply-link {
+    text-decoration: none;
+    color: #cae9ea;
+
+    &:hover {
+        color: #cae9ea;
+        text-decoration: underline;
+    }
+}
+
+.strong-color {
+    color: #8be8b5;
+}
+
+.reply-form textarea {
+    background-color: #222;
+    white-space: pre-wrap;
+}
+
+.reply-form label {
+    color: #cae9ea;
+}
+
+.parent-comment {
+    background-color: #3c4748;
+    width: 95%;
+    border-radius: 5px;
+    padding-left: 10px;
+}
+
+.post-comment-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-bottom: 40px;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.delete-button, .edit-comment-button {
+    color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+hr {
+    border-color: white;
+}
+
+.logged-in-user {
+    color: #cae9ea;
+}
+
+.other-user {
+    color: #8be8b5;
 }

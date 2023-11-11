@@ -3,6 +3,9 @@ from models import Forum
 # run pip install python-slugify
 from slugify import slugify
 
+# running this file is essential to getting everything to work correctly!
+# make sure to run python add_forum_data.py in the terminal
+
 # Create the Forum table
 with app.app_context():
     db.create_all()

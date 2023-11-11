@@ -22,7 +22,7 @@
                     <div>
                         {% if comment.parent_comment %}
                             <div class="parent-comment">
-                                <p><strong class="strong-color">{{ comment.parent_comment.user.username }} said:</strong> {{ comment.parent_comment.content }}</p>
+                                <p><strong class="strong-color">{{ comment.parent_comment.user.username }} said:</strong> <span style="color: #cae9ea;">{{ comment.parent_comment.content }}</span></p>
                             </div>
                         {% endif %}
     
@@ -64,6 +64,8 @@
         </div>
     </div>
 {% endfor %}
+
+<hr>
 
     <!-- form to add a new comment -->
     <div class="thread-comment-form-container">

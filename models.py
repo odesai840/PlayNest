@@ -33,6 +33,7 @@ class Thread(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('threads', lazy=True))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('thread_comments', lazy=True), cascade='all, delete-orphan')
 
     def __init__(self, title, content, forum_id, user_id):
         self.title = title
@@ -46,7 +47,7 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
     thread_id = db.Column(db.Integer, db.ForeignKey('thread.id'), nullable=False)
-    thread = db.relationship('Thread', backref=db.backref('comments', lazy=True))
+    thread = db.relationship('Thread', backref=db.backref('thread_comments', lazy=True))
     parent_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
     child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')

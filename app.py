@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 from models import db, User, Forum, Thread, Comment
+import requests
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -199,7 +200,6 @@ def delete_thread(forum_slug, thread_id):
         db.session.commit()
 
     return redirect(url_for('forum_threads', forum_slug=forum_slug))
-
 
 if __name__ == '__main__':
     app.run(debug=True)

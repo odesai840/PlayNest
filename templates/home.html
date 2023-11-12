@@ -4,12 +4,108 @@
 
 {% block content %}
 
-    <style>
-        h2 {
-            padding-left: 3px;
-        }
+<!-- this code is for truncating the titles and card text on the home page, so that when it gets too long, ellipsis are displayed -->
+<!-- rather than the rest of the content -->
+{% macro truncate_text(text, max_words=40) %}
+    {% set words = text.split() %}
+    {% if words|length > max_words %}
+        {{ ' '.join(words[:max_words]) + '...' }}
+    {% else %}
+        {{ text }}
+    {% endif %}
+{% endmacro %}
 
-    </style>
+<!-- i'm using inline styles here because I want the cards on the home page to display as a grid, but not anywhere else -->
+<!-- keep in mind that the formatting for the recent user games will be very similar to how the recent threads and recent reviews are formatted -->
+<style>
+    .recent-forum-posts,
+    .recent-reviews {
+        margin-top: 20px;
+    }
+
+    .forum-threads-grid,
+    .recent-reviews .forum-threads-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-right: 40px;
+        margin-left: 5px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .small-card,
+    .recent-reviews .small-card {
+        border: 2px solid #cae9ea;
+        border-radius: 5px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        background-color: #273b40;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+
+    .small-card:hover,
+    .recent-reviews .small-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .recents-home-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .small-card .card-body,
+    .recent-reviews .small-card .card-body {
+        padding: 10px;
+    }
+
+    .small-card-title,
+    .recent-reviews .small-card-title {
+        font-size: 20px;
+        color: #cae9ea;
+        height: 40px;
+    }
+
+    .small-card-text,
+    .recent-reviews .small-card-text,
+    .card-text,
+    .recent-reviews .card-text {
+        font-size: 14px;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+    .small-card-text, .card-text {
+        margin-top: 30px;
+    }
+
+    .card-details,
+    .recent-reviews .card-details,
+    p {
+        font-size: 12px;
+        color: #c8c6c6;
+        margin-bottom: 5px;
+        margin-top: 10px;
+    }
+
+    .card-details {
+        margin-top: auto;
+    }
+
+    h2 {
+        padding-left: 3px;
+    }
+</style>
+
     <div class="sidebar-container">
         <div class="row">
             <div class="col-md-2 sidebar">
@@ -23,12 +119,6 @@
                         <li><a href="{{ url_for('forum_threads', forum_slug='indie-games-corner') }}">Indie Games</a></li>
                         <li><a href="{{ url_for('forum_threads', forum_slug='developer-corner') }}">Developer Discussions</a></li>
                         <li class="browse-all"><a href="{{ url_for('forum') }}">Browse All →</a></li>
-                    </ul>
-                </div>
-                <div class="sidebar-content">
-                    <h5>Game Reviews</h5>
-                    <ul>
-                        <li><a href="{{ url_for('game_reviews') }}">View Reviews</a></li>
                     </ul>
                 </div>
             </div>
@@ -57,41 +147,42 @@
 
                         <div class="recent-forum-posts">
                             <h2>Recent Forum Threads</h2>
-                            {% if recent_threads %}
-                                {% for thread in recent_threads %}
-                                    <div class="card mb-3 home-page-thread-cards">
-                                        <div class="threads-home-container">
-                                            <div class="card-body">
-                                                <a href="{{ thread.detail_url }}">
-                                                    <h5 class="card-title">{{ thread.title }}</h5>
-                                                </a>
-                                                <p class="card-text">{{ thread.content }}</p>
-                                                <p class="card-details">
-                                                    Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> 
-                                                    on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }} 
-                                                    in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="forum-home-page-link">{{ thread.forum.title }}</a>
-                                                </p>
+                            <div class="forum-threads-grid">
+                                {% if recent_threads %}
+                                    {% for thread in recent_threads %}
+                                        <div class="card small-card">
+                                            <div class="recents-home-container">
+                                                <div class="card-body">
+                                                    <a href="{{ thread.detail_url }}">
+                                                        <h5 class="card-title small-card-title">{{ truncate_text(thread.title, max_words=10) }}</h5>
+                                                    </a>
+                                                    <p class="small-card-text">{{ truncate_text(thread.content) }}</p>
+                                                    <p class="card-details">
+                                                        Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span>
+                                                        on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                                        in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="forum-home-page-link">{{ thread.forum.title }}</a>
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <p>No recent threads found.</p>
-                            {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No recent threads found.</p>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <div class="recent-reviews">
                             <h2>Recent Game Reviews</h2>
-                            {% if recent_reviews %}
-                                {% for review in recent_reviews %}
-                                    <div class="card mb-3 home-page-thread-cards">
-                                        <div class="threads-home-container">
-                                            <div class="card-body">
-                                                <!-- Fetch game name using the review's game_identifier -->
+                            <div class="forum-threads-grid">
+                                {% if recent_reviews %}
+                                    {% for review in recent_reviews %}
+                                        <div class="card small-card">
+                                            <div class="recents-home-container">
                                                 {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
-                                                <h5 class="card-title">{{ review.title }}</h5>
+                                                <h5 class="card-title small-card-title">{{ truncate_text(review.title, max_words=10) }}</h5>
                                                 <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}"><span style="color: #8be8b5;">{{ game_info.name }}</span></a></strong></h6>
-                                                <p class="card-text">{{ review.content }}</p>
+                                                <p class="small-card-text">{{ truncate_text(review.content) }}</p>
                                                 <p class="card-details">
                                                     Review by:
                                                     <span style="color: #8be8b5;">{{ review.user.username }}</span>
@@ -99,11 +190,11 @@
                                                 </p>
                                             </div>
                                         </div>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <p>No recent threads found.</p>
-                            {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No recent reviews found.</p>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

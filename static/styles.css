@@ -187,6 +187,9 @@ textarea {
 .sidebar {
     background-color: #3c4748;
     padding: 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
 }
 
 .sidebar h5 {
@@ -218,8 +221,7 @@ textarea {
     margin: 0;
 }
 
-.threads-home-container {
-    border: 2px solid #cae9ea;
+.recents-home-container {
     border-radius: 5px;
     padding: 15px;
 }
@@ -332,11 +334,6 @@ header p {
 .recent-forum-posts h2 {
     color: #cae9ea;
     justify-content: center;
-}
-
-.home-page-thread-cards {
-    margin-right: 40px;
-    margin-left: 5px;
 }
 
 /* ---------------------------------------------------------------DASHBOARD PAGE STYLING-----------------------------------------------------*/

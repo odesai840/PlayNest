@@ -40,7 +40,7 @@
         border-radius: 5px;
         overflow: hidden;
         transition: transform 0.3s;
-        background-color: #273b40;
+        background-color: #39595f;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         width: 100%;
     }
@@ -72,7 +72,7 @@
     .recent-reviews .small-card-title {
         font-size: 20px;
         color: #cae9ea;
-        height: 40px;
+        height: 62px;
     }
 
     .small-card-text,
@@ -97,7 +97,8 @@
         margin-top: 10px;
     }
 
-    .card-details {
+    .card-details,
+    .recent-reviews .card-details {
         margin-top: auto;
     }
 
@@ -179,15 +180,17 @@
                                     {% for review in recent_reviews %}
                                         <div class="card small-card">
                                             <div class="recents-home-container">
-                                                {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
-                                                <h5 class="card-title small-card-title">{{ truncate_text(review.title, max_words=10) }}</h5>
-                                                <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}"><span style="color: #8be8b5;">{{ game_info.name }}</span></a></strong></h6>
-                                                <p class="small-card-text">{{ truncate_text(review.content) }}</p>
-                                                <p class="card-details">
-                                                    Review by:
-                                                    <span style="color: #8be8b5;">{{ review.user.username }}</span>
-                                                    on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                                                </p>
+                                                <div class="card-body">
+                                                    {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
+                                                    <h5 class="card-title small-card-title">{{ truncate_text(review.title, max_words=10) }}</h5>
+                                                    <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}"><span style="color: #8be8b5;">{{ game_info.name }}</span></a></strong></h6>
+                                                    <p class="small-card-text">{{ truncate_text(review.content) }}</p>
+                                                    <p class="card-details">
+                                                        Review by:
+                                                        <span style="color: #8be8b5;">{{ review.user.username }}</span>
+                                                        on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     {% endfor %}

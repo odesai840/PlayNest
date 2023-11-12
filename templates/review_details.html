@@ -1,5 +1,5 @@
 {% extends '_layout.html' %}
-{% block title %}PlayNest | User Profile{% endblock %}
+{% block title %}PlayNest | Reviews {% endblock %}
 {% block content %}
 
 <style>
@@ -16,9 +16,19 @@
 
     .with-background {
         background-image: url('{{ game.background_image or "./static/images/game_landscape.jpg" }}');
-        background-size: cover;  /* Ensures the background image covers the entire card */
-        background-position: center center;  /* Centers the background image */
-        z-index: 0;  /* Ensures the background image is behind the overlay and text */
+        background-size: cover;
+        background-position: center center;
+        z-index: 0; 
+    }
+
+    .card-text {
+        width: 100%;
+        display: inline-block;
+    }
+
+    .card {
+        width: 100%;
+        height: 100%;
     }
 
     .card img {
@@ -34,6 +44,28 @@
         padding: 30px;
         color: #fff;
         z-index: 1;
+    }
+
+    .toggleFormBtn {
+        float: right;
+    }
+
+    .review-form-container {
+        background-color: #303030;
+        border: 2px solid #cae9ea;
+        margin-top: 8px;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .review-form-container textarea {
+        background-color: #222;
+    }
+
+    .review-form-container label {
+    font-size: 20px;
+    color: #cae9ea;
     }
 </style>
 
@@ -53,7 +85,33 @@
 
     <hr>
 
-    <h3 class="comments-heading">Reviews</h3>
+    <div class="reviews-line d-flex justify-content-between">
+        <h3 class="comments-heading">Reviews</h3>
+        <!-- display a message if the user is not logged in -->
+        {% if 'username' not in session %}
+            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
+        {% else %}
+            <!-- button to toggle the form visibility -->
+            <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
+        {% endif %}
+    </div>
+
+        <!-- form to add a new review (initially hidden) -->
+        <form id="reviewForm" method="POST" action="{{ url_for('post_review') }}" style="display: none;">
+            <div class="review-form-container">
+                <div class="form-group">
+                    <input type="hidden" name="game_id" value="{{ game.id }}">
+                    <label for="title">Review Title:</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Review Content:</label>
+                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="thread-button">Post</button>
+            </div>
+        </form>
 
     <!-- display existing threads -->
     {% for review in reviews %}
@@ -83,31 +141,6 @@
         </div>
     </div>
     {% endfor %}
-
-    <!-- display a message if the user is not logged in -->
-    {% if 'username' not in session %}
-        <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
-    {% else %}
-        <!-- button to toggle the form visibility -->
-        <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
-    {% endif %}
-    
-    <!-- form to add a new review (initially hidden) -->
-        <form id="reviewForm" method="POST" action="{{ url_for('post_review') }}" style="display: none;">
-            <div class="review-form-container">
-                <div class="form-group">
-                    <input type="hidden" name="game_id" value="{{ game.id }}">
-                    <label for="title">Review Title:</label>
-                    <input type="text" class="form-control" id="title" name="title" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="content">Review Content:</label>
-                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="thread-button">Post</button>
-            </div>
-        </form>
 </div>
     
     <!-- JavaScript to toggle form visibility -->

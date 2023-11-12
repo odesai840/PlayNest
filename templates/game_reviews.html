@@ -60,7 +60,7 @@
     let page = 1;  // track the current page
 
     function fetchGames(query) {
-        let apiUrl = `https://api.rawg.io/api/games?key=e73e6de1e566460fa6e5c038979d3ac3&page_size=12&page=${page}`;
+        let apiUrl = `https://api.rawg.io/api/games?key={{ api_key }}&page_size=12&page=${page}`;
 
         if (query) {
             apiUrl += `&search=${query}`;

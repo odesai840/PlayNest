@@ -1,0 +1,128 @@
+{% extends '_layout.html' %}
+{% block title %}PlayNest | User Profile{% endblock %}
+{% block content %}
+
+<style>
+    .game-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 5px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+    }
+
+    .with-background {
+        background-image: url('{{ game.background_image or "./static/images/game_landscape.jpg" }}');
+        background-size: cover;  /* Ensures the background image covers the entire card */
+        background-position: center center;  /* Centers the background image */
+        z-index: 0;  /* Ensures the background image is behind the overlay and text */
+    }
+
+    .card img {
+        filter: brightness(0.3);
+        width: 100%;
+        height: auto;
+        display: block;
+        flex-shrink: 0;
+    }
+
+    .game-card-body {
+        position: absolute;
+        padding: 30px;
+        color: #fff;
+        z-index: 1;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="card game-card {% if game.background_image %}with-background{% endif %}">
+        <div class="card-body game-card-body">
+            <h5 class="card-title">{{ game.name }}</h5>
+            <p class="card-text">{{ game.description or 'No description available.' }}</p>
+            <p class="card-text"><strong>Release Date:</strong> {{ game.released or 'Not available' }}</p>
+        </div>
+        {% if game.background_image %}
+            <img src="{{ game.background_image }}" alt="{{ game.name }}">
+        {% else %}
+            <img src="{{ url_for('static', filename='images/game_landscape.jpg') }}" alt="Default Image">
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <!-- display existing threads -->
+    {% for review in reviews %}
+    <div class="card mb-3">
+        <div class="review-container">
+            <div class="card-body d-flex justify-content-between">
+                <div>
+                    <a href="{{ review.detail_url }}">
+                        <h5 class="card-title">{{ review.title }}</h5>
+                    </a>
+                    <p class="card-text">{{ review.content }}</p>
+                    <p class="card-details">
+                        Review by: 
+                        <span style="color: #8be8b5;">{{ review.user.username }}</span> 
+                        on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                    </p>
+                </div>
+                {% if 'username' in session and review.user.username == session['username'] %}
+                    <!-- delete button if the review belongs to the logged-in user -->
+                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                        <button type="submit" class="btn btn-link delete-button">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- display a message if the user is not logged in -->
+    {% if 'username' not in session %}
+        <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
+    {% else %}
+        <!-- button to toggle the form visibility -->
+        <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
+    {% endif %}
+    
+    <!-- form to add a new review (initially hidden) -->
+        <form id="reviewForm" method="POST" action="{{ url_for('post_review') }}" style="display: none;">
+            <div class="review-form-container">
+                <div class="form-group">
+                    <input type="hidden" name="game_id" value="{{ game.id }}">
+                    <label for="title">Review Title:</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Review Content:</label>
+                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="thread-button">Post</button>
+            </div>
+        </form>
+</div>
+    
+    <!-- JavaScript to toggle form visibility -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toggleFormBtn = document.getElementById('toggleFormBtn');
+            var reviewForm = document.getElementById('reviewForm');
+    
+            toggleFormBtn.addEventListener('click', function () {
+                if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
+                    reviewForm.style.display = 'block';
+                } else {
+                    reviewForm.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+</div>
+{% endblock %}

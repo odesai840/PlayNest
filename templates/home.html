@@ -3,6 +3,13 @@
 {% block title %}PlayNest | Home{% endblock %}
 
 {% block content %}
+
+    <style>
+        h2 {
+            padding-left: 3px;
+        }
+
+    </style>
     <div class="sidebar-container">
         <div class="row">
             <div class="col-md-2 sidebar">
@@ -19,10 +26,9 @@
                     </ul>
                 </div>
                 <div class="sidebar-content">
-                    <h5>Media</h5>
+                    <h5>Game Reviews</h5>
                     <ul>
-                        <li>Images</li>
-                        <li>Videos</li>
+                        <li><a href="{{ url_for('game_reviews') }}">View Reviews</a></li>
                     </ul>
                 </div>
             </div>
@@ -46,11 +52,11 @@
 
                     <div class="content-below-hero">
                         <div class="recent-games">
-                            <h2>Recent Games</h2>
+                            <h2>Recent User Games</h2>
                         </div>
 
                         <div class="recent-forum-posts">
-                            <h2>Recent Threads</h2>
+                            <h2>Recent Forum Threads</h2>
                             {% if recent_threads %}
                                 {% for thread in recent_threads %}
                                     <div class="card mb-3 home-page-thread-cards">
@@ -64,6 +70,32 @@
                                                     Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> 
                                                     on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }} 
                                                     in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="forum-home-page-link">{{ thread.forum.title }}</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No recent threads found.</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="recent-reviews">
+                            <h2>Recent Game Reviews</h2>
+                            {% if recent_reviews %}
+                                {% for review in recent_reviews %}
+                                    <div class="card mb-3 home-page-thread-cards">
+                                        <div class="threads-home-container">
+                                            <div class="card-body">
+                                                <!-- Fetch game name using the review's game_identifier -->
+                                                {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
+                                                <h5 class="card-title">{{ review.title }}</h5>
+                                                <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}"><span style="color: #8be8b5;">{{ game_info.name }}</span></a></strong></h6>
+                                                <p class="card-text">{{ review.content }}</p>
+                                                <p class="card-details">
+                                                    Review by:
+                                                    <span style="color: #8be8b5;">{{ review.user.username }}</span>
+                                                    on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                                                 </p>
                                             </div>
                                         </div>

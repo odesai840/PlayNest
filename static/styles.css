@@ -632,3 +632,65 @@ hr {
 .other-user {
     color: #8be8b5;
 }
+
+/* ---------------------------------------------------------------GAME REVIEW STYLING--------------------------------------------------------*/
+
+.game-card-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    max-width: 84px;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.load-more-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    max-width: 115px;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.search-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+/* ---------------------------------------------------------------REVIEW DETAIL STYLING--------------------------------------------------------*/
+.review-container {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+}

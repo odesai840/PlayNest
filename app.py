@@ -5,8 +5,14 @@ from flask import Flask, render_template, request, redirect, url_for, session
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
-from models import db, User, Forum, Thread, Comment
+from models import db, User, Forum, Thread, Comment, Review
 import requests
+
+# beautifulsoup4: python package for parsing HTML
+# I had an issue where the game descriptions from the API were displaying html elements in the text,
+# like <p> and <br> were showing. So I used this package to remove that.
+# pip install beautifulsoup4
+from bs4 import BeautifulSoup
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -24,15 +30,44 @@ db.init_app(app) # initializing database with the flask app
 
 bcrypt = Bcrypt(app)
 
+def get_game_details_from_rawg_api(game_id):
+    API_KEY = os.getenv('API_KEY')
+    base_url = f'https://api.rawg.io/api/games/{game_id}'
+    
+    params = {
+        'key': API_KEY,
+    }
+    
+    try:
+        response = requests.get(base_url, params=params)
+        
+        if response.status_code == 200:
+            game_data = response.json()
+            
+            if 'description' in game_data:
+                game_data['description'] = strip_html_tags(game_data['description'])
+
+            return game_data
+        else:
+            print(f"Error: Unable to fetch game details from RAWG API. Status code: {response.status_code}")
+            return None
+    except requests.RequestException as e:
+        print(f"Error: {e}")
+        return None
+
 @app.get('/')
 def home():
-    # retrieve most recent threads from all forums
-    recent_threads = Thread.query.order_by(desc(Thread.created_at)).limit(10).all()
+    # retrieve most recent threads from all forums and recent reviews posted
+    recent_threads = Thread.query.order_by(desc(Thread.created_at)).limit(5).all()
+    recent_reviews = Review.query.order_by(desc(Review.created_at)).limit(5).all()
 
     for thread in recent_threads:
         thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
     
-    return render_template('home.html', recent_threads=recent_threads)
+    for review in recent_reviews:
+        review.detail_url = url_for('game_details', game_id=review.game_identifier)
+    
+    return render_template('home.html', recent_threads=recent_threads, recent_reviews=recent_reviews, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -204,6 +239,98 @@ def delete_thread(forum_slug, thread_id):
         db.session.commit()
 
     return redirect(url_for('forum_threads', forum_slug=forum_slug))
+
+def get_games_from_rawg_api():
+    API_KEY = os.getenv('API_KEY')
+    base_url = 'https://api.rawg.io/api/games'
+    
+    # defining parameters for API request
+    params = {
+        'key': API_KEY,
+        'ordering': '-metacritic',
+        'page_size': 12,  # number of games per 'page'
+        'language': 'english',
+    }
+    
+    try:
+        # make a GET request to RAWG API
+        response = requests.get(base_url, params=params)
+        
+        # checking if request was successful
+        if response.status_code == 200:
+            # parse the JSON data from the response
+            games_data = response.json()
+            
+            # extract results containing game information
+            games = games_data.get('results', [])
+            
+            return games
+        else:
+            # print error message is request wasn't successful
+            print(f"Error: Unable to fetch games from RAWG API. Status code: {response.status_code}")
+            return None
+        
+    except requests.RequestException as e:
+        # print error message if there is an exception during the request
+        print(f"Error: {e}")
+        return None
+
+@app.get('/game_reviews')
+def game_reviews():
+    games = get_games_from_rawg_api()
+    
+    if games is not None and games:
+        return render_template('game_reviews.html', games=games)
+    else:
+        # return template without passing the game variable
+        return render_template('game_reviews.html')
+
+@app.route('/game_details/<int:game_id>', methods=['GET', 'POST'])
+def game_details(game_id):
+    game = get_game_details_from_rawg_api(game_id)
+    reviews = Review.query.filter_by(game_identifier=str(game_id)).all()
+    if game:
+        return render_template('review_details.html', game=game, reviews=reviews)
+    else:
+        return render_template('review_details.html')
+
+def strip_html_tags(html):
+    # using BeautifulSoup to parse the HTML and then get text
+    soup = BeautifulSoup(html, 'html.parser')
+    return soup.get_text()
+
+@app.route('/post_review', methods=['POST'])
+def post_review():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        user_id = User.query.filter_by(username=session['username']).first().id
+        game_id = request.form.get('game_id')
+        
+        # associate the review with the corresponding game using game_id
+        new_review = Review(title=title, content=content, user_id=user_id, game_identifier=game_id)
+        db.session.add(new_review)
+        db.session.commit()
+        
+        # redirect to game details page
+        return redirect(url_for('game_details', game_id=game_id))
+    
+    return redirect(url_for('home'))
+
+@app.route('/delete_review/<int:review_id>', methods=['POST'])
+def delete_review(review_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    review = Review.query.get(review_id)
+    
+    # check if logged in user is owner of the review
+    if review.user.username == session['username']:
+        db.session.delete(review)
+        db.session.commit()
+    
+    game_id = review.game_identifier
+    return redirect(url_for('game_details', game_id=game_id))
 
 if __name__ == '__main__':
     app.run(debug=True)

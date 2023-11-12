@@ -1,0 +1,138 @@
+{% extends '_layout.html' %}
+{% block title %}PlayNest | Game Reviews{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Game Reviews</h2>
+
+    <!-- Search Bar -->
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="searchbar-container">
+                <form class="d-flex" id="search-form">
+                    <input class="form-control me-2" type="search" placeholder="Search for a game" aria-label="Search" id="search-input">
+                    <button class="search-button" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="game-cards-container">
+
+    </div>
+
+    <div class="text-center mt-4">
+        <button id="load-more-btn" class="load-more-button">Load More</button>
+    </div>
+</div>
+
+<style>
+    .card {
+        width: 100%;
+        height: 100%;
+    }
+
+    .card-img-top {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    #search-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .searchbar-container {
+        margin-bottom: 30px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const gameCardsContainer = document.getElementById('game-cards-container');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    let page = 1;  // track the current page
+
+    function fetchGames(query) {
+        let apiUrl = `https://api.rawg.io/api/games?key=e73e6de1e566460fa6e5c038979d3ac3&page_size=12&page=${page}`;
+
+        if (query) {
+            apiUrl += `&search=${query}`;
+        } else {
+            apiUrl += '';
+        }
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // process game data
+                let games = data.results;
+
+                // Custom sorting based on the relevance of the search query
+                if (query) {
+                    games = games.sort((a, b) => {
+                        const aMatch = a.name.toLowerCase().startsWith(query.toLowerCase());
+                        const bMatch = b.name.toLowerCase().startsWith(query.toLowerCase());
+
+                        if (aMatch && !bMatch) return -1;
+                        if (!aMatch && bMatch) return 1;
+
+                        // If both have the exact query, sort based on the order of appearance
+                        if (aMatch && bMatch) {
+                            const aIndex = a.name.toLowerCase().indexOf(query.toLowerCase());
+                            const bIndex = b.name.toLowerCase().indexOf(query.toLowerCase());
+                            return aIndex - bIndex;
+                        }
+
+                        return 0;
+                    });
+                }
+
+                // generate game cards
+                games.forEach(game => {
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-4', 'mb-4');
+
+                    card.innerHTML = `
+                        <div class="card">
+                            <img src="${game.background_image || './static/images/game_landscape.jpg'}" class="card-img-top" alt="${game.name}">
+                            <div class="card-body">
+                                <h5 class="card-title">${game.name}</h5>
+                            </div>
+                            <a href="/game_details/${game.id}" class="game-card-button">Reviews</a>
+                        </div>
+                    `;
+
+                    gameCardsContainer.appendChild(card);
+                });
+
+                // incrementing the page for the next request
+                page += 1;
+            })
+            .catch(error => console.error('Error fetching game data:', error));
+    }
+
+    // initial fetch without search query
+    fetchGames();
+
+    // load more button click event
+    loadMoreBtn.addEventListener('click', function() {
+        fetchGames(searchInput.value); // tetch with the search query
+    });
+
+    // search form submit event
+    searchForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        page = 1; // reset page when searching
+        gameCardsContainer.innerHTML = ''; // clear existing cards
+        fetchGames(searchInput.value); // fetch with the search query
+    });
+});
+</script>
+{% endblock %}

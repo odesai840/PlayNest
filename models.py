@@ -59,3 +59,19 @@ class Comment(db.Model):
         self.user_id = user_id
         self.thread_id = thread_id
         self.parent_comment_id = parent_comment_id
+
+class Review(db.Model):
+    __tablename__ = 'reviews'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('reviews', lazy=True))
+    game_identifier = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    def __init__(self, title, content, user_id, game_identifier):
+        self.title = title
+        self.content = content
+        self.user_id = user_id
+        self.game_identifier = game_identifier

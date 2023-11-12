@@ -3,20 +3,19 @@
 {% block title %}PlayNest | Home{% endblock %}
 
 {% block content %}
-<div class="responsive-sidebar-container">
     <div class="sidebar-container">
         <div class="row">
             <div class="col-md-2 sidebar">
                 <div class="sidebar-content">
                     <h5>Forum Corners</h5>
                     <ul>
-                        <li>PC</li>
-                        <li>Nintendo</li>
-                        <li>Xbox</li>
-                        <li>PlayStation</li>
-                        <li>Indie Games</li>
-                        <li>Developer Discussions</li>
-                        <li class="browse-all">Browse All →</li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='pc-corner') }}">PC</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='nintendo-corner') }}">Nintendo</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='xbox-corner') }}">Xbox</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='playstation-corner') }}">PlayStation</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='indie-games-corner') }}">Indie Games</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='developer-corner') }}">Developer Discussions</a></li>
+                        <li class="browse-all"><a href="{{ url_for('forum') }}">Browse All →</a></li>
                     </ul>
                 </div>
                 <div class="sidebar-content">
@@ -51,12 +50,32 @@
                         </div>
 
                         <div class="recent-forum-posts">
-                            <h2>Recent Forum Posts</h2>
+                            <h2>Recent Threads</h2>
+                            {% if recent_threads %}
+                                {% for thread in recent_threads %}
+                                    <div class="card mb-3 home-page-thread-cards">
+                                        <div class="threads-home-container">
+                                            <div class="card-body">
+                                                <a href="{{ thread.detail_url }}">
+                                                    <h5 class="card-title">{{ thread.title }}</h5>
+                                                </a>
+                                                <p class="card-text">{{ thread.content }}</p>
+                                                <p class="card-details">
+                                                    Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> 
+                                                    on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }} 
+                                                    in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="forum-home-page-link">{{ thread.forum.title }}</a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <p>No recent threads found.</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

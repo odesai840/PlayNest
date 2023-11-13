@@ -58,8 +58,8 @@ def get_game_details_from_rawg_api(game_id):
 @app.get('/')
 def home():
     # retrieve most recent threads from all forums and recent reviews posted
-    recent_threads = Thread.query.order_by(desc(Thread.created_at)).limit(8).all()
-    recent_reviews = Review.query.order_by(desc(Review.created_at)).limit(8).all()
+    recent_threads = Thread.query.order_by(desc(Thread.created_at)).limit(4).all()
+    recent_reviews = Review.query.order_by(desc(Review.created_at)).limit(4).all()
 
     for thread in recent_threads:
         thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)

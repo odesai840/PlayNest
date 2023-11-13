@@ -1,8 +1,15 @@
 {% extends "_layout.html" %}
-
 {% block title %}PlayNest | {{ forum.title }} Threads{% endblock %}
 
 {% block content %}
+
+<style>
+    .thread-title:hover {
+        text-decoration: underline;
+        color: #8be8b5;
+    }
+</style>
+
 <div class="container mt-4">
     <h2 class="text-center mb-4">{{ forum.title }} Threads</h2>
 
@@ -34,9 +41,9 @@
     <div class="card mb-3">
         <div class="thread-container">
             <div class="card-body d-flex justify-content-between">
-                <div>
+                <div class="w-100"> <!-- width 100% to make the text extend from one end to the other -->
                     <a href="{{ thread.detail_url }}">
-                        <h5 class="card-title">{{ thread.title }}</h5>
+                        <h5 class="card-title thread-title">{{ thread.title }}</h5>
                     </a>
                     <p class="card-text">{{ thread.content }}</p>
                     <p class="card-details">

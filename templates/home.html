@@ -75,6 +75,11 @@
         height: 62px;
     }
 
+    .threads-title:hover {
+        color: #8be8b5;
+        text-decoration: underline;
+    }
+
     .small-card-text,
     .recent-reviews .small-card-text,
     .card-text,
@@ -104,6 +109,16 @@
 
     h2 {
         padding-left: 3px;
+    }
+
+    h6 strong a {
+        color: #8be8b5;
+        text-decoration: none;
+    }
+
+    h6 strong a:hover {
+        color: #8be8b5;
+        text-decoration: underline;
     }
 </style>
 
@@ -155,7 +170,7 @@
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     <a href="{{ thread.detail_url }}">
-                                                        <h5 class="card-title small-card-title">{{ truncate_text(thread.title, max_words=10) }}</h5>
+                                                        <h5 class="card-title small-card-title threads-title">{{ truncate_text(thread.title, max_words=10) }}</h5>
                                                     </a>
                                                     <p class="small-card-text">{{ truncate_text(thread.content) }}</p>
                                                     <p class="card-details">
@@ -183,7 +198,7 @@
                                                 <div class="card-body">
                                                     {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
                                                     <h5 class="card-title small-card-title">{{ truncate_text(review.title, max_words=10) }}</h5>
-                                                    <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}"><span style="color: #8be8b5;">{{ game_info.name }}</span></a></strong></h6>
+                                                    <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}">{{ game_info.name }}</a></strong></h6>
                                                     <p class="small-card-text">{{ truncate_text(review.content) }}</p>
                                                     <p class="card-details">
                                                         Review by:

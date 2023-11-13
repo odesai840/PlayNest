@@ -67,6 +67,12 @@
     font-size: 20px;
     color: #cae9ea;
     }
+
+    .review-title {
+        font-size: 20px;
+        color: #cae9ea;
+        height: 62px;
+    }
 </style>
 
 <div class="container mt-4">
@@ -113,15 +119,13 @@
             </div>
         </form>
 
-    <!-- display existing threads -->
+    <!-- display existing reviews -->
     {% for review in reviews %}
     <div class="card mb-3">
         <div class="review-container">
             <div class="card-body d-flex justify-content-between">
                 <div>
-                    <a href="{{ review.detail_url }}">
-                        <h5 class="card-title">{{ review.title }}</h5>
-                    </a>
+                    <h5 class="review-title">{{ review.title }}</h5>
                     <p class="card-text">{{ review.content }}</p>
                     <p class="card-details">
                         Review by: 
@@ -142,7 +146,7 @@
     </div>
     {% endfor %}
 </div>
-    
+
     <!-- JavaScript to toggle form visibility -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {

@@ -1,6 +1,15 @@
 {% extends '_layout.html' %}
 {% block title %}PlayNest | Game Reviews{% endblock %}
 {% block content %}
+
+<style>
+    .game-card-title {
+        font-size: 20px;
+        color: #cae9ea;
+        height: 62px;
+    }
+</style>
+
 <div class="container mt-4">
     <h2 class="text-center mb-4">Game Reviews</h2>
 
@@ -101,9 +110,9 @@
 
                     card.innerHTML = `
                         <div class="card">
-                            <img src="${game.background_image || './static/images/game_landscape.jpg'}" class="card-img-top" alt="${game.name}">
+                            <img src="${game.background_image || './static/images/game_landscape.jpg'}" class="card-img-top" alt="${game.name} loading=lazy">
                             <div class="card-body">
-                                <h5 class="card-title">${game.name}</h5>
+                                <h5 class="game-card-title">${game.name}</h5>
                             </div>
                             <a href="/game_details/${game.id}" class="game-card-button">Reviews</a>
                         </div>

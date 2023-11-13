@@ -3,6 +3,14 @@
 {% block title %}PlayNest | Forums{% endblock %}
 
 {% block content %}
+
+<style>
+    h4:hover {
+        text-decoration: underline;
+        color: #8be8b5;
+    }
+</style>
+
 <div class="container mt-4">
     <h2 class="text-center mb-4">Forums</h2>
 
@@ -11,8 +19,8 @@
             <div class="col-md-12">
                 <a href="{{ url_for('forum_threads', forum_slug=forum.slug) }}" class="forum-card forum-card-color">
                     <h4>{{ forum.title }}</h4>
-                    <p>{{ forum.description }}</p>
                 </a>
+                <p>{{ forum.description }}</p>
             </div>
         {% endfor %}
     </div>

@@ -308,9 +308,17 @@ def post_review():
         content = request.form.get('content')
         user_id = User.query.filter_by(username=session['username']).first().id
         game_id = request.form.get('game_id')
+        is_recommendation = bool(int(request.form.get('recommendation', 1)))
         
         # associate the review with the corresponding game using game_id
-        new_review = Review(title=title, content=content, user_id=user_id, game_identifier=game_id)
+        new_review = Review(
+            title=title, 
+            content=content, 
+            user_id=user_id, 
+            game_identifier=game_id,
+            is_recommendation=is_recommendation
+        )
+        
         db.session.add(new_review)
         db.session.commit()
         

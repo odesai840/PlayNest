@@ -1,5 +1,5 @@
 {% extends '_layout.html' %}
-{% block title %}PlayNest | Reviews {% endblock %}
+{% block title %}PlayNest | {{ game.name }} Reviews {% endblock %}
 {% block content %}
 
 <style>
@@ -69,9 +69,12 @@
     }
 
     .review-title {
-        font-size: 20px;
+        font-size: 24px;
         color: #cae9ea;
-        height: 62px;
+    }
+
+    .radio-inline {
+        margin-right: 10px;
     }
 </style>
 
@@ -106,6 +109,17 @@
         <form id="reviewForm" method="POST" action="{{ url_for('post_review') }}" style="display: none;">
             <div class="review-form-container">
                 <div class="form-group">
+                    <label for="recommendation">Do you recommend this game?</label>
+                    <div>
+                        <label class="radio-inline">
+                            <input type="radio" name="recommendation" value="1" checked> Yes
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="recommendation" value="0"> No
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
                     <input type="hidden" name="game_id" value="{{ game.id }}">
                     <label for="title">Review Title:</label>
                     <input type="text" class="form-control" id="title" name="title" required>
@@ -125,7 +139,13 @@
         <div class="review-container">
             <div class="card-body d-flex justify-content-between">
                 <div>
-                    <h5 class="review-title">{{ review.title }}</h5>
+                    <h5 class="review-title">{{ review.title }} •
+                        {% if review.is_recommendation %}
+                            <span style="color: rgb(167, 224, 167);"> Recommended</span>
+                        {% else %}
+                            <span style="color: rgb(240, 134, 134);"> Not Recommended</span>
+                        {% endif %}
+                    </h5>
                     <p class="card-text">{{ review.content }}</p>
                     <p class="card-details">
                         Review by: 

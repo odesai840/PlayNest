@@ -4,17 +4,52 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4">{{ thread.title }}</h2>
+    <h2 class="text-center mb-4 thread-detail-title">{{ thread.title }}</h2>
+    <div class="card mb-3">
         <div class="thread-op-post">
-            <p class="card-text">{{ thread.content }}</p>
-            <p class="card-details">Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}</p>
+            <div class="d-flex justify-content-between">
+                <div class="w-100">
+                    <div>
+                        <p class="card-text">{{ thread.content }}</p>
+                        <p class="card-details">Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}</p>
+                    </div>
+                </div>
+                <div class="align-self-start">
+                    {% if 'username' in session and thread.user.username == session['username'] %}
+                        <!-- delete button if the thread belongs to the logged-in user -->
+                        <form method="POST" action="{{ url_for('delete_thread', forum_slug=forum.slug, thread_id=thread.id) }}">
+                            <button type="submit" class="btn btn-link delete-button">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
         </div>
+    </div>
 
-    <hr>
+<hr>
+
+<!-- form to add a new comment -->
+<div class="thread-comment-form-container">
+    {% if 'username' in session %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="content">Leave a Comment:</label>
+                <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="post-comment-button">Post Comment</button>
+        </form>
+    {% else %}
+        <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to leave a comment.</p>
+    {% endif %}
+</div>
 
 <!-- display comments -->
 <h3 class="comments-heading">Comments</h3>
-{% for comment in thread.comments %}
+
+{% if thread.comments %}
+    {% for comment in thread.comments|reverse %}
     <div class="card mb-3">
         <div class="comments">
             <div class="card-body">
@@ -49,7 +84,7 @@
                         {% endif %}
                     </div>
                 </div>
-    
+
                 <div class="reply-form" style="display: none;">
                     <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
                         <div class="form-group">
@@ -63,23 +98,11 @@
             </div>
         </div>
     </div>
-{% endfor %}
+    {% endfor %}
+{% else %}
+    <p>No comments yet. Start the conversation!</p>
+{% endif %}
 
-<hr>
-
-    <!-- form to add a new comment -->
-    <div class="thread-comment-form-container">
-        {% if 'username' in session %}
-            <form method="POST">
-                <div class="form-group">
-                    <label for="content">Leave a Comment:</label>
-                    <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
-                </div>
-                <button type="submit" class="post-comment-button">Post Comment</button>
-            </form>
-        {% else %}
-            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to leave a comment.</p>
-        {% endif %}
 </div>
 
 <script>

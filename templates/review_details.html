@@ -64,8 +64,8 @@
     }
 
     .review-form-container label {
-    font-size: 20px;
-    color: #cae9ea;
+        font-size: 20px;
+        color: #cae9ea;
     }
 
     .review-title {
@@ -141,9 +141,9 @@
                 <div>
                     <h5 class="review-title">{{ review.title }} •
                         {% if review.is_recommendation %}
-                            <span style="color: rgb(167, 224, 167);"> Recommended</span>
+                            <span style="color: rgb(167, 224, 167);"> Recommended <i class="fas fa-thumbs-up"></i></span>
                         {% else %}
-                            <span style="color: rgb(240, 134, 134);"> Not Recommended</span>
+                            <span style="color: rgb(240, 134, 134);"> Not Recommended <i class="fas fa-thumbs-down"></i></span>
                         {% endif %}
                     </h5>
                     <p class="card-text">{{ review.content }}</p>

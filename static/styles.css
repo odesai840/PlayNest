@@ -528,6 +528,10 @@ iframe {
 
 /* ---------------------------------------------------------------THREAD DETAILS STYLING--------------------------------------------------------*/
 
+.thread-detail-title {
+    font-size: 35px;
+}
+
 .thread-op-post {
     background-color: #303030;
     padding: 20px;
@@ -553,7 +557,7 @@ iframe {
 }
 
 .comments-heading {
-    font-size: 25px;
+    font-size: 30px;
     color: #cae9ea;
     margin-bottom: 15px;
 }
@@ -596,7 +600,7 @@ iframe {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
 
     &:hover {
         background: linear-gradient(180deg, #8be8b5, #4b9c78);

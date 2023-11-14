@@ -3,6 +3,32 @@
 {% block title %}PlayNest | {{ thread.title }}{% endblock %}
 
 {% block content %}
+
+<style>
+    .indent-0 {
+        margin-left: 0;
+    }
+
+    .indent-1 {
+        margin-left: 20px;
+    }
+
+    .indent-2 {
+        margin-left: 40px;
+    }
+
+    .reply-card {
+        background-color: #273b40;
+        border: none;
+    }
+
+    .replies {
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+
 <div class="container mt-4">
     <h2 class="text-center mb-4 thread-detail-title">{{ thread.title }}</h2>
     <div class="card mb-3">
@@ -36,7 +62,7 @@
         <form method="POST">
             <div class="form-group">
                 <label for="content">Leave a Comment:</label>
-                <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
             </div>
             <button type="submit" class="post-comment-button">Post Comment</button>
         </form>
@@ -49,55 +75,77 @@
 <h3 class="comments-heading">Comments</h3>
 
 {% if thread.comments %}
-    {% for comment in thread.comments|reverse %}
-    <div class="card mb-3">
-        <div class="comments">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        {% if comment.parent_comment %}
-                            <div class="parent-comment">
-                                <p><strong class="strong-color">{{ comment.parent_comment.user.username }} said:</strong> <span style="color: #cae9ea;">{{ comment.parent_comment.content }}</span></p>
-                            </div>
-                        {% endif %}
-    
-                        <p class="card-text">{{ comment.content }}</p>
-                        <p class="card-details">Comment by: 
-                            <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                            {% if 'username' in session %}
-                                • <a href="#" class="reply-link">Reply</a>
-                            {% endif %}
-                        </p>
-                    </div>
-    
-                    <div>
-                        {% if comment.user.username == session['username'] %}
-                            <!-- delete button if the comment belongs to the logged-in user -->
-                            <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
-                                <button type="button" class="btn btn-link edit-comment-button">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
-                                <button type="submit" class="btn btn-link delete-button">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="reply-form" style="display: none;">
-                    <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
-                        <div class="form-group">
-                            <label for="content">Your Reply:</label>
-                            <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+    {% for comment in thread.comments|reverse if not comment.parent_comment %}
+        <div class="card mb-3 {{ comment.indent_class }}">
+            <div class="comments">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="card-text">{{ comment.content }}</p>
+                            <p class="card-details">Comment by: 
+                                <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                {% if 'username' in session %}
+                                    • <a href="#" class="reply-link">Reply</a>
+                                {% endif %}
+                            </p>
                         </div>
-                        <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
-                        <button type="submit" class="post-comment-button">Post Reply</button>
-                    </form>
+        
+                        <div>
+                            {% if comment.user.username == session['username'] %}
+                                <!-- delete button if the comment belongs to the logged-in user -->
+                                <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
+                                    <button type="submit" class="btn btn-link delete-button">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="reply-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
+                            <div class="form-group">
+                                <label for="content">Your Reply:</label>
+                                <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                            </div>
+                            <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                            <button type="submit" class="post-comment-button">Post Reply</button>
+                        </form>
+                    </div>
+
+                    <!-- display replies for this parent comment -->
+                    {% for reply in comment.child_comments %}
+                        <div class="card mb-3 {{ reply.indent_class }} reply-card">
+                            <div class="replies">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="w-100">
+                                            <div>
+                                                <p class="card-text">{{ reply.content }}</p>
+                                                <p class="card-details">Reply by: 
+                                                    <span style="color: #8be8b5;">{{ reply.user.username }}</span> on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            {% if reply.user.username == session['username'] %}
+                                                <!-- delete button if the reply belongs to the logged-in user -->
+                                                <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
+                                                    <button type="submit" class="btn btn-link delete-button">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
     {% endfor %}
 {% else %}
     <p>No comments yet. Start the conversation!</p>

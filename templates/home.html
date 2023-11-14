@@ -120,6 +120,11 @@
         color: #8be8b5;
         text-decoration: underline;
     }
+
+    .none-found {
+        font-size: 16px;
+        color: white;
+    }
 </style>
 
     <div class="sidebar-container">
@@ -183,7 +188,7 @@
                                         </div>
                                     {% endfor %}
                                 {% else %}
-                                    <p>No recent threads found.</p>
+                                    <p class="none-found">No recent threads found.</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -210,7 +215,7 @@
                                         </div>
                                     {% endfor %}
                                 {% else %}
-                                    <p>No recent reviews found.</p>
+                                    <p class="none-found">No recent reviews found.</p>
                                 {% endif %}
                             </div>
                         </div>

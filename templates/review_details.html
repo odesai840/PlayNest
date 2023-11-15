@@ -59,10 +59,6 @@
         border-radius: 5px;
     }
 
-    .review-form-container textarea {
-        background-color: #222;
-    }
-
     .review-form-container label {
         font-size: 20px;
         color: #cae9ea;
@@ -116,7 +112,7 @@
                     <label for="recommendation">Do you recommend this game?</label>
                     <div>
                         <label class="radio-inline">
-                            <input type="radio" name="recommendation" value="1"> Yes
+                            <input type="radio" name="recommendation" value="1" required> Yes
                         </label>
                         <label class="radio-inline">
                             <input type="radio" name="recommendation" value="0"> No
@@ -131,7 +127,7 @@
 
                 <div class="form-group">
                     <label for="content">Review Content:</label>
-                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                    <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
                 </div>
                 <button type="submit" class="thread-button">Post</button>
             </div>

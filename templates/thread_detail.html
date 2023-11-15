@@ -89,7 +89,7 @@
                                 {% endif %}
                             </p>
                         </div>
-        
+
                         <div>
                             {% if comment.user.username == session['username'] %}
                                 <!-- delete button if the comment belongs to the logged-in user -->
@@ -106,7 +106,7 @@
                         <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
                             <div class="form-group">
                                 <label for="content">Your Reply:</label>
-                                <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+                                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
                             </div>
                             <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
                             <button type="submit" class="post-comment-button">Post Reply</button>
@@ -121,7 +121,7 @@
                                     <div class="d-flex justify-content-between">
                                         <div class="w-100">
                                             <div>
-                                                <p class="card-text">{{ reply.content }}</p>
+                                                <p class="card-text"> {{ reply.content }}</p>
                                                 <p class="card-details">Reply by: 
                                                     <span style="color: #8be8b5;">{{ reply.user.username }}</span> on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                                                 </p>
@@ -155,18 +155,18 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Select all reply links
+        // select all reply links
         var replyLinks = document.querySelectorAll('.reply-link');
 
-        // Iterate over each reply link
+        // iterate over each reply link
         replyLinks.forEach(function (link) {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                // Get the associated reply form
+                // get the associated reply form
                 var replyForm = this.closest('.card-body').querySelector('.reply-form');
 
-                // Toggle the visibility of the reply form
+                // toggle the visibility of the reply form
                 if (replyForm.style.display === 'none' || replyForm.style.display === '') {
                     replyForm.style.display = 'block';
                 } else {

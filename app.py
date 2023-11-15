@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 from models import db, User, Forum, Thread, Comment, Review
+from flask import jsonify
 import requests
 
 # beautifulsoup4: python package for parsing HTML
@@ -233,6 +234,33 @@ def delete_comment(forum_slug, thread_id, comment_id):
         db.session.commit()
     
     return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+
+@app.route('/forum/<forum_slug>/<int:thread_id>/update_comment/<int:comment_id>', methods=['POST'])
+def update_comment(forum_slug, thread_id, comment_id):
+    if request.method == 'POST':
+        data = request.get_json()
+        # extract data from the request
+        comment_id = data['commentId']
+        updated_comment = data.get('updatedComment')
+    
+        # check if comment belongs to the user
+        comment = Comment.query.get(comment_id)
+        
+        # Use user ID from the session for comparison
+        user_id = User.query.filter_by(username=session.get('username')).first().id
+
+        if comment.user_id == user_id:
+            # update the comment content
+            comment.content = updated_comment
+            db.session.commit()
+            # return a JSON response indicating success
+            return jsonify(status="success")
+        else:
+            # return a JSON response indicating unauthorized access
+            return jsonify(status="unauthorized"), 403
+    else:
+        # return a JSON response indicating invalid request method
+        return jsonify(status="error", message="Invalid request method"), 400
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_thread', methods=['POST'])
 def delete_thread(forum_slug, thread_id):

@@ -43,14 +43,16 @@
                 <div class="align-self-start">
                     {% if 'username' in session and thread.user.username == session['username'] %}
                         <!-- delete/edit buttons if the thread belongs to the logged-in user -->
-                        <button type="submit" class="btn btn-link edit-button">
-                            <i class="fa-solid fa-pencil"></i>
-                        </button>
-                        <form method="POST" action="{{ url_for('delete_thread', forum_slug=forum.slug, thread_id=thread.id) }}">
-                            <button type="submit" class="btn btn-link delete-button">
-                                <i class="fas fa-trash-alt"></i>
+                        <div class="thread-buttons">
+                            <button type="submit" class="btn btn-link edit-button">
+                                <i class="fa-solid fa-pencil"></i>
                             </button>
-                        </form>
+                            <form method="POST" action="{{ url_for('delete_thread', forum_slug=forum.slug, thread_id=thread.id) }}">
+                                <button type="submit" class="btn btn-link delete-button">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
                     {% endif %}
                 </div>
             </div>
@@ -105,14 +107,16 @@
                         <div>
                             {% if comment.user.username == session['username'] %}
                                 <!-- delete/edit buttons if the comment belongs to the logged-in user -->
-                                <button type="submit" class="btn btn-link edit-button">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </button>
-                                <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
-                                    <button type="submit" class="btn btn-link delete-button">
-                                        <i class="fas fa-trash-alt"></i>
+                                <div class="comment-buttons">
+                                    <button type="submit" class="btn btn-link edit-button">
+                                        <i class="fa-solid fa-pencil"></i>
                                     </button>
-                                </form>
+                                    <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
+                                        <button type="submit" class="btn btn-link delete-button">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
@@ -156,14 +160,16 @@
                                         <div>
                                             {% if reply.user.username == session['username'] %}
                                                 <!-- delete/edit buttons if the reply belongs to the logged-in user -->
-                                                <button type="submit" class="btn btn-link edit-button">
-                                                    <i class="fa-solid fa-pencil"></i>
-                                                </button>
-                                                <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
-                                                    <button type="submit" class="btn btn-link delete-button">
-                                                        <i class="fas fa-trash-alt"></i>
+                                                <div class="reply-buttons">
+                                                    <button type="submit" class="btn btn-link edit-button">
+                                                        <i class="fa-solid fa-pencil"></i>
                                                     </button>
-                                                </form>
+                                                    <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
+                                                        <button type="submit" class="btn btn-link delete-button">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             {% endif %}
                                         </div>
                                     </div>

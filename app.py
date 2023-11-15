@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 from models import db, User, Forum, Thread, Comment, Review
+# pip install requests
 import requests
 
 # beautifulsoup4: python package for parsing HTML

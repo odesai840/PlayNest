@@ -21,6 +21,11 @@
         z-index: 0; 
     }
 
+    .game-title {
+        font-size: 24px;
+        color: #cae9ea;
+    }
+
     .card-text {
         width: 100%;
         display: inline-block;
@@ -81,7 +86,7 @@
 <div class="container mt-4">
     <div class="card game-card {% if game.background_image %}with-background{% endif %}">
         <div class="card-body game-card-body">
-            <h5 class="card-title">{{ game.name }}</h5>
+            <h5 class="game-title">{{ game.name }}</h5>
             <p class="card-text">{{ game.description or 'No description available.' }}</p>
             <p class="card-text"><strong>Release Date:</strong> {{ game.released or 'Not available' }}</p>
         </div>

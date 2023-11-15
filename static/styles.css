@@ -2,6 +2,11 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     background-color: #1d1d1d;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 /* -----------------------------------------------------LAYOUT STYLING (NAVBAR, FOOTER, BUTTONS)---------------------------------------------*/
@@ -25,11 +30,6 @@ body {
 
 .navbar-nav .nav-item .nav-link {
     color: #CED4da;
-}
-
-.navbar-nav .nav-item.active .nav-link {
-    color: white;
-    font-weight: bold;
 }
 
 .navbar-nav .nav-item .nav-link:hover {
@@ -99,10 +99,6 @@ textarea {
 /* ---------------------------------------------------------------LOGIN/SIGNUP PAGE STYLING--------------------------------------------------*/
 .form-group label {
     color: white;
-}
-
-.form-group input {
-    background-color: #222;
 }
 
 .login-container {
@@ -177,6 +173,23 @@ textarea {
     }
 }
 
+.password-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.password-input {
+    padding: 10px;
+    width: 100%;
+}
+
+.show-password {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    cursor: pointer;
+}
+
 /* ---------------------------------------------------------------HOME PAGE STYLING-----------------------------------------------------------*/
 .sidebar-container {
     display: flex;
@@ -187,6 +200,9 @@ textarea {
 .sidebar {
     background-color: #3c4748;
     padding: 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
 }
 
 .sidebar h5 {
@@ -218,8 +234,7 @@ textarea {
     margin: 0;
 }
 
-.threads-home-container {
-    border: 2px solid #cae9ea;
+.recents-home-container {
     border-radius: 5px;
     padding: 15px;
 }
@@ -332,11 +347,6 @@ header p {
 .recent-forum-posts h2 {
     color: #cae9ea;
     justify-content: center;
-}
-
-.home-page-thread-cards {
-    margin-right: 40px;
-    margin-left: 5px;
 }
 
 /* ---------------------------------------------------------------DASHBOARD PAGE STYLING-----------------------------------------------------*/
@@ -479,7 +489,6 @@ iframe {
 }
 
 .forum-threads-form-container textarea {
-    background-color: #222;
     white-space: pre-wrap;
 }
 
@@ -536,6 +545,10 @@ iframe {
 
 /* ---------------------------------------------------------------THREAD DETAILS STYLING--------------------------------------------------------*/
 
+.thread-detail-title {
+    font-size: 35px;
+}
+
 .thread-op-post {
     background-color: #303030;
     padding: 20px;
@@ -550,7 +563,6 @@ iframe {
 }
 
 .thread-comment-form-container textarea {
-    background-color: #222;
     white-space: pre-wrap;
 }
 
@@ -561,7 +573,7 @@ iframe {
 }
 
 .comments-heading {
-    font-size: 25px;
+    font-size: 30px;
     color: #cae9ea;
     margin-bottom: 15px;
 }
@@ -580,12 +592,15 @@ iframe {
     color: #8be8b5;
 }
 
-.reply-form textarea {
-    background-color: #222;
+.edit-form {
+    margin: 0px 20px;
+}
+
+.reply-form textarea, .edit-form textarea {
     white-space: pre-wrap;
 }
 
-.reply-form label {
+.reply-form label, .edit-form label {
     color: #cae9ea;
 }
 
@@ -604,7 +619,7 @@ iframe {
     border-radius: 5px;
     padding: 5px 10px;
     cursor: pointer;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
 
     &:hover {
         background: linear-gradient(180deg, #8be8b5, #4b9c78);
@@ -613,7 +628,7 @@ iframe {
     }
 }
 
-.delete-button, .edit-comment-button {
+.delete-button, .edit-button {
     color: #cae9ea;
 
     &:hover {
@@ -631,4 +646,87 @@ hr {
 
 .other-user {
     color: #8be8b5;
+}
+
+/* ---------------------------------------------------------------GAME REVIEW STYLING--------------------------------------------------------*/
+
+.game-card-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    max-width: 84px;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.load-more-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    max-width: 115px;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+.search-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+/* ---------------------------------------------------------------REVIEW DETAIL STYLING--------------------------------------------------------*/
+.review-container {
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+}
+
+/* ---------------------------------------------------------------FOOTER STYLING---------------------------------------------------------------*/
+
+footer {
+    background-color: #273b40;
+    color: #cae9ea;
+    padding: 10px 0;
+    text-align: center;
+    height: 100vh;
+}
+
+.footer-section {
+    display: inline-block;
+    width: 30%;
+    margin: 0 2%;
+}
+
+.footer-section h4 {
+    font-size: 20px;
+    margin: 0;
 }

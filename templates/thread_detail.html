@@ -3,103 +3,240 @@
 {% block title %}PlayNest | {{ thread.title }}{% endblock %}
 
 {% block content %}
+
+<style>
+    .indent-0 {
+        margin-left: 0;
+    }
+
+    .indent-1 {
+        margin-left: 20px;
+    }
+
+    .indent-2 {
+        margin-left: 40px;
+    }
+
+    .reply-card {
+        background-color: #273b40;
+        border: none;
+    }
+
+    .replies {
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+
 <div class="container mt-4">
-    <h2 class="text-center mb-4">{{ thread.title }}</h2>
-        <div class="thread-op-post">
-            <p class="card-text">{{ thread.content }}</p>
-            <p class="card-details">Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}</p>
-        </div>
-
-    <hr>
-
-<!-- display comments -->
-<h3 class="comments-heading">Comments</h3>
-{% for comment in thread.comments %}
+    <h2 class="text-center mb-4 thread-detail-title">{{ thread.title }}</h2>
     <div class="card mb-3">
-        <div class="comments">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
+        <div class="thread-op-post">
+            <div class="d-flex justify-content-between">
+                <div class="w-100">
                     <div>
-                        {% if comment.parent_comment %}
-                            <div class="parent-comment">
-                                <p><strong class="strong-color">{{ comment.parent_comment.user.username }} said:</strong> <span style="color: #cae9ea;">{{ comment.parent_comment.content }}</span></p>
-                            </div>
-                        {% endif %}
-    
-                        <p class="card-text">{{ comment.content }}</p>
-                        <p class="card-details">Comment by: 
-                            <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                            {% if 'username' in session %}
-                                • <a href="#" class="reply-link">Reply</a>
-                            {% endif %}
-                        </p>
+                        <p class="card-text">{{ thread.content }}</p>
+                        <p class="card-details">Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span> on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}</p>
                     </div>
-    
-                    <div>
-                        {% if comment.user.username == session['username'] %}
-                            <!-- delete button if the comment belongs to the logged-in user -->
-                            <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
-                                <button type="button" class="btn btn-link edit-comment-button">
-                                    <i class="fas fa-pencil-alt"></i>
-                                </button>
+                </div>
+                <div class="align-self-start">
+                    {% if 'username' in session and thread.user.username == session['username'] %}
+                        <!-- delete/edit buttons if the thread belongs to the logged-in user -->
+                        <div class="thread-buttons">
+                            <button type="submit" class="btn btn-link edit-button">
+                                <i class="fa-solid fa-pencil"></i>
+                            </button>
+                            <form method="POST" action="{{ url_for('delete_thread', forum_slug=forum.slug, thread_id=thread.id) }}">
                                 <button type="submit" class="btn btn-link delete-button">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
-                        {% endif %}
-                    </div>
-                </div>
-    
-                <div class="reply-form" style="display: none;">
-                    <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
-                        <div class="form-group">
-                            <label for="content">Your Reply:</label>
-                            <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
                         </div>
-                        <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
-                        <button type="submit" class="post-comment-button">Post Reply</button>
-                    </form>
+                    {% endif %}
                 </div>
+            </div>
+            <div class="edit-form" style="display: none;">
+                <form method="POST" action="{{ url_for('edit_thread', forum_slug=forum.slug, thread_id=thread.id) }}">
+                    <div class="form-group">
+                        <label for="edit-content">Edit Your Thread:</label>
+                        <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ thread.content }}</textarea>
+                    </div>
+                    <button type="submit" class="post-comment-button">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>
-{% endfor %}
 
 <hr>
 
-    <!-- form to add a new comment -->
-    <div class="thread-comment-form-container">
-        {% if 'username' in session %}
-            <form method="POST">
-                <div class="form-group">
-                    <label for="content">Leave a Comment:</label>
-                    <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+<!-- form to add a new comment -->
+<div class="thread-comment-form-container">
+    {% if 'username' in session %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="content">Leave a Comment:</label>
+                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="post-comment-button">Post Comment</button>
+        </form>
+    {% else %}
+        <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to leave a comment.</p>
+    {% endif %}
+</div>
+
+<!-- display comments -->
+<h3 class="comments-heading">Comments</h3>
+
+{% if thread.comments %}
+    {% for comment in thread.comments|reverse if not comment.parent_comment %}
+        <div class="card mb-3 {{ comment.indent_class }}">
+            <div class="comments">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <p class="card-text">{{ comment.content }}</p>
+                            <p class="card-details">Comment by: 
+                                <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                {% if 'username' in session %}
+                                    • <a href="#" class="reply-link">Reply</a>
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div>
+                            {% if comment.user.username == session['username'] %}
+                                <!-- delete/edit buttons if the comment belongs to the logged-in user -->
+                                <div class="comment-buttons">
+                                    <button type="submit" class="btn btn-link edit-button">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </button>
+                                    <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
+                                        <button type="submit" class="btn btn-link delete-button">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('edit_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
+                            <div class="form-group">
+                                <label for="edit-content">Edit Your Comment:</label>
+                                <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ comment.content }}</textarea>
+                            </div>
+                            <button type="submit" class="post-comment-button">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <div class="reply-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
+                            <div class="form-group">
+                                <label for="content">Your Reply:</label>
+                                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                            </div>
+                            <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                            <button type="submit" class="post-comment-button">Post Reply</button>
+                        </form>
+                    </div>
+
+                    <!-- display replies for this parent comment -->
+                    {% for reply in comment.child_comments %}
+                        <div class="card mb-3 {{ reply.indent_class }} reply-card">
+                            <div class="replies">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div class="w-100">
+                                            <div>
+                                                <p class="card-text"> {{ reply.content }}</p>
+                                                <p class="card-details">Reply by: 
+                                                    <span style="color: #8be8b5;">{{ reply.user.username }}</span> on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            {% if reply.user.username == session['username'] %}
+                                                <!-- delete/edit buttons if the reply belongs to the logged-in user -->
+                                                <div class="reply-buttons">
+                                                    <button type="submit" class="btn btn-link edit-button">
+                                                        <i class="fa-solid fa-pencil"></i>
+                                                    </button>
+                                                    <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
+                                                        <button type="submit" class="btn btn-link delete-button">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="edit-form" style="display: none;">
+                                    <form method="POST" action="{{ url_for('edit_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
+                                        <div class="form-group">
+                                            <label for="edit-content">Edit Your Reply:</label>
+                                            <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ reply.content }}</textarea>
+                                        </div>
+                                        <button type="submit" class="post-comment-button">Save Changes</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-                <button type="submit" class="post-comment-button">Post Comment</button>
-            </form>
-        {% else %}
-            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to leave a comment.</p>
-        {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No comments yet. Start the conversation!</p>
+{% endif %}
+
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Select all reply links
-        var replyLinks = document.querySelectorAll('.reply-link');
+        // select all reply links
+        const replyLinks = document.querySelectorAll('.reply-link');
 
-        // Iterate over each reply link
+        // iterate over each reply link
         replyLinks.forEach(function (link) {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
 
-                // Get the associated reply form
-                var replyForm = this.closest('.card-body').querySelector('.reply-form');
+                // get the associated reply form
+                const replyForm = this.closest('.card-body').querySelector('.reply-form');
 
-                // Toggle the visibility of the reply form
+                // toggle the visibility of the reply form
                 if (replyForm.style.display === 'none' || replyForm.style.display === '') {
                     replyForm.style.display = 'block';
                 } else {
                     replyForm.style.display = 'none';
+                }
+            });
+        });
+
+        // select all edit buttons
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        // iterate over each edit button
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated card
+                const card = this.closest('.card');
+
+                // get the associated edit form within the card
+                const editForm = card.querySelector('.edit-form');
+
+                // toggle the visibility of the edit form
+                if (editForm.style.display === 'none' || editForm.style.display === '') {
+                    editForm.style.display = 'block';
+                } else {
+                    editForm.style.display = 'none';
                 }
             });
         });

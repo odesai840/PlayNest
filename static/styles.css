@@ -2,6 +2,11 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     background-color: #1d1d1d;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 /* -----------------------------------------------------LAYOUT STYLING (NAVBAR, FOOTER, BUTTONS)---------------------------------------------*/
@@ -703,4 +708,25 @@ hr {
 .review-container {
     border: 2px solid #cae9ea;
     border-radius: 5px;
+}
+
+/* ---------------------------------------------------------------FOOTER STYLING---------------------------------------------------------------*/
+
+footer {
+    background-color: #273b40;
+    color: #cae9ea;
+    padding: 10px 0;
+    text-align: center;
+    height: 100vh;
+}
+
+.footer-section {
+    display: inline-block;
+    width: 30%;
+    margin: 0 2%;
+}
+
+.footer-section h4 {
+    font-size: 20px;
+    margin: 0;
 }

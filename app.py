@@ -6,7 +6,6 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 from models import db, User, Forum, Thread, Comment, Review
-from flask import jsonify
 import requests
 
 # beautifulsoup4: python package for parsing HTML
@@ -235,32 +234,40 @@ def delete_comment(forum_slug, thread_id, comment_id):
     
     return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
 
-@app.route('/forum/<forum_slug>/<int:thread_id>/update_comment/<int:comment_id>', methods=['POST'])
-def update_comment(forum_slug, thread_id, comment_id):
-    if request.method == 'POST':
-        data = request.get_json()
-        # extract data from the request
-        comment_id = data['commentId']
-        updated_comment = data.get('updatedComment')
+@app.route('/forum/<forum_slug>/<int:thread_id>/edit_comment/<int:comment_id>', methods=['POST'])
+def edit_comment(forum_slug, thread_id, comment_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+    comment = Comment.query.get(comment_id)
     
-        # check if comment belongs to the user
-        comment = Comment.query.get(comment_id)
-        
-        # Use user ID from the session for comparison
-        user_id = User.query.filter_by(username=session.get('username')).first().id
-
-        if comment.user_id == user_id:
-            # update the comment content
-            comment.content = updated_comment
+    # check if logged in user is owner of the comment
+    if comment.user.username == session['username']:
+        if request.method == 'POST':
+            new_content = request.form.get('edit_content')
+            
+            # update the comment content in the database
+            comment.content = new_content
             db.session.commit()
-            # return a JSON response indicating success
-            return jsonify(status="success")
-        else:
-            # return a JSON response indicating unauthorized access
-            return jsonify(status="unauthorized"), 403
-    else:
-        # return a JSON response indicating invalid request method
-        return jsonify(status="error", message="Invalid request method"), 400
+
+    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+
+@app.route('/forum/<forum_slug>/<int:thread_id>/edit_thread', methods=['POST'])
+def edit_thread(forum_slug, thread_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+    
+    thread = Thread.query.get(thread_id)
+    
+    # check if logged in user is the owner of the reply
+    if thread.user.username == session['username']:
+        if request.method == 'POST':
+            new_content = request.form.get('edit_content')
+            
+            # update the reply content in the database
+            thread.content = new_content
+            db.session.commit()
+
+    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_thread', methods=['POST'])
 def delete_thread(forum_slug, thread_id):
@@ -378,6 +385,25 @@ def delete_review(review_id):
         db.session.delete(review)
         db.session.commit()
     
+    game_id = review.game_identifier
+    return redirect(url_for('game_details', game_id=game_id))
+
+@app.route('/edit_review/<int:review_id>', methods=['POST'])
+def edit_review(review_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+    
+    review = Review.query.get(review_id)
+    
+    # check if logged in user is the owner of the review
+    if review.user.username == session['username']:
+        if request.method == 'POST':
+            new_content = request.form.get('edit_content')
+            
+            # update the review content in the database
+            review.content = new_content
+            db.session.commit()
+
     game_id = review.game_identifier
     return redirect(url_for('game_details', game_id=game_id))
 

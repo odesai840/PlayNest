@@ -100,7 +100,7 @@
         {% if 'username' not in session %}
             <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
         {% else %}
-            <!-- button to toggle the form visibility -->
+            <!-- button to toggle the review form visibility -->
             <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
         {% endif %}
     </div>
@@ -109,7 +109,7 @@
         <form id="reviewForm" method="POST" action="{{ url_for('post_review') }}" style="display: none;">
             <div class="review-form-container">
                 <div class="form-group">
-                    <label for="recommendation">Do you recommend this game?</label>
+                    <label>Do you recommend this game?</label>
                     <div>
                         <label class="radio-inline">
                             <input type="radio" name="recommendation" value="1" required> Yes
@@ -155,31 +155,68 @@
                     </p>
                 </div>
                 {% if 'username' in session and review.user and review.user.username == session['username'] %}
-                <!-- delete button if the review belongs to the logged-in user -->
-                <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
-                    <button type="submit" class="btn btn-link delete-button">
-                        <i class="fas fa-trash-alt"></i>
+                <!-- delete/edit buttons if the review belongs to the logged-in user -->
+                <div class="review-buttons">
+                    <button type="submit" class="btn btn-link edit-button">
+                        <i class="fa-solid fa-pencil"></i>
                     </button>
-                </form>
+                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                        <button type="submit" class="btn btn-link delete-button">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
                 {% endif %}
+            </div>
+            <div class="edit-form" style="display: none;">
+                <form method="POST" action="{{ url_for('edit_review', review_id=review.id) }}">
+                    <div class="form-group">
+                        <label for="edit-content">Edit Your Review:</label>
+                        <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ review.content }}</textarea>
+                    </div>
+                    <button type="submit" class="post-comment-button">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>
     {% endfor %}
 </div>
 
-    <!-- JavaScript to toggle form visibility -->
+    <!-- JavaScript to toggle review form visibility -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var toggleFormBtn = document.getElementById('toggleFormBtn');
             var reviewForm = document.getElementById('reviewForm');
-    
+
             toggleFormBtn.addEventListener('click', function () {
                 if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
                     reviewForm.style.display = 'block';
                 } else {
                     reviewForm.style.display = 'none';
                 }
+            });
+
+            // select all edit buttons for reviews
+            const editButtons = document.querySelectorAll('.edit-button');
+
+            // iterate over each edit button for reviews
+            editButtons.forEach(function (button) {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    // get the associated card for reviews
+                    const card = this.closest('.card');
+
+                    // get the associated edit form within the card for reviews
+                    const editForm = card.querySelector('.edit-form');
+
+                    // toggle the visibility of the edit form for reviews
+                    if (editForm.style.display === 'none' || editForm.style.display === '') {
+                        editForm.style.display = 'block';
+                    } else {
+                        editForm.style.display = 'none';
+                    }
+                });
             });
         });
     </script>

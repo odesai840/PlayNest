@@ -83,22 +83,22 @@
                 // process game data
                 let games = data.results;
 
-                // Custom sorting based on the relevance of the search query
+                // custom sorting based on the relevance of the search query
+                // what this is basically doing is comparing pairs of elements within the games array that the API has provided us
+                // the function prioritizes games that start with the search query
                 if (query) {
                     games = games.sort((a, b) => {
+                        // check if the name of game 'a' starts with the search query
                         const aMatch = a.name.toLowerCase().startsWith(query.toLowerCase());
+                        // check if the name of game 'b' starts with the search query
                         const bMatch = b.name.toLowerCase().startsWith(query.toLowerCase());
 
+                        // if game 'a' starts with the query, but 'b' doesn't, prioritize 'a'
                         if (aMatch && !bMatch) return -1;
+                        // if game 'b' starts with the query, but 'a' doesn't, prioritize 'b'
                         if (!aMatch && bMatch) return 1;
 
-                        // If both have the exact query, sort based on the order of appearance
-                        if (aMatch && bMatch) {
-                            const aIndex = a.name.toLowerCase().indexOf(query.toLowerCase());
-                            const bIndex = b.name.toLowerCase().indexOf(query.toLowerCase());
-                            return aIndex - bIndex;
-                        }
-
+                        // if neither start with the query then it maintains the original order of games
                         return 0;
                     });
                 }

@@ -169,9 +169,84 @@ def upload_game():
 
     return redirect('/dashboard')
 
-@app.get('/settings')
+@app.route('/settings')
 def settings():
-    return render_template('settings.html')
+    # retrieve user ID of current session user
+    user_email = User.query.filter_by(username=session['username']).first().email
+
+    if request.method == 'POST':
+        pass
+    return render_template('settings.html', user_email=user_email)
+
+@app.route('/change-username', methods=['GET', 'POST'])
+def change_username():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=session['username']).first()
+        new_username = request.form['username']
+        user.username = new_username
+        db.session.commit()
+
+        session['username'] = new_username
+    return redirect(url_for('settings'))
+
+@app.route('/change-email', methods=['GET', 'POST'])
+def change_email():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=session['username']).first()
+        old_email = request.form['oldemail']
+        new_email = request.form['newemail']
+        if user.email != old_email:
+            return "Current email does not match."
+        user.email = new_email
+        db.session.commit()
+    return redirect(url_for('settings'))
+
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    if request.method == "POST":
+        old_password = request.form['old-password']
+        new_password = request.form['new-password']
+        re_new_password = request.form['renew-password']
+        user = User.query.filter_by(username=session['username']).first()
+        if bcrypt.check_password_hash(user.password_hash, old_password):
+            if new_password != re_new_password:
+                return "Passwords do not match."
+            # hash password before storing it
+            hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+            user.password_hash = hashed_password
+            db.session.commit()
+        else:
+            return "Current password incorrect."
+    return redirect(url_for('settings'))
+
+@app.route('/delete-account', methods=['GET', 'POST'])
+def delete_account():
+    if request.method == "POST":
+        password_verification = request.form['delete-account-pw']
+        user = User.query.filter_by(username=session['username']).first()
+        if bcrypt.check_password_hash(user.password_hash, password_verification):
+            db.session.delete(user)
+            db.session.commit()
+            # clear username from session
+            session.pop('username', None)
+    else:
+        return "Password incorrect."
+    return redirect(url_for('home'))
+    
+@app.route('/delete-games', methods=['GET', 'POST'])
+def delete_games():
+    if request.method == "POST":
+        password_verification = request.form['delete-games-pw']
+        user = User.query.filter_by(username=session['username']).first()
+        if bcrypt.check_password_hash(user.password_hash, password_verification):
+            user_game = Game.query.filter_by(author_id=user._id).first()
+            while user_game != None:
+                db.session.delete(user_game)
+                db.session.commit()
+                user_game = Game.query.filter_by(author_id=user._id).first()
+    else:
+        return "Password incorrect."
+    return redirect(url_for('settings'))
 
 @app.get('/forum')
 def forum():

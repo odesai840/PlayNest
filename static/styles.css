@@ -4,9 +4,6 @@ body {
     background-color: #1d1d1d;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
 }
 
 /* -----------------------------------------------------LAYOUT STYLING (NAVBAR, FOOTER, BUTTONS)---------------------------------------------*/

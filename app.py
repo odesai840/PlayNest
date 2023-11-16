@@ -6,7 +6,6 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 from models import db, User, Forum, Thread, Comment
-import requests
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -99,9 +98,40 @@ def dashboard():
 def create_game():
     return redirect('/dashboard')
 
-@app.get('/settings')
+@app.route('/settings')
 def settings():
-    return render_template('settings.html')
+    # retrieve user ID of current session user
+    user_email = User.query.filter_by(username=session['username']).first().email
+
+    if request.method == 'POST':
+        pass
+    return render_template('settings.html', user_email=user_email)
+
+@app.route('/change-username', methods=['GET', 'POST'])
+def change_username():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=session['username']).first()
+        new_username = request.form['username']
+        user.username = new_username
+        db.session.commit()
+
+        session['username'] = new_username
+    return redirect(url_for('settings'))
+
+@app.route('/change-email', methods=['GET', 'POST'])
+def change_email():
+    if request.method == 'POST':
+        user = User.query.filter_by(username=session['username']).first()
+        old_email = request.form['oldemail']
+        new_email = request.form['newemail']
+        if user.email == old_email:
+            user.email = new_email
+            db.session.commit()
+    return redirect(url_for('settings'))
+
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    pass
 
 @app.get('/forum')
 def forum():

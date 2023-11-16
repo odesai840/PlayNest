@@ -39,13 +39,6 @@ CREATE TABLE Comment (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
     CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
-);-- users table: 
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    registration_token VARCHAR(255)
 );
 
 -- games table:
@@ -60,4 +53,16 @@ CREATE TABLE games (
     author_id INT NOT NULL,
     PRIMARY KEY (game_id),
     FOREIGN KEY (author_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- reviews table:
+CREATE TABLE reviews (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    content TEXT NOT NULL,
+    user_id INTEGER REFERENCES users(id) NOT NULL,
+    game_identifier VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    is_recommendation BOOLEAN NOT NULL DEFAULT TRUE,
+    rating INTEGER DEFAULT NULL
 );

@@ -6,11 +6,11 @@ from slugify import slugify
 # running this file is essential to getting everything to work correctly!
 # make sure to run python add_forum_data.py in the terminal
 
-# Create the Forum table
+# create the Forum table
 with app.app_context():
     db.create_all()
 
-# Add data
+# add data
 with app.app_context():
     forums_data = [
         {
@@ -40,10 +40,10 @@ with app.app_context():
     ]
 
     for forum_data in forums_data:
-        # Generate a slug for each forum entry
+        # generate a slug for each forum entry
         forum_data['slug'] = slugify(forum_data['title'])
 
-        # Create a Forum object and add it to the database
+        # create a Forum object and add it to the database
         new_forum = Forum(**forum_data)
         db.session.add(new_forum)
 

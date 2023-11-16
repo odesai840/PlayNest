@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import FileStorage
 # bcrypt is a hashing library used to securely hash passwords
 # instead of storing passwords directly in the database, we store a hash of the password so that if the database is compromised,
 # attackers wont have access to the actual user passwords
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
-from src.models import db, User
+from models import db, User, Game
 
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
@@ -21,6 +23,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
 db.init_app(app) # initializing database with the flask app
 
 bcrypt = Bcrypt(app)
+
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Allowed file extensions
+ALLOWED_EXTENSIONS = {'zip'}
 
 @app.get('/')
 def index():
@@ -91,8 +99,27 @@ def logout():
 def dashboard():
     return render_template('dashboard.html')
 
-@app.post('/dashboard')
-def create_game():
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.post('/upload')
+def upload_game():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    # If the user does not select a file, the browser submits an
+    # empty file without a filename.
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        # If the line below shows up as an error, just ignore it.
+        # It works fine.
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
     return redirect('/dashboard')
 
 @app.get('/settings')

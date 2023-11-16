@@ -13,7 +13,7 @@ CREATE TABLE games (
     title VARCHAR(255) NOT NULL,
     game_cover_url VARCHAR(255),
     short_description VARCHAR(255),
-    long_description VARCHAR(255),
+    long_description TEXT,
     release_date VARCHAR(255) NOT NULL,
     game_url VARCHAR(255) NOT NULL,
     author_id INT NOT NULL,

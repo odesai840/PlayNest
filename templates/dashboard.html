@@ -16,34 +16,22 @@
         <!-- Left Column with Horizontal Cards -->
         <div class="col-md-6">
             <h6>Your Creations:</h6>
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="..." class="img-fluid rounded-start" alt="...">
-                    </div>
+            {% for game in games %}
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{ game.game_cover_url }}" class="img-fluid rounded-start" alt="game cover image">
+                        </div>
                         <div class="col-md-8">
                             <div class="card-body">
-                            <h5 class="card-title">Game Name</h5>
-                            <p class="card-text">Game short description goes here</p>
-                            <p class="card-text"><small class="text-body-secondary">Release date</small></p>
+                                <h5 class="card-title">{{ game.title }}</h5>
+                                <p class="card-text">{{ game.short_description }}</p>
+                                <p class="card-text"><small class="text-body-secondary">{{ game.release_date }}</small></p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="card mb-3">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="..." class="img-fluid rounded-start" alt="...">
-                    </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                            <h5 class="card-title">Game Name 2</h5>
-                            <p class="card-text">Game short description goes here</p>
-                            <p class="card-text"><small class="text-body-secondary">Release date</small></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
 
         <!-- Right Column with Form Card -->
@@ -51,7 +39,7 @@
             <h6>Upload a game:</h6>
             <div class="card">
                 <div class="card-body">
-                    <form>
+                    <form action="/upload" method="post" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="title">Title:</label>
                             <input type="text" class="form-control" id="title" placeholder="Enter game title" required>
@@ -62,13 +50,13 @@
                             <small id="helper" class="form-text">Shown when we link your game. Avoid duplicating your project's title.</small>
                         </div>
                         <div class="form-group">
-                            <label for="message">Long Description:</label>
-                            <textarea class="form-control" id="message" rows="4"></textarea>
+                            <label for="long-description">Long Description:</label>
+                            <textarea class="form-control" id="long-description" rows="4"></textarea>
                             <small id="helper" class="form-text">This description will be shown on your game's page.</small>
                         </div>
                         <div class="form-group">
                             <label for="upload" class="form-label">Upload:</label>
-                            <input type="file" id="upload" class="form-control">
+                            <input name="file" type="file" id="upload" class="form-control">
                         </div>
                         <br>
                         <button type="submit" class="btn btn-primary">Publish Game</button>

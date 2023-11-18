@@ -2,6 +2,14 @@
 {% block title %}PlayNest | {{ game.name }} Reviews {% endblock %}
 {% block content %}
 
+{% macro truncate_text(text, length) %}
+    {% if text | count <= length %}
+        {{ text }}
+    {% else %}
+        {{ text | truncate(length) }}&hellip;
+    {% endif %}
+{% endmacro %}
+
 <style>
     .game-card {
         position: relative;
@@ -39,7 +47,7 @@
     .card img {
         filter: brightness(0.3);
         width: 100%;
-        height: auto;
+        height: 600px;
         display: block;
         flex-shrink: 0;
     }
@@ -87,7 +95,7 @@
     <div class="card game-card {% if game.background_image %}with-background{% endif %}">
         <div class="card-body game-card-body">
             <h5 class="game-title">{{ game.name }}</h5>
-            <p class="card-text">{{ game.description or 'No description available.' }}</p>
+            <p class="card-text">{{ truncate_text(game.description or 'No description available.', 1300) }}</p>
             <p class="card-text"><strong>Release Date:</strong> {{ game.released or 'Not available' }}</p>
         </div>
         {% if game.background_image %}
@@ -190,8 +198,8 @@
     <!-- JavaScript to toggle review form visibility -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var toggleFormBtn = document.getElementById('toggleFormBtn');
-            var reviewForm = document.getElementById('reviewForm');
+            const toggleFormBtn = document.getElementById('toggleFormBtn');
+            const reviewForm = document.getElementById('reviewForm');
 
             toggleFormBtn.addEventListener('click', function () {
                 if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {

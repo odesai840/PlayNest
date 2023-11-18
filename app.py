@@ -447,9 +447,9 @@ def game_details(game_id):
     game = get_game_details_from_rawg_api(game_id)
     reviews = Review.query.filter_by(game_identifier=str(game_id)).all()
     if game:
-        return render_template('review_details.html', game=game, reviews=reviews)
+        return render_template('game_details.html', game=game, reviews=reviews)
     else:
-        return render_template('review_details.html')
+        return render_template('game_details.html')
 
 def strip_html_tags(html):
     # using BeautifulSoup to parse the HTML and then get text

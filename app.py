@@ -40,12 +40,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'zip'}
 
-UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Allowed file extensions
-ALLOWED_EXTENSIONS = {'zip'}
-
 def get_game_details_from_rawg_api(game_id):
     API_KEY = os.getenv('API_KEY')
     base_url = f'https://api.rawg.io/api/games/{game_id}'

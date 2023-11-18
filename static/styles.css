@@ -1,7 +1,8 @@
 body {
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: #1d1d1d;
+    background: linear-gradient(180deg, #141c1c, #284040, #1a2c2c, #2f4646, #223737, #132e2e);
+    background-size: 300% 300%;
     margin: 0;
     padding: 0;
 }
@@ -99,7 +100,7 @@ textarea {
 }
 
 .login-container {
-    background-color: #3c4748;
+    background-color: #39595f;
     padding: 20px;
     border-radius: 8px;
     margin: auto;
@@ -132,7 +133,7 @@ textarea {
 }
 
 .signup-container {
-    background-color: #3c4748;
+    background-color: #39595f;
     padding: 20px;
     border-radius: 8px;
     margin: auto;
@@ -391,9 +392,27 @@ iframe {
 
 #upload {
     background: #39595f;
+    margin: auto;
     color: white;
     font-weight: bold;
     border: none;
+}
+
+.publish-game-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
 }
 
 #helper {
@@ -402,7 +421,7 @@ iframe {
 
 /* ---------------------------------------------------------------FORUM PAGE STYLING----------------------------------------------------------*/
 .col-md-12 {
-    background-color: #273b40;
+    background-color: #39595f;
     padding-top: 30px;
     padding-bottom: 30px;
     border-radius: 5px;

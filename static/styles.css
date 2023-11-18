@@ -189,6 +189,10 @@ textarea {
 }
 
 /* ---------------------------------------------------------------HOME PAGE STYLING-----------------------------------------------------------*/
+.home-page {
+    background: #1d1d1d;
+}
+
 .sidebar-container {
     display: flex;
     flex-direction: column;

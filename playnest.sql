@@ -66,3 +66,13 @@ CREATE TABLE reviews (
     is_recommendation BOOLEAN NOT NULL DEFAULT TRUE,
     rating INTEGER DEFAULT NULL
 );
+
+-- user profiles table:
+CREATE TABLE user_profiles (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    profile_picture VARCHAR(50) DEFAULT '/static/images/default.jpg',
+    about_me VARCHAR(250),
+    user_id INTEGER,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

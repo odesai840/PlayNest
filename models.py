@@ -11,7 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    
+
     def __init__(self, username, email, password_hash):
         self.username = username
         self.email = email
@@ -98,3 +98,20 @@ class Review(db.Model):
         self.game_identifier = game_identifier
         self.is_recommendation = is_recommendation
         self.rating = rating
+
+# added UserProfile model
+class UserProfile(db.Model):
+    __tablename__ = 'user_profiles'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    profile_picture = db.Column(db.String(50), default='default.jpg')
+    about_me = db.Column(db.String(250))
+    
+    # add user_id foreign key
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    # establush relationship with user model
+    user_relationship = db.relationship('User', backref='profile', uselist=False)
+
+    def __repr__(self):
+        return f'<UserProfile {self.username}>'

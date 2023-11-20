@@ -730,23 +730,52 @@ hr {
     border-radius: 5px;
 }
 
-/* ---------------------------------------------------------------FOOTER STYLING---------------------------------------------------------------*/
-
-footer {
-    background-color: #273b40;
-    color: #cae9ea;
-    padding: 10px 0;
-    text-align: center;
-    height: 100vh;
+/* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/
+.profile-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-right: 200px;
 }
 
-.footer-section {
-    display: inline-block;
-    width: 30%;
-    margin: 0 2%;
+.profile-picture-section {
+    width: 300px;
+    margin-right: 20px;
 }
 
-.footer-section h4 {
-    font-size: 20px;
-    margin: 0;
+.profile-pic {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    margin-left: 200px;
+}
+
+.profile-picture-section img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture-section h2 {
+    margin-bottom: 30px;
+    margin-left: 80px;
+}
+
+.about-me-form {
+    width: 500px;
+    height: 300px;
+    padding: 25px;
+    background-color: #39595f;
+    border: 2px solid #cae9ea;
+    border-radius: 5px;
+}
+
+.about-me h2 {
+    margin-bottom: 30px;
+}
+
+.save-profile-changes-button {
+    margin-top: 5px;
 }

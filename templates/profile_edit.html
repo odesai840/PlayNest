@@ -1,0 +1,36 @@
+{% extends '_layout.html' %}
+
+{% block title %}PlayNest | Your Profile{% endblock %}
+
+{% block content %}
+
+<style>
+    body {
+        background-size: 1000% 1000%;
+    }
+</style>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Edit Profile</h2>
+</div>
+
+<div class="profile-container">
+    <div class="profile-picture-section">
+        <h2>Profile Picture:</h2>
+        <div class="profile-pic">
+            <img src="{{ url_for('static', filename='images/default.jpg') }}" alt="Profile Picture">
+        </div>
+    </div>
+
+    <div class="about-me">
+        <h2>About Me:</h2>
+        <div class="about-me-form">
+            <form id="about_me" method="POST">
+                <div class="form-group">
+                    <textarea class="form-control" id="about_me" name="about_me" rows="8" required></textarea>
+                </div>
+                <button type="submit" class="save-profile-changes-button">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

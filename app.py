@@ -7,9 +7,14 @@ from werkzeug.datastructures import FileStorage
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
-from models import db, User, Forum, Thread, Comment, Review, Game
+from models import db, User, Forum, Thread, Comment, Review, Game, UserProfile
 # pip install requests
 import requests
+
+# pip install Flask-WTF
+from flask_wtf import FlaskForm
+from wtforms import TextAreaField
+from wtforms.validators import DataRequired
 
 # beautifulsoup4: python package for parsing HTML
 # I had an issue where the game descriptions from the API were displaying html elements in the text,
@@ -509,6 +514,13 @@ def edit_review(review_id):
 
     game_id = review.game_identifier
     return redirect(url_for('game_details', game_id=game_id))
+
+class ProfileEditForm(FlaskForm):
+    about_me = TextAreaField('About Me', validators=[DataRequired()])
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    return render_template('profile_edit.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

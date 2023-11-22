@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 # bcrypt is a hashing library used to securely hash passwords
@@ -7,7 +7,7 @@ from werkzeug.datastructures import FileStorage
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
-from models import db, User, Forum, Thread, Comment, Review, Game
+from models import db, User, Forum, Thread, Comment, Review, Game, Like
 # pip install requests
 import requests
 
@@ -301,8 +301,14 @@ def thread_detail(forum_slug, thread_id):
     for comment in comments:
         comment.depth = get_comment_depth(comment)
         comment.indent_class = f"indent-{comment.depth}"
-        
-    return render_template('thread_detail.html', forum=forum, thread=thread)
+
+    if 'username' in session:
+        user_id = User.query.filter_by(username=session['username']).first().id
+        liked_comments = [like.comment_id for like in Like.query.filter_by(user_id=user_id).all()]
+    else:
+        liked_comments = []
+
+    return render_template('thread_detail.html', forum=forum, thread=thread, liked_comments=liked_comments)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/post_reply', methods=['POST'])
 def post_reply(forum_slug, thread_id):
@@ -509,6 +515,29 @@ def edit_review(review_id):
 
     game_id = review.game_identifier
     return redirect(url_for('game_details', game_id=game_id))
+
+@app.route('/like_comment/<int:comment_id>', methods=['POST'])
+def like_comment(comment_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = User.query.filter_by(username=session['username']).first().id
+    comment = Comment.query.get(comment_id)
+    
+    # check if the user has already liked the comment
+    existing_like = Like.query.filter_by(user_id=user_id, comment_id=comment_id).first()
+
+    if existing_like:
+        # user has already liked the comment so unlike
+        db.session.delete(existing_like)
+        db.session.commit()
+    else:
+        # user has not liked the comment so like
+        like = Like(user_id=user_id, comment_id=comment_id)
+        db.session.add(like)
+        db.session.commit()
+
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(debug=True)

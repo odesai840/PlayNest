@@ -750,3 +750,9 @@ footer {
     font-size: 20px;
     margin: 0;
 }
+
+
+
+.like-button.liked {
+    color: red;
+}

@@ -102,6 +102,13 @@
                                     • <a href="#" class="reply-link">Reply</a>
                                 {% endif %}
                             </p>
+                            <!-- like button and like count display -->
+                            <p class="card-likes">
+                                <button class="btn btn-link like-button {% if 'username' in session and comment.id in liked_comments %}liked{% endif %}" data-comment-id="{{ comment.id }}">
+                                    <i class="fas fa-thumbs-up"></i> Like
+                                </button>
+                                <span class="like-count">{{ comment.likes|length }}</span> likes
+                            </p>
                         </div>
 
                         <div>
@@ -198,6 +205,47 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                likeComment(commentId, this)
+            });
+        });
+
+        async function likeComment(commentId, button) {
+            try {
+                const response = await fetch(`/like_comment/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+                const data = await response.json();
+
+                if(data.success) {
+                    // update like count in UI
+                    const likeCountElement = button.parentElement.querySelector('.like-count');
+                    const currentLikes = parseInt(likeCountElement.innerText);
+
+                    if (button.classList.contains('liked')) {
+                        // if its already been liked, unlike
+                        likeCountElement.innerText = currentLikes - 1;
+                        button.classList.remove('liked');
+                    } else {
+                        // if not liked, then like
+                        likeCountElement.innerText = currentLikes + 1;
+                        button.classList.add('liked');
+                    }
+                } else {
+                    console.error('Failed to like comment');
+                }
+            } catch (error) {
+                console.error('Error during likeComment:', error);
+            }
+        }
+
         // select all reply links
         const replyLinks = document.querySelectorAll('.reply-link');
 

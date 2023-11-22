@@ -107,7 +107,9 @@
                                 <button class="btn btn-link like-button {% if 'username' in session and comment.id in liked_comments %}liked{% endif %}" data-comment-id="{{ comment.id }}">
                                     <i class="fas fa-thumbs-up"></i> Like
                                 </button>
-                                <span class="like-count">{{ comment.likes|length }}</span> likes
+                                <span class="like-count">
+                                    {{ comment.likes|length }}
+                                </span> like(s)
                             </p>
                         </div>
 
@@ -232,12 +234,12 @@
                     if (button.classList.contains('liked')) {
                         // if its already been liked, unlike
                         likeCountElement.innerText = currentLikes - 1;
-                        button.classList.remove('liked');
                     } else {
                         // if not liked, then like
                         likeCountElement.innerText = currentLikes + 1;
-                        button.classList.add('liked');
                     }
+                    // toggle 'liked' class after updating like count
+                    button.classList.toggle('liked');
                 } else {
                     console.error('Failed to like comment');
                 }

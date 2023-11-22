@@ -751,8 +751,14 @@ footer {
     margin: 0;
 }
 
-
+/* ---------------------------------------------------------------LIKE BUTTON STYLING----------------------------------------------------------*/
+.like-button {
+    color: #cae9ea;
+    &:hover {
+        color: #93c2c4;
+    }
+}
 
 .like-button.liked {
-    color: red;
+    color: #8be8b5;
 }

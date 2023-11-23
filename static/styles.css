@@ -766,16 +766,38 @@ hr {
     margin-bottom: 15px;
 }
 
-.picture-preview {
+.picture-label1 {
+    font-size: 20px;
+    color: #97c1c3 !important;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-left: 40px;
+}
+
+.picture-label2 {
+    font-size: 20px;
+    color: #97c1c3 !important;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-left: 50px;
+}
+
+.image-container {
+    display: flex;
+}
+
+.picture-preview, .current-picture {
     margin-bottom: 50px;
 }
 
-#profile-preview {
+#profile-preview, #current-picture {
     border-radius: 50%;
     border: 2px solid #cae9ea;
     width: 380px; 
     height: 380px;
     object-fit: cover;
+    margin-right: 50px;
+    margin-left: 90px;
 }
 
 .save-changes-button {

@@ -30,13 +30,22 @@
         </form>
     </div>
     <hr>
-    <div class="picture-preview">
-        <p class="profile-label">Picture Preview:</p>
-        <img id="profile-preview" class="img-fluid mt-2"
-            src="{{ url_for('static', filename='images/picture_options/' + form.profile_picture.choices[0][0]) }}"
-            alt="Profile Preview">
-    </div>
-</div>
+        <div class="image-container">
+            <div class="picture-preview">
+                <p class="picture-label1 mt-2">Picture Preview:</p>
+                <img id="profile-preview" class="img-fluid mt-2"
+                    src="{{ url_for('static', filename='images/picture_options/' + form.profile_picture.choices[0][0]) }}"
+                    alt="Profile Preview">
+            </div>
+            {% if user.profile.profile_picture %}
+            <div class="current-picture">
+                <p class="picture-label2 mt-2">Current Picture:</p>
+                <img id="current-picture" class="img-fluid mt-2"
+                    src="{{ url_for('static', filename='images/picture_options/' + user.profile.profile_picture) }}"
+                    alt="Current Profile Picture">
+            </div>
+            {% endif %}
+        </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

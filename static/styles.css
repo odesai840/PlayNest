@@ -731,51 +731,87 @@ hr {
 }
 
 /* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/
-.profile-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-right: 200px;
+.edit-profile-container {
+    text-align: center;
+    margin-top: 40px;
 }
 
-.profile-picture-section {
-    width: 300px;
-    margin-right: 20px;
+.profile-label {
+    font-size: 20px;
+    color: #97c1c3 !important;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-.profile-pic {
-    width: 300px;
-    height: 300px;
+.picture-preview {
+    margin-bottom: 50px;
+}
+
+#profile-preview {
     border-radius: 50%;
-    overflow: hidden;
-    position: relative;
-    margin-left: 200px;
-}
-
-.profile-picture-section img {
-    width: 100%;
-    height: 100%;
+    border: 2px solid #cae9ea;
+    width: 400px; 
+    height: 400px;
     object-fit: cover;
 }
 
-.profile-picture-section h2 {
-    margin-bottom: 30px;
-    margin-left: 80px;
-}
-
-.about-me-form {
-    width: 500px;
-    height: 300px;
-    padding: 25px;
-    background-color: #39595f;
-    border: 2px solid #cae9ea;
+.save-changes-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
     border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
 }
 
-.about-me h2 {
-    margin-bottom: 30px;
+/* ---------------------------------------------------------------PROFILE VIEW STYLING---------------------------------------------------------*/
+.profile-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
 }
 
-.save-profile-changes-button {
-    margin-top: 5px;
+.user-activity {
+    width: 45%;
+}
+
+.user-activity-heading {
+    color: #8be8b5;
+    font-weight: bold;
+}
+
+.activity-labels {
+    color: #97c1c3;
+}
+
+.activity-cards {
+    margin-bottom: 15px;
+    border: 2px solid #cae9ea;
+}
+
+.view-profile-pic-and-about-me {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.view-profile-pic {
+    margin-bottom: 20px;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    border: 2px solid #cae9ea;
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
 }

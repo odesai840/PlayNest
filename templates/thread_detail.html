@@ -97,7 +97,11 @@
                         <div>
                             <p class="card-text">{{ comment.content }}</p>
                             <p class="card-details">Comment by: 
-                                <span style="color: #8be8b5;">{{ comment.user.username }}</span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                <span style="color: #8be8b5;">
+                                    <a href="{{ url_for('view_profile', user_id=comment.user.id) }}">
+                                        {{ comment.user.username }}
+                                    </a>
+                                </span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                                 {% if 'username' in session %}
                                     • <a href="#" class="reply-link">Reply</a>
                                 {% endif %}

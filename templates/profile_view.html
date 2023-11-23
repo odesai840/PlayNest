@@ -1,7 +1,71 @@
-{% extends '_layout.html' %}
+{% extends "_layout.html" %}
 
-{% block title %}PlayNest | {{ username }}'s Profile{% endblock %}
+{% block title %}Viewing {{ user.username }}'s Profile{% endblock %}
 
 {% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">{{ user.username }}'s Profile</h2>
+    
+    <div class="profile-container">
+        <div class="view-profile-pic-and-about-me">
+            <div class="view-profile-pic">
+                {% if user.profile.profile_picture %}
+                <img class="profile-picture" src="{{ url_for('static', filename='images/picture_options/' + user.profile.profile_picture) }}"
+                    alt="Profile Picture">
+                {% else %}
+                <img class="profile-picture" src="{{ url_for('static', filename='images/default.jpg') }}" alt="Default Profile Picture">
+                {% endif %}
+            </div>
+            
+            <div class="view-about-me">
+                <p class="profile-label">About Me:</p>
+                {% if user.profile.about_me %}
+                    <p>{{ user.profile.about_me }}</p>
+                {% else %}
+                    <p>This user has not set a description about themselves.</p>
+                {% endif %}
+            </div>
+        </div>
 
+        <div class="user-activity">
+            <h3 class="text-center mb-4 user-activity-heading">User Activity:</h3>
+
+            <h4 class="activity-labels">Reviews:</h4>
+            {% if user_reviews %}
+                {% for review in user_reviews %}
+                <div class="card activity-cards">
+                    <div class="card-body">
+                        {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
+                        <p>
+                            {% if game_info %}
+                                <a href="{{ review.detail_url }}">Review</a> for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}">{{ game_info.name }}</a>
+                            {% else %}
+                                Review for a game (game details not available)
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="none-found">This user has not posted any reviews.</p>
+            {% endif %}
+
+            <h4 class="activity-labels">Threads:</h4>
+            {% if user_threads %}
+                {% for thread in user_threads %}
+                <div class="card activity-cards">
+                    <div class="card-body">
+                        <p>
+                            Thread: 
+                            <a href="{{ thread.detail_url }}">{{ thread.title }}</a>
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="none-found">This user has not posted any threads.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -7,13 +7,13 @@ from werkzeug.datastructures import FileStorage
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
-from models import db, User, Forum, Thread, Comment, Review, Game, UserProfile
+from models import db, User, Forum, Thread, Comment, Review, Game, Profile
 # pip install requests
 import requests
 
 # pip install Flask-WTF
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField
+from wtforms import TextAreaField, SelectField, SubmitField, validators, ValidationError
 from wtforms.validators import DataRequired
 
 # beautifulsoup4: python package for parsing HTML
@@ -25,6 +25,9 @@ from bs4 import BeautifulSoup
 # run pip install python-dotenv to install
 from dotenv import load_dotenv
 import os
+
+from os import listdir
+from os.path import isfile, join
 
 load_dotenv()
 
@@ -516,11 +519,48 @@ def edit_review(review_id):
     return redirect(url_for('game_details', game_id=game_id))
 
 class ProfileEditForm(FlaskForm):
-    about_me = TextAreaField('About Me', validators=[DataRequired()])
+    about_me = TextAreaField('About Me')
+    profile_picture = SelectField('Profile Picture',  validators=[validators.DataRequired()])
+    submit = SubmitField('Save Changes')
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+    def __init__(self, *args, **kwargs):
+        super(ProfileEditForm, self).__init__(*args, **kwargs)
+
+        # this dynamically populates choices for the profile pic dropdown
+        picture_options_path = join('static', 'images', 'picture_options')
+        image_files = [f for f in listdir(picture_options_path) if isfile(join(picture_options_path, f))]
+        self.profile_picture.choices = [(filename, join(picture_options_path, filename)) for filename in image_files]
+
+@app.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
-    return render_template('profile_edit.html')
+    user = user = User.query.filter_by(username=session['username']).first()
+    profile = user.profile
+    
+    form = ProfileEditForm(request.form, obj=profile)
+
+    if request.method == 'POST' and form.validate():
+        form.populate_obj(profile)
+        db.session.commit()
+        return redirect(url_for('view_profile', user_id=user.id))
+
+    return render_template('profile_edit.html', form=form)
+
+@app.route('/profile/vie/<int:user_id>')
+def view_profile(user_id):
+    user = User.query.get(user_id)
+    
+    # retrieve reviews and threads posted by user
+    user_reviews = Review.query.filter_by(user_id=user.id).all()
+    user_threads = Thread.query.filter_by(user_id=user.id).all()
+    
+    # attach URLs to reviews and threads for details viewing
+    for review in user_reviews:
+        review.detail_url = url_for('game_details', game_id=review.game_identifier)
+
+    for thread in user_threads:
+        thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
+
+    return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -16,6 +16,7 @@ class User(db.Model):
         self.username = username
         self.email = email
         self.password_hash = password_hash
+        self.profile = Profile()
 
 class Game(db.Model):
     __tablename__ = 'games'
@@ -99,19 +100,10 @@ class Review(db.Model):
         self.is_recommendation = is_recommendation
         self.rating = rating
 
-# added UserProfile model
-class UserProfile(db.Model):
-    __tablename__ = 'user_profiles'
+class Profile(db.Model):
+    __tablename__ = 'profiles'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    profile_picture = db.Column(db.String(50), default='default.jpg')
-    about_me = db.Column(db.String(250))
-    
-    # add user_id foreign key
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-
-    # establush relationship with user model
-    user_relationship = db.relationship('User', backref='profile', uselist=False)
-
-    def __repr__(self):
-        return f'<UserProfile {self.username}>'
+    about_me = db.Column(db.Text)
+    profile_picture = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    user = db.relationship('User', backref=db.backref('profile', uselist=False), lazy=True)

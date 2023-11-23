@@ -67,12 +67,10 @@ CREATE TABLE reviews (
     rating INTEGER DEFAULT NULL
 );
 
--- user profiles table:
-CREATE TABLE user_profiles (
+-- profiles table:
+CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    profile_picture VARCHAR(50) DEFAULT '/static/images/default.jpg',
-    about_me VARCHAR(250),
-    user_id INTEGER,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    about_me TEXT,
+    profile_picture VARCHAR(255),
+    user_id INTEGER REFERENCES users(id) UNIQUE NOT NULL
 );

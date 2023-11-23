@@ -1,0 +1,79 @@
+{% extends '_layout.html' %}
+{% block title %}PlayNest | {{ review.user.username }}'s Review{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">{{ review.user.username }}'s review</h2>
+    <h4 class="text-center mb-4">for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}" class="single-review-game-name">{{ game.name }}</a></h4>
+    <div class="card mb-3">
+        <div class="review-container">
+            <div class="card-body d-flex justify-content-between">
+                <div>
+                    <h5 class="review-title">{{ review.title }}</h5>
+                    <p class="review-recommendation">
+                        {% if review.is_recommendation %}
+                            <span style="color: rgb(167, 224, 167);"> Recommended <i class="fas fa-thumbs-up"></i></span>
+                        {% else %}
+                            <span style="color: rgb(240, 134, 134);"> Not Recommended <i class="fas fa-thumbs-down"></i></span>
+                        {% endif %}
+                    </p>
+                    <p class="card-text">{{ review.content }}</p>
+                    <p class="card-details">
+                        Review by: 
+                        <a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>
+                        on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                    </p>
+                </div>
+                {% if 'username' in session and review.user and review.user.username == session['username'] %}
+                <!-- delete/edit buttons if the review belongs to the logged-in user -->
+                <div class="review-buttons">
+                    <button type="submit" class="btn btn-link edit-button">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                        <button type="submit" class="btn btn-link delete-button">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <div class="edit-form" style="display: none;">
+                <form method="POST" action="{{ url_for('edit_single_review', review_id=review.id) }}">
+                    <div class="form-group">
+                        <label for="edit-content">Edit Your Review:</label>
+                        <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ review.content }}</textarea>
+                    </div>
+                    <button type="submit" class="post-comment-button">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // select all edit buttons for reviews
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        // iterate over each edit button for reviews
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated card for reviews
+                const card = this.closest('.card');
+
+                // get the associated edit form within the card for reviews
+                const editForm = card.querySelector('.edit-form');
+
+                // toggle the visibility of the edit form for reviews
+                if (editForm.style.display === 'none' || editForm.style.display === '') {
+                    editForm.style.display = 'block';
+                } else {
+                    editForm.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

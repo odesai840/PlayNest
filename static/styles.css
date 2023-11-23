@@ -730,6 +730,29 @@ hr {
     border-radius: 5px;
 }
 
+.single-review-title {
+    color: #cae9ea;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.single-review-game-name {
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.review-title {
+    font-size: 24px;
+    color: #cae9ea;
+}
+
+.review-recommendation {
+    font-size: 18px;
+}
+
 /* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/
 .edit-profile-container {
     text-align: center;
@@ -750,8 +773,8 @@ hr {
 #profile-preview {
     border-radius: 50%;
     border: 2px solid #cae9ea;
-    width: 400px; 
-    height: 400px;
+    width: 380px; 
+    height: 380px;
     object-fit: cover;
 }
 
@@ -811,8 +834,8 @@ hr {
 .profile-picture {
     border-radius: 50%;
     border: 2px solid #cae9ea;
-    width: 400px;
-    height: 400px;
+    width: 380px;
+    height: 380px;
     object-fit: cover;
 }
 

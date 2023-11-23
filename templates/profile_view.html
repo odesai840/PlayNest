@@ -39,7 +39,7 @@
                         <p>
                             {% if game_info %}
                             <p class="profile-card-title">Review for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}" class="big-activity-link">{{ game_info.name }}</a></p>
-                            <a href="{{ review.detail_url }}" class="activity-link">Review</a>
+                            <a href="{{ url_for('review_detail', review_id=review.id) }}" class="activity-link">{{ review.title }}</a>
                             {% else %}
                                 Review for a game (game details not available)
                             {% endif %}

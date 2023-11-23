@@ -47,7 +47,10 @@
                     </a>
                     <p class="card-text">{{ thread.content }}</p>
                     <p class="card-details">
-                        Posted by: <span style="color: #8be8b5;">{{ thread.user.username }}</span>
+                        Posted by:
+                        <span>
+                            <a href="{{ url_for('view_profile', user_id=thread.user.id) }}" class="usernames">{{ thread.user.username }}</a>
+                        </span> 
                         on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                     </p>
                 </div>

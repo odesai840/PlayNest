@@ -209,12 +209,12 @@
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
-                                                    <h5 class="card-title small-card-title">{{ truncate_text(review.title, max_words=10) }}</h5>
+                                                    <h5 class="card-title small-card-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ truncate_text(review.title, max_words=10) }}</a></h5>
                                                     <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}">{{ game_info.name }}</a></strong></h6>
                                                     <p class="small-card-text">{{ truncate_text(review.content) }}</p>
                                                     <p class="card-details">
                                                         Review by:
-                                                        <span style="color: #8be8b5;">{{ review.user.username }}</span>
+                                                        <a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>
                                                         on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                                                     </p>
                                                 </div>

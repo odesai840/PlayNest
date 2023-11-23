@@ -557,19 +557,32 @@ class ProfileEditForm(FlaskForm):
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
-    user = user = User.query.filter_by(username=session['username']).first()
+    user = User.query.filter_by(username=session['username']).first()
     profile = user.profile
     
     form = ProfileEditForm(request.form, obj=profile)
 
     if request.method == 'POST' and form.validate():
-        form.populate_obj(profile)
+        action = request.form.get('action')
+
+        if action == 'save_description':
+            # update only the about me desc
+            form.profile_picture.data = profile.profile_picture  # retain the current picture
+            form.populate_obj(profile)
+        elif action == 'save_picture':
+            # update only the profile picture
+            form.about_me.data = profile.about_me  # retain the current description
+            form.populate_obj(profile)
+        else:
+            # update both description and picture
+            form.populate_obj(profile)
+
         db.session.commit()
         return redirect(url_for('view_profile', user_id=user.id))
 
-    return render_template('profile_edit.html', form=form)
+    return render_template('profile_edit.html', form=form, user=user)
 
-@app.route('/profile/vie/<int:user_id>')
+@app.route('/profile/view/<int:user_id>')
 def view_profile(user_id):
     user = User.query.get(user_id)
     

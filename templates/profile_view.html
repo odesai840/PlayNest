@@ -38,7 +38,8 @@
                         {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
                         <p>
                             {% if game_info %}
-                                <a href="{{ review.detail_url }}">Review</a> for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}">{{ game_info.name }}</a>
+                            <p class="profile-card-title">Review for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}" class="big-activity-link">{{ game_info.name }}</a></p>
+                            <a href="{{ review.detail_url }}" class="activity-link">Review</a>
                             {% else %}
                                 Review for a game (game details not available)
                             {% endif %}
@@ -55,10 +56,8 @@
                 {% for thread in user_threads %}
                 <div class="card activity-cards">
                     <div class="card-body">
-                        <p>
-                            Thread: 
-                            <a href="{{ thread.detail_url }}">{{ thread.title }}</a>
-                        </p>
+                        <p class="profile-card-title">Thread in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="big-activity-link">{{ thread.forum.title }}</a></p>
+                        <a href="{{ thread.detail_url }}" class="activity-link">{{ thread.title }}</a>
                     </div>
                 </div>
                 {% endfor %}

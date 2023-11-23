@@ -223,18 +223,41 @@ def change_password():
 
 @app.route('/delete-account', methods=['GET', 'POST'])
 def delete_account():
+    if 'username' not in session:
+        return redirect(url_for('home'))
+
     if request.method == "POST":
         password_verification = request.form['delete-account-pw']
         user = User.query.filter_by(username=session['username']).first()
-        if bcrypt.check_password_hash(user.password_hash, password_verification):
+
+        if user and bcrypt.check_password_hash(user.password_hash, password_verification):
+            # delete all threads, reviews, games, and the user's profile
+            for thread in user.threads:
+                db.session.delete(thread)
+
+            for review in user.reviews:
+                db.session.delete(review)
+
+            # clear the user's profile
+            if user.profile:
+                db.session.delete(user.profile)
+
+            # delete the user
             db.session.delete(user)
             db.session.commit()
-            # clear username from session
-            session.pop('username', None)
-    else:
-        return "Password incorrect."
+
+            # clear the session to log out the user
+            session.clear()
+
+            # Redirect with a success flash message
+            flash('Account successfully deleted!', 'success')
+            return redirect(url_for('home'))
+        else:
+            # Redirect with an error flash message
+            flash('Incorrect password. Please try again.', 'error')
+
     return redirect(url_for('home'))
-    
+
 @app.route('/delete-games', methods=['GET', 'POST'])
 def delete_games():
     if request.method == "POST":

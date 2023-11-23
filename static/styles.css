@@ -815,3 +815,40 @@ hr {
     height: 400px;
     object-fit: cover;
 }
+
+.profile-card-title {
+    font-size: 20px;
+    color: #cae9ea;
+}
+
+.forum-profile-link {
+    text-decoration: underline;
+    color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+        text-decoration: underline;
+    }
+}
+
+.activity-link {
+    font-size: 18px;
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.big-activity-link {
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.usernames {
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}

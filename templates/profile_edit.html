@@ -9,7 +9,7 @@
         <form method="POST">
             {{ form.hidden_tag() }}
             <div class="form-group">
-                {{ form.about_me.label(class="edit-label") }}
+                {{ form.about_me.label(class="profile-label") }}
                 {{ form.about_me(class="form-control") }}
             </div>
             <div class="form-group">
@@ -27,6 +27,7 @@
                 <button type="submit" class="btn btn-primary save-changes-button">Save Changes</button>
         </form>
     </div>
+    <hr>
     <div class="picture-preview">
         <p class="profile-label">Picture Preview:</p>
         <img id="profile-preview" class="img-fluid mt-2"

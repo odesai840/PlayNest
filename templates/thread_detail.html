@@ -97,11 +97,10 @@
                         <div>
                             <p class="card-text">{{ comment.content }}</p>
                             <p class="card-details">Comment by: 
-                                <span style="color: #8be8b5;">
-                                    <a href="{{ url_for('view_profile', user_id=comment.user.id) }}">
-                                        {{ comment.user.username }}
-                                    </a>
-                                </span> on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                <span>
+                                    <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username }}</a>
+                                </span>
+                                on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                                 {% if 'username' in session %}
                                     • <a href="#" class="reply-link">Reply</a>
                                 {% endif %}
@@ -156,7 +155,10 @@
                                             <div>
                                                 <p class="card-text"> {{ reply.content }}</p>
                                                 <p class="card-details">Reply by: 
-                                                    <span style="color: #8be8b5;">{{ reply.user.username }}</span> on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                                    <span>
+                                                        <a href="{{ url_for('view_profile', user_id=reply.user.id) }}" class="usernames">{{ reply.user.username }}</a>
+                                                    </span>
+                                                    on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
                                                 </p>
                                             </div>
                                         </div>

@@ -555,6 +555,9 @@ class ProfileEditForm(FlaskForm):
         image_files = [f for f in listdir(picture_options_path) if isfile(join(picture_options_path, f))]
         self.profile_picture.choices = [(filename, join(picture_options_path, filename)) for filename in image_files]
 
+        if not self.profile_picture.data:
+            self.profile_picture.data = 'images/default.jpeg'
+
 @app.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
     user = User.query.filter_by(username=session['username']).first()
@@ -598,6 +601,27 @@ def view_profile(user_id):
         thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
 
     return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
+
+@app.route('/profile/view')
+def view_own_profile():
+    if 'username' in session:
+        user = User.query.filter_by(username=session['username']).first()
+
+        # retrieve reviews and threads posted by the user
+        user_reviews = Review.query.filter_by(user_id=user.id).all()
+        user_threads = Thread.query.filter_by(user_id=user.id).all()
+
+        # attach URLs to reviews and threads for details viewing
+        for review in user_reviews:
+            review.detail_url = url_for('game_details', game_id=review.game_identifier)
+
+        for thread in user_threads:
+            thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
+
+        return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
+    else:
+        # if the user is not logged in
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)

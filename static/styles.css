@@ -853,6 +853,14 @@ hr {
     margin-bottom: 20px;
 }
 
+#profile-pic {
+    border-radius: 50%;
+    border: 2px solid #cae9ea;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
 .profile-picture {
     border-radius: 50%;
     border: 2px solid #cae9ea;

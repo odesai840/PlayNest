@@ -61,6 +61,10 @@ class Thread(db.Model):
         self.forum_id = forum_id
         self.user_id = user_id
 
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -79,6 +83,10 @@ class Comment(db.Model):
         self.user_id = user_id
         self.thread_id = thread_id
         self.parent_comment_id = parent_comment_id
+
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
 
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -99,6 +107,10 @@ class Review(db.Model):
         self.game_identifier = game_identifier
         self.is_recommendation = is_recommendation
         self.rating = rating
+
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
 
 class Profile(db.Model):
     __tablename__ = 'profiles'

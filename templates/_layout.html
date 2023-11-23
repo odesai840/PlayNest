@@ -38,6 +38,7 @@
                     {{ session['username'] }}
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="{{ url_for('view_own_profile') }}">Your Profile</a>
                     <a class="dropdown-item" href="{{ url_for('edit_profile') }}">Edit Profile</a>
                     <a class="dropdown-item" href="{{ url_for('dashboard') }}">Creator Dashboard</a>
                     <a class="dropdown-item" href="{{ url_for('settings') }}">Settings</a>

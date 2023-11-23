@@ -18,6 +18,7 @@
     }
 
     .reply-card {
+        margin-top: 10px;
         background-color: #273b40;
         border: none;
     }
@@ -25,6 +26,10 @@
     .replies {
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-details {
+        margin-top: 35px;
     }
 
 </style>
@@ -35,13 +40,24 @@
         <div class="thread-op-post">
             <div class="d-flex justify-content-between">
                 <div class="w-100">
-                    <div>
-                        <p class="card-text">{{ thread.content }}</p>
-                        <p class="card-details">Posted by: 
-                        <span>
-                            <a href="{{ url_for('view_profile', user_id=thread.user.id) }}" class="usernames">{{ thread.user.username }}</a>
-                        </span> 
-                        on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}</p>
+                    <div class="d-flex align-items-start">
+                        {% if thread.profile_picture %}
+                            <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + thread.profile_picture) }}"
+                                alt="Profile Picture" class="mr-3">
+                        {% else %}
+                            <!-- default profile picture if the user doesn't have one -->
+                            <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                                alt="Default Profile Picture" class="mr-3">
+                        {% endif %}
+    
+                        <div>
+                            <p class="card-text">{{ thread.content }}</p>
+                            <p class="card-details">Posted by:
+                                <span>
+                                    <a href="{{ url_for('view_profile', user_id=thread.user.id) }}" class="usernames">{{ thread.user.username }}</a>
+                                </span>
+                                on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}</p>
+                        </div>
                     </div>
                 </div>
                 <div class="align-self-start">
@@ -98,17 +114,27 @@
             <div class="comments">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
-                        <div>
-                            <p class="card-text">{{ comment.content }}</p>
-                            <p class="card-details">Comment by: 
-                                <span>
-                                    <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username }}</a>
-                                </span>
-                                on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                                {% if 'username' in session %}
-                                    • <a href="#" class="reply-link">Reply</a>
-                                {% endif %}
-                            </p>
+                        <div class="d-flex align-items-start">
+                            {% if comment.profile_picture %}
+                                <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + comment.profile_picture) }}"
+                                    alt="Profile Picture" class="mr-3">
+                            {% else %}
+                                <!-- default profile picture if the user doesn't have one -->
+                                <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                                    alt="Default Profile Picture" class="mr-3">
+                            {% endif %}
+                            <div>
+                                <p class="card-text">{{ comment.content }}</p>
+                                <p class="card-details">Comment by: 
+                                    <span>
+                                        <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username }}</a>
+                                    </span>
+                                    on {{ comment.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                    {% if 'username' in session %}
+                                        • <a href="#" class="reply-link">Reply</a>
+                                    {% endif %}
+                                </p>
+                            </div>
                         </div>
 
                         <div>
@@ -156,14 +182,24 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div class="w-100">
-                                            <div>
-                                                <p class="card-text"> {{ reply.content }}</p>
-                                                <p class="card-details">Reply by: 
-                                                    <span>
-                                                        <a href="{{ url_for('view_profile', user_id=reply.user.id) }}" class="usernames">{{ reply.user.username }}</a>
-                                                    </span>
-                                                    on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                                                </p>
+                                            <div class="d-flex align-items-start">
+                                                {% if reply.profile_picture %}
+                                                    <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + reply.profile_picture) }}"
+                                                        alt="Profile Picture" class="mr-3">
+                                                {% else %}
+                                                    <!-- default profile picture if the user doesn't have one -->
+                                                    <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                                                        alt="Default Profile Picture" class="mr-3">
+                                                {% endif %}
+                                                <div>
+                                                    <p class="card-text"> {{ reply.content }}</p>
+                                                    <p class="card-details">Reply by: 
+                                                        <span>
+                                                            <a href="{{ url_for('view_profile', user_id=reply.user.id) }}" class="usernames">{{ reply.user.username }}</a>
+                                                        </span>
+                                                        on {{ reply.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
 

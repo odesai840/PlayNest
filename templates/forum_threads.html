@@ -45,7 +45,7 @@
                     <a href="{{ thread.detail_url }}">
                         <h5 class="card-title thread-title">{{ thread.title }}</h5>
                     </a>
-                    <p class="card-text">{{ thread.content }}</p>
+                    <p class="card-text">{{ thread.content[:300] + '...' if thread.content|length > 300 else thread.content }}</p>
                     <p class="card-details">
                         Posted by:
                         <span>

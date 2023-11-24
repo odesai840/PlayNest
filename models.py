@@ -1,7 +1,7 @@
 # defines data models
 # run pip install flask-sqlalchemy psycopg2-binary to install sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 db = SQLAlchemy() 
 
@@ -11,11 +11,12 @@ class User(db.Model):
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    
+
     def __init__(self, username, email, password_hash):
         self.username = username
         self.email = email
         self.password_hash = password_hash
+        self.profile = Profile()
 
 class Game(db.Model):
     __tablename__ = 'games'
@@ -51,7 +52,7 @@ class Thread(db.Model):
     forum = db.relationship('Forum', backref=db.backref('threads', lazy=True))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('threads', lazy=True))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('thread_comments', lazy=True, viewonly=True), cascade='all, delete-orphan')
 
     def __init__(self, title, content, forum_id, user_id):
@@ -59,6 +60,10 @@ class Thread(db.Model):
         self.content = content
         self.forum_id = forum_id
         self.user_id = user_id
+
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -71,13 +76,17 @@ class Comment(db.Model):
     parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
     child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
 
     def __init__(self, content, user_id, thread_id, parent_comment_id=None):
         self.content = content
         self.user_id = user_id
         self.thread_id = thread_id
         self.parent_comment_id = parent_comment_id
+
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
 
 class Review(db.Model):
     __tablename__ = 'reviews'
@@ -87,7 +96,7 @@ class Review(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('reviews', lazy=True))
     game_identifier = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     is_recommendation = db.Column(db.Boolean, nullable=False, default=True)
     rating = db.Column(db.Integer, nullable=True)
 
@@ -98,3 +107,15 @@ class Review(db.Model):
         self.game_identifier = game_identifier
         self.is_recommendation = is_recommendation
         self.rating = rating
+
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
+
+class Profile(db.Model):
+    __tablename__ = 'profiles'
+    id = db.Column(db.Integer, primary_key=True)
+    about_me = db.Column(db.Text)
+    profile_picture = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
+    user = db.relationship('User', backref=db.backref('profile', uselist=False), lazy=True)

@@ -189,6 +189,10 @@ textarea {
 }
 
 /* ---------------------------------------------------------------HOME PAGE STYLING-----------------------------------------------------------*/
+.home-page {
+    background: #1d1d1d;
+}
+
 .sidebar-container {
     display: flex;
     flex-direction: column;
@@ -330,7 +334,7 @@ header p {
 }
 
 .content-below-hero {
-    margin-top: 3%;
+    margin-top: 2%;
     margin-left: 20px;
 }
 
@@ -445,31 +449,6 @@ iframe {
 .col-md-12 {
     border: 2px solid #cae9ea;
     border-radius: 5px;
-}
-
-/* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
-@media (max-width: 768px) {
-    .sidebar-content {
-        display: inline-block;
-        margin: 0 2%;
-        vertical-align: top;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: 45%;
-        text-align: center;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-
-    .main-content {
-        width: 100%;
-    }
 }
 
 /* ---------------------------------------------------------------FORUM THREADS STYLING--------------------------------------------------------*/
@@ -726,23 +705,337 @@ hr {
     border-radius: 5px;
 }
 
-/* ---------------------------------------------------------------FOOTER STYLING---------------------------------------------------------------*/
-
-footer {
-    background-color: #273b40;
+.single-review-title {
     color: #cae9ea;
-    padding: 10px 0;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.single-review-game-name {
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.review-title {
+    font-size: 24px;
+    color: #cae9ea;
+}
+
+.review-recommendation {
+    font-size: 18px;
+}
+
+/* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/
+.edit-profile-container {
     text-align: center;
-    height: 100vh;
+    margin-top: 40px;
 }
 
-.footer-section {
-    display: inline-block;
-    width: 30%;
-    margin: 0 2%;
-}
-
-.footer-section h4 {
+.profile-label {
     font-size: 20px;
-    margin: 0;
+    color: #97c1c3 !important;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.picture-label1 {
+    font-size: 20px;
+    color: #97c1c3 !important;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-left: 40px;
+}
+
+.picture-label2 {
+    font-size: 20px;
+    color: #97c1c3 !important;
+    font-weight: bold;
+    margin-bottom: 15px;
+    margin-left: 50px;
+}
+
+.image-container {
+    display: flex;
+}
+
+.picture-preview, .current-picture {
+    margin-bottom: 50px;
+}
+
+#profile-preview, #current-picture {
+    border-radius: 50%;
+    border: 2px solid #cae9ea;
+    width: 380px; 
+    height: 380px;
+    object-fit: cover;
+    margin-right: 50px;
+    margin-left: 90px;
+}
+
+.save-changes-button {
+    background: linear-gradient(180deg, #cae9ea, #7ebda5);
+    font-weight: bold;
+    color: #273b40;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    cursor: pointer;
+
+    &:hover {
+        background: linear-gradient(180deg, #8be8b5, #4b9c78);
+        border: 2px solid #cae9ea;
+        color: #273b40;
+    }
+}
+
+/* ---------------------------------------------------------------PROFILE VIEW STYLING---------------------------------------------------------*/
+.profile-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.user-activity {
+    width: 45%;
+}
+
+.user-activity-heading {
+    color: #8be8b5;
+    font-weight: bold;
+}
+
+.activity-labels {
+    color: #97c1c3;
+}
+
+.activity-cards {
+    margin-bottom: 15px;
+    border: 2px solid #cae9ea;
+}
+
+.view-profile-pic-and-about-me {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.view-profile-pic {
+    margin-bottom: 20px;
+}
+
+#profile-pic {
+    border-radius: 50%;
+    border: 2px solid #cae9ea;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    border: 2px solid #cae9ea;
+    width: 380px;
+    height: 380px;
+    object-fit: cover;
+}
+
+.profile-card-title {
+    font-size: 20px;
+    color: #cae9ea;
+}
+
+.forum-profile-link {
+    text-decoration: underline;
+    color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+        text-decoration: underline;
+    }
+}
+
+.activity-link {
+    font-size: 18px;
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.big-activity-link {
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.usernames {
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+/* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
+@media (max-width: 554px) {
+    .content-below-hero {
+        margin-top: 3%;
+        margin-left: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .forum-card-container {
+        margin: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    header h2 {
+        font-size: 25px;
+    }
+
+    header p {
+        font-size: 15px;
+    }
+
+    .hero-button,
+    .dashboard-button {
+        font-size: 16px;
+    }
+
+    .content-below-hero {
+        margin-top: 3%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-content {
+        display: inline-block;
+        margin: 0 2%;
+        vertical-align: top;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 45%;
+        text-align: center;
+    }
+
+    .profile-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .view-profile-pic-and-about-me,
+    .user-activity {
+        width: 100%;
+    }
+
+    .view-profile-pic-and-about-me {
+        margin-bottom: 30px;
+    }
+
+    .profile-picture {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        max-height: 400px;
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        flex-direction: column;
+    }
+
+    .picture-label1, .picture-label2 {
+        margin-left: 0px;
+    }
+
+    #profile-preview, #current-picture {
+        margin-left: 40px;
+        width: 325px;
+        height: 325px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .profile-container {
+        flex-direction: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+    }
+
+    .view-profile-pic-and-about-me,
+    .user-activity {
+        width: 100%;
+    }
+
+    .user-activity {
+        margin-left: 80px;
+    }
+
+    .profile-picture {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        max-height: 500px; 
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        flex-direction: column;
+    }
+
+    .picture-label1, .picture-label2 {
+        margin-left: 0px;
+    }
+
+    #profile-preview, #current-picture {
+        margin-left: 40px;
+        width: 325px;
+        height: 325px;
+    }
+}
+
+@media (max-width: 1335px) {
+    .sidebar {
+        flex-direction: column;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar h5 {
+        font-size: 18px;
+    }
+
+    .sidebar li {
+        font-size: 14px;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1199px) {
+    #profile-preview {
+        margin-left: 20px;
+    }
+
+    .picture-label1 {
+        margin-right: 65px;
+    }
+
+    .picture-label2 {
+        margin-left: 80px;
+        margin-right: 20px;
+    }
 }

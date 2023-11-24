@@ -160,7 +160,7 @@
                                 <span style="color: rgb(240, 134, 134);"> Not Recommended <i class="fas fa-thumbs-down"></i></span>
                             {% endif %}
                         </p>
-                        <p class="card-text">{{ review.content }}</p>
+                        <p class="card-text">{{ review.content[:300] + '...' if review.content|length > 300 else review.content }}</p>
                         <p class="card-details">
                             Review by:
                             <a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>

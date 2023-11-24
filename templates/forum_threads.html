@@ -42,17 +42,29 @@
         <div class="thread-container">
             <div class="card-body d-flex justify-content-between">
                 <div class="w-100"> <!-- width 100% to make the text extend from one end to the other -->
-                    <a href="{{ thread.detail_url }}">
-                        <h5 class="card-title thread-title">{{ thread.title }}</h5>
-                    </a>
-                    <p class="card-text">{{ thread.content[:300] + '...' if thread.content|length > 300 else thread.content }}</p>
-                    <p class="card-details">
-                        Posted by:
-                        <span>
-                            <a href="{{ url_for('view_profile', user_id=thread.user.id) }}" class="usernames">{{ thread.user.username }}</a>
-                        </span> 
-                        on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
-                    </p>
+                    <div class="d-flex align-items-start">
+                        {% if thread.profile_picture %}
+                            <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + thread.profile_picture) }}"
+                                alt="Profile Picture" class="mr-3">
+                        {% else %}
+                            <!-- default profile picture if the user doesn't have one -->
+                            <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                                alt="Default Profile Picture" class="mr-3">
+                        {% endif %}
+                        <div>
+                            <a href="{{ thread.detail_url }}">
+                                <h5 class="card-title thread-title">{{ thread.title }}</h5>
+                            </a>
+                            <p class="card-text">{{ thread.content[:300] + '...' if thread.content|length > 300 else thread.content }}</p>
+                            <p class="card-details">
+                                Posted by:
+                                <span>
+                                    <a href="{{ url_for('view_profile', user_id=thread.user.id) }}" class="usernames">{{ thread.user.username }}</a>
+                                </span> 
+                                on {{ thread.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 {% if 'username' in session and thread.user.username == session['username'] %}
                     <!-- delete button if the thread belongs to the logged-in user -->

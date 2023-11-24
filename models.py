@@ -1,7 +1,7 @@
 # defines data models
 # run pip install flask-sqlalchemy psycopg2-binary to install sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 db = SQLAlchemy() 
 
@@ -52,7 +52,7 @@ class Thread(db.Model):
     forum = db.relationship('Forum', backref=db.backref('threads', lazy=True))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('threads', lazy=True))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('thread_comments', lazy=True, viewonly=True), cascade='all, delete-orphan')
 
     def __init__(self, title, content, forum_id, user_id):
@@ -76,7 +76,7 @@ class Comment(db.Model):
     parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
     child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
 
     def __init__(self, content, user_id, thread_id, parent_comment_id=None):
         self.content = content
@@ -96,7 +96,7 @@ class Review(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('reviews', lazy=True))
     game_identifier = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     is_recommendation = db.Column(db.Boolean, nullable=False, default=True)
     rating = db.Column(db.Integer, nullable=True)
 

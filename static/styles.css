@@ -334,7 +334,7 @@ header p {
 }
 
 .content-below-hero {
-    margin-top: 3%;
+    margin-top: 2%;
     margin-left: 20px;
 }
 
@@ -449,31 +449,6 @@ iframe {
 .col-md-12 {
     border: 2px solid #cae9ea;
     border-radius: 5px;
-}
-
-/* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
-@media (max-width: 768px) {
-    .sidebar-content {
-        display: inline-block;
-        margin: 0 2%;
-        vertical-align: top;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: 45%;
-        text-align: center;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-
-    .main-content {
-        width: 100%;
-    }
 }
 
 /* ---------------------------------------------------------------FORUM THREADS STYLING--------------------------------------------------------*/
@@ -822,7 +797,7 @@ hr {
 .profile-container {
     margin-top: 30px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .user-activity {
@@ -903,5 +878,164 @@ hr {
     color: #8be8b5;
     &:hover {
         color: #8be8b5;
+    }
+}
+
+/* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
+@media (max-width: 554px) {
+    .content-below-hero {
+        margin-top: 3%;
+        margin-left: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .forum-card-container {
+        margin: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    header h2 {
+        font-size: 25px;
+    }
+
+    header p {
+        font-size: 15px;
+    }
+
+    .hero-button,
+    .dashboard-button {
+        font-size: 16px;
+    }
+
+    .content-below-hero {
+        margin-top: 3%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-content {
+        display: inline-block;
+        margin: 0 2%;
+        vertical-align: top;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 45%;
+        text-align: center;
+    }
+
+    .profile-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .view-profile-pic-and-about-me,
+    .user-activity {
+        width: 100%;
+    }
+
+    .view-profile-pic-and-about-me {
+        margin-bottom: 30px;
+    }
+
+    .profile-picture {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        max-height: 400px;
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        flex-direction: column;
+    }
+
+    .picture-label1, .picture-label2 {
+        margin-left: 0px;
+    }
+
+    #profile-preview, #current-picture {
+        margin-left: 40px;
+        width: 325px;
+        height: 325px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .profile-container {
+        flex-direction: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+    }
+
+    .view-profile-pic-and-about-me,
+    .user-activity {
+        width: 100%;
+    }
+
+    .user-activity {
+        margin-left: 80px;
+    }
+
+    .profile-picture {
+        width: 100%;
+        max-width: 500px;
+        height: auto;
+        max-height: 500px; 
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        flex-direction: column;
+    }
+
+    .picture-label1, .picture-label2 {
+        margin-left: 0px;
+    }
+
+    #profile-preview, #current-picture {
+        margin-left: 40px;
+        width: 325px;
+        height: 325px;
+    }
+}
+
+@media (max-width: 1335px) {
+    .sidebar {
+        flex-direction: column;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar h5 {
+        font-size: 18px;
+    }
+
+    .sidebar li {
+        font-size: 14px;
+    }
+
+    .main-content {
+        width: 100%;
+    }
+}
+
+@media (min-width: 993px) and (max-width: 1199px) {
+    #profile-preview {
+        margin-left: 20px;
+    }
+
+    .picture-label1 {
+        margin-right: 65px;
+    }
+
+    .picture-label2 {
+        margin-left: 80px;
+        margin-right: 20px;
     }
 }

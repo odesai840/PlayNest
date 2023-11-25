@@ -1,0 +1,70 @@
+{% extends "_layout.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4 edit-profile-container">
+    <h2 class="text-center mb-4">Edit Profile</h2>
+    <div class="profile-form">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.about_me.label(class="profile-label") }}
+                {{ form.about_me(class="form-control") }}
+            </div>
+            <div class="form-group">
+                <p class="profile-label">Select a profile picture:</p>
+                <select class="form-control" name="{{ form.profile_picture.name }}">
+                    {% for picture_option, picture_path in form.profile_picture.choices %}
+                    <option value="{{ picture_option }}"
+                        data-img-src="{{ url_for('static', filename='images/picture_options/' + picture_option) }}"
+                        class="profile-img-option">
+                        {{ picture_option }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" name="action" value="save_description" class="btn btn-primary save-changes-button">Save Description</button>
+            <button type="submit" name="action" value="save_picture" class="btn btn-primary save-changes-button">Save Picture</button>
+            <button type="submit" name="action" value="save_all_changes" class="btn btn-primary save-changes-button">Save All Changes</button>
+        </form>
+    </div>
+    <hr>
+        <div class="image-container">
+            <div class="picture-preview">
+                <p class="picture-label1 mt-2">Picture Preview:</p>
+                <img id="profile-preview" class="img-fluid mt-2"
+                    src="{{ url_for('static', filename='images/picture_options/' + form.profile_picture.choices[0][0]) }}"
+                    alt="Profile Preview">
+            </div>
+            {% if user.profile.profile_picture %}
+            <div class="current-picture">
+                <p class="picture-label2 mt-2">Current Picture:</p>
+                <img id="current-picture" class="img-fluid mt-2"
+                    src="{{ url_for('static', filename='images/picture_options/' + user.profile.profile_picture) }}"
+                    alt="Current Profile Picture">
+            </div>
+            {% endif %}
+        </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const profilePictureSelect = document.querySelector('select[name="{{ form.profile_picture.name }}"]');
+        const profilePreview = document.getElementById('profile-preview');
+
+        // load the preview image on page load
+        profilePreview.src = profilePictureSelect.options[profilePictureSelect.selectedIndex].dataset.imgSrc;
+
+        // preload all images on page load
+        profilePictureSelect.querySelectorAll('option').forEach(function (option) {
+            const img = new Image();
+            img.src = option.dataset.imgSrc;
+        });
+
+        profilePictureSelect.addEventListener('change', function () {
+            const selectedOption = profilePictureSelect.options[profilePictureSelect.selectedIndex];
+            profilePreview.src = selectedOption.dataset.imgSrc;
+        });
+    });
+</script>
+{% endblock %}

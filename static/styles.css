@@ -620,6 +620,19 @@ iframe {
     }
 }
 
+.parent-comment-content {
+    color: white;
+    font-size: 17px;
+    padding: 15px;
+    max-width: 900px;
+    border-radius: 4px;
+    background-color: #273b40;
+}
+
+.white-space {
+    white-space: pre-line;
+}
+
 .strong-color {
     color: #8be8b5;
 }
@@ -637,7 +650,7 @@ iframe {
 }
 
 .parent-comment {
-    background-color: #3c4748;
+    background-color: #273b40;
     width: 95%;
     border-radius: 5px;
     padding-left: 10px;

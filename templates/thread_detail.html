@@ -5,29 +5,6 @@
 {% block content %}
 
 <style>
-    .indent-0 {
-        margin-left: 0;
-    }
-
-    .indent-1 {
-        margin-left: 20px;
-    }
-
-    .indent-2 {
-        margin-left: 40px;
-    }
-
-    .reply-card {
-        margin-top: 15px;
-        background-color: #273b40;
-        border: none;
-    }
-
-    .replies {
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
     .card-details {
         margin-top: 35px;
     }
@@ -38,10 +15,6 @@
 
     .details-container {
         margin-right: 18px;
-    }
-
-    .reply-details-container {
-        margin-right: 10px;
     }
 
     .profile-pic-container {
@@ -66,7 +39,7 @@
                             <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
                                 alt="Default Profile Picture" class="mr-3">
                         {% endif %}
-    
+
                         <div>
                             <p class="card-text">{{ thread.content }}</p>
                             <p class="card-details">Posted by:
@@ -105,7 +78,9 @@
         </div>
     </div>
 
+
 <hr>
+
 
 <!-- form to add a new comment -->
 <div class="thread-comment-form-container">
@@ -122,12 +97,14 @@
     {% endif %}
 </div>
 
+
 <!-- display comments -->
 <h3 class="comments-heading">Comments</h3>
 
+
 {% if thread.comments %}
-    {% for comment in thread.comments|reverse if not comment.parent_comment %}
-        <div class="card mb-3 {{ comment.indent_class }}">
+    {% for comment in thread.comments|reverse %}
+        <div class="card mb-3">
             <div class="comments">
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
@@ -143,14 +120,17 @@
                                         alt="Default Profile Picture" class="mr-3">
                                 {% endif %}
                                 <div class="details">
-                                    <p class="comment-card-details no-margin-bottom">Comment by:
-                                        <span>
-                                            <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username
-                                                }}</a>
-                                        </span>
+                                    <p class="comment-card-details no-margin-bottom">Comment by:</p>
+                                    <p class="comment-card-details no-margin-bottom">
+                                        <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username}}</a>
                                     </p>
                                     <p class="comment-card-details no-margin-bottom">on {{ comment.created_at.strftime('%m-%d-%Y') }}</p>
                                     <p class="comment-card-details no-margin-bottom">at {{ comment.created_at.strftime('%I:%M %p') }}</p>
+                                    <p class="comment-card-details no-margin-bottom">
+                                        {% if 'username' in session %}
+                                            <a href="#" class="reply-link">Reply</a>
+                                        {% endif %}
+                                    </p>
                                     <!-- like button and like count display -->
                                     <div class="card-likes">
                                         <button
@@ -166,9 +146,23 @@
                                 </div>
                             </div>
                             <div>
-                                <p class="card-text"> {{ comment.content }}</p>
+                                {% if comment.parent_comment %}
+                                    <div class="parent-comment-content">
+                                        <span>
+                                            <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
+                                            <strong>said:</strong>
+                                        </span>
+                                        <div class="white-space">
+                                            {{ comment.parent_comment.content }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <p class="card-text">
+                                    {{ comment.content }}
+                                </p>
                             </div>
                         </div>
+
 
                         <div>
                             {% if comment.user.username == session['username'] %}
@@ -187,6 +181,7 @@
                         </div>
                     </div>
 
+
                     <div class="edit-form" style="display: none;">
                         <form method="POST" action="{{ url_for('edit_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
                             <div class="form-group">
@@ -196,6 +191,7 @@
                             <button type="submit" class="post-comment-button">Save Changes</button>
                         </form>
                     </div>
+
 
                     <div class="reply-form" style="display: none;">
                         <form method="POST" action="{{ url_for('post_reply', forum_slug=forum.slug, thread_id=thread.id) }}">
@@ -207,83 +203,6 @@
                             <button type="submit" class="post-comment-button">Post Reply</button>
                         </form>
                     </div>
-
-                    <!-- display replies for this parent comment -->
-                    {% for reply in comment.child_comments %}
-                        <div class="card mb-3 {{ reply.indent_class }} reply-card">
-                            <div class="replies">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="w-100">
-                                            <div class="d-flex align-items-start">
-                                                <div class="profile-pic-container">
-                                                    <div class="reply-details-container">
-                                                        {% if reply.profile_picture %}
-                                                    <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + reply.profile_picture) }}"
-                                                        alt="Profile Picture" class="mr-3">
-                                                    {% else %}
-                                                        <!-- default profile picture if the user doesn't have one -->
-                                                        <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
-                                                            alt="Default Profile Picture" class="mr-3">
-                                                    {% endif %}
-                                                    <div class="details">
-                                                        <p class="comment-card-details no-margin-bottom">Reply by:
-                                                            <span>
-                                                                <a href="{{ url_for('view_profile', user_id=reply.user.id) }}" class="usernames">{{ reply.user.username
-                                                                    }}</a>
-                                                            </span>
-                                                        </p>
-                                                        <p class="comment-card-details no-margin-bottom">on {{ reply.created_at.strftime('%m-%d-%Y') }}</p>
-                                                        <p class="comment-card-details no-margin-bottom">at {{ reply.created_at.strftime('%I:%M %p') }}</p>
-                                                        <!-- like button and like count display -->
-                                                        <div class="card-likes">
-                                                            <button
-                                                                class="btn btn-link like-button {% if 'username' in session and reply.id in liked_comments %}liked{% endif %}"
-                                                                data-comment-id="{{ reply.id }}">
-                                                                <i class="fas fa-thumbs-up"></i>
-                                                            </button>
-                                                            <span class="like-count">
-                                                                {{ reply.likes|length }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <p class="card-text"> {{ reply.content }}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            {% if reply.user.username == session['username'] %}
-                                                <!-- delete/edit buttons if the reply belongs to the logged-in user -->
-                                                <div class="reply-buttons">
-                                                    <button type="submit" class="btn btn-link edit-button">
-                                                        <i class="fa-solid fa-pencil"></i>
-                                                    </button>
-                                                    <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
-                                                        <button type="submit" class="btn btn-link delete-button">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="edit-form" style="display: none;">
-                                    <form method="POST" action="{{ url_for('edit_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=reply.id) }}">
-                                        <div class="form-group">
-                                            <label for="edit-content">Edit Your Reply:</label>
-                                            <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ reply.content }}</textarea>
-                                        </div>
-                                        <button type="submit" class="post-comment-button">Save Changes</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -291,6 +210,7 @@
 {% else %}
     <p>No comments yet. Start the conversation!</p>
 {% endif %}
+
 
 </div>
 

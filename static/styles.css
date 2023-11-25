@@ -537,6 +537,7 @@ iframe {
 .comment-card-details {
     font-size: 13px;
     color: #c8c6c6;
+    margin-left: 10px;
 }
 
 .card-details {
@@ -947,6 +948,7 @@ hr {
     margin-top: 10px;
     display: flex;
     align-items: center;
+    margin-left: 15px;
 }
 
 .card-likes span {

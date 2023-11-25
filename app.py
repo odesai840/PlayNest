@@ -395,8 +395,9 @@ def delete_thread(forum_slug, thread_id):
     
     # check if logged in user is the owner of the thread
     if thread.user.username == session['username']:
-        # delete all associated comments first
         for comment in thread.comments:
+            for like in comment.likes:
+                db.session.delete(like)
             db.session.delete(comment)
     
         db.session.delete(thread)

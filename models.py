@@ -97,7 +97,7 @@ class Like(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('likes', lazy=True))
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
-    comment = db.relationship('Comment', backref=db.backref('likes', lazy=True))
+    comment = db.relationship('Comment', backref=db.backref('likes', lazy=True, cascade='all, delete-orphan'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 class Review(db.Model):

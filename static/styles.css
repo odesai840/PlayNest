@@ -7,6 +7,30 @@ body {
     padding: 0;
 }
 
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/static/images/body_background_8.png') no-repeat center center fixed;
+    background-size: cover;
+    filter: brightness(0.45);
+    z-index: -1;
+}
+
+
+body.home-page::before {
+    background: none;
+}
+
+
+body.home-page {
+    background-color: #1d1d1d;
+}
+
 /* -----------------------------------------------------LAYOUT STYLING (NAVBAR, FOOTER, BUTTONS)---------------------------------------------*/
 .custom-navbar {
     background-color: #273b40;
@@ -101,6 +125,7 @@ textarea {
 
 .login-container {
     background-color: #39595f;
+    border: 2px solid #cae9ea;
     padding: 20px;
     border-radius: 8px;
     margin: auto;
@@ -134,6 +159,7 @@ textarea {
 
 .signup-container {
     background-color: #39595f;
+    border: 2px solid #cae9ea;
     padding: 20px;
     border-radius: 8px;
     margin: auto;
@@ -270,7 +296,8 @@ header {
 
 header img {
     width: 100%;
-    max-height: 500px;
+    height: 100%;
+    max-height: 600px;
     object-fit: cover;
     filter: brightness(0.4);
     border-radius: 1px;
@@ -498,8 +525,18 @@ iframe {
 
 .card-text {
     font-size: 17px;
-    width: 95%;
+    width: 100%;
+    max-width: 900px;
     white-space: pre-line;
+}
+
+.details {
+    margin-top: 20px;
+}
+
+.comment-card-details {
+    font-size: 13px;
+    color: #c8c6c6;
 }
 
 .card-details {
@@ -655,7 +692,7 @@ hr {
     cursor: pointer;
     margin-bottom: 20px;
     margin-left: 20px;
-    max-width: 84px;
+    max-width: 85px;
 
     &:hover {
         background: linear-gradient(180deg, #8be8b5, #4b9c78);
@@ -894,7 +931,13 @@ hr {
 }
 
 .card-likes {
-    margin-right: 100px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.card-likes span {
+    color: white;
 }
 
 /* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
@@ -905,58 +948,60 @@ hr {
     }
 }
 
+
 @media (max-width: 576px) {
     .forum-card-container {
         margin: auto;
     }
 }
 
+
 @media (max-width: 767px) {
     header h2 {
-        font-size: 25px;
+        font-size: 24px;
     }
 
+
     header p {
-        font-size: 15px;
+        font-size: 14px;
     }
+
 
     .hero-button,
     .dashboard-button {
         font-size: 16px;
     }
 
+
     .content-below-hero {
         margin-top: 3%;
     }
-}
 
-@media (max-width: 768px) {
-    .sidebar-content {
-        display: inline-block;
-        margin: 0 2%;
-        vertical-align: top;
-    }
 
     .sidebar {
-        width: 100%;
-        height: 45%;
-        text-align: center;
+        display: none;
     }
+}
 
+
+@media (max-width: 768px) {
     .profile-container {
         flex-direction: column;
         align-items: center;
         text-align: center;
     }
 
+
     .view-profile-pic-and-about-me,
     .user-activity {
         width: 100%;
     }
 
+
     .view-profile-pic-and-about-me {
         margin-bottom: 30px;
     }
+
 
     .profile-picture {
         width: 100%;
@@ -966,13 +1011,16 @@ hr {
         margin-bottom: 20px;
     }
 
+
     .image-container {
         flex-direction: column;
     }
 
+
     .picture-label1, .picture-label2 {
         margin-left: 0px;
     }
+
 
     #profile-preview, #current-picture {
         margin-left: 40px;
@@ -980,6 +1028,7 @@ hr {
         height: 325px;
     }
 }
+
 
 @media (min-width: 769px) and (max-width: 992px) {
     .profile-container {
@@ -989,30 +1038,36 @@ hr {
         text-align: center;
     }
 
+
     .view-profile-pic-and-about-me,
     .user-activity {
         width: 100%;
     }
 
+
     .user-activity {
         margin-left: 80px;
     }
+
 
     .profile-picture {
         width: 100%;
         max-width: 500px;
         height: auto;
-        max-height: 500px; 
+        max-height: 500px;
         margin-bottom: 20px;
     }
+
 
     .image-container {
         flex-direction: column;
     }
 
+
     .picture-label1, .picture-label2 {
         margin-left: 0px;
     }
+
 
     #profile-preview, #current-picture {
         margin-left: 40px;
@@ -1021,34 +1076,17 @@ hr {
     }
 }
 
-@media (max-width: 1335px) {
-    .sidebar {
-        flex-direction: column;
-        height: auto;
-        position: relative;
-    }
-
-    .sidebar h5 {
-        font-size: 18px;
-    }
-
-    .sidebar li {
-        font-size: 14px;
-    }
-
-    .main-content {
-        width: 100%;
-    }
-}
 
 @media (min-width: 993px) and (max-width: 1199px) {
     #profile-preview {
         margin-left: 20px;
     }
 
+
     .picture-label1 {
         margin-right: 65px;
     }
+
 
     .picture-label2 {
         margin-left: 80px;

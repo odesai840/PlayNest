@@ -88,6 +88,18 @@ class Comment(db.Model):
     def profile_picture(self):
         return self.user.profile.profile_picture if self.user and self.user.profile else None
 
+    def has_liked(self, user_id):
+        return any(like.user_id == user_id for like in self.likes)
+
+class Like(db.Model):
+    __tablename__ = 'likes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('likes', lazy=True))
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
+    comment = db.relationship('Comment', backref=db.backref('likes', lazy=True, cascade='all, delete-orphan'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
 class Review(db.Model):
     __tablename__ = 'reviews'
     id = db.Column(db.Integer, primary_key=True)

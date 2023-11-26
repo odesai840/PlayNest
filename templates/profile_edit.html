@@ -37,6 +37,13 @@
                     src="{{ url_for('static', filename='images/picture_options/' + form.profile_picture.choices[0][0]) }}"
                     alt="Profile Preview">
             </div>
+            {% if not user.profile.profile_picture %}>
+                <div class="current-picture">
+                    <p class="picture-label2 mt-2">Current Picture:</p>
+                    <img id="current-picture" class="img-fluid mt-2"
+                    src="{{ url_for('static', filename='images/default.jpg') }}" alt="Default Profile Picture">
+                </div>
+            {% endif %}
             {% if user.profile.profile_picture %}
             <div class="current-picture">
                 <p class="picture-label2 mt-2">Current Picture:</p>

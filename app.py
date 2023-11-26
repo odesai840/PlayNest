@@ -165,7 +165,7 @@ def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.post('/upload')
+@app.post('/upload_game')
 def upload_game():
     if 'file' not in request.files:
         return redirect(request.url)

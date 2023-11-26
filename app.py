@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.utils import secure_filename
-from werkzeug.datastructures import FileStorage
+import zipfile
+import shutil
 # bcrypt is a hashing library used to securely hash passwords
 # instead of storing passwords directly in the database, we store a hash of the password so that if the database is compromised,
 # attackers wont have access to the actual user passwords
@@ -148,6 +149,18 @@ def logout():
 def dashboard():
     return render_template('dashboard.html')
 
+def find_index_html(zip_path):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        # Get a list of all files in the ZIP archive
+        file_list = zip_ref.namelist()
+        
+        # Search for index.html in all files
+        for file in file_list:
+            if file.lower().endswith('index.html'):
+                return file
+        
+        return None
+
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -155,21 +168,39 @@ def allowed_file(filename):
 @app.post('/upload')
 def upload_game():
     if 'file' not in request.files:
-        flash('No file part')
         return redirect(request.url)
+    
     file = request.files['file']
-    # If the user does not select a file, the browser submits an
-    # empty file without a filename.
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        # If the line below shows up as an error, just ignore it.
-        # It works fine.
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    return redirect('/dashboard')
+    if file.filename == '':
+        return redirect(request.url)
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+
+        # Extract the uploaded ZIP file
+        zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extracted_folder)
+
+        # Search for index.html in the extracted files
+        index_html_path = find_index_html(zip_path)
+        if index_html_path:
+            index_html_url = url_for('static', filename=f'uploads/{filename.split(".")[0]}/{index_html_path}')
+            print(f'{index_html_url}')
+            os.remove(zip_path)
+            return redirect('/dashboard')
+        else:
+            # If index.html is not found, delete the uploaded ZIP file and the extracted folder
+            os.remove(zip_path)
+            if os.path.exists(extracted_folder):
+                shutil.rmtree(extracted_folder)
+            return 'No index.html found in the uploaded ZIP file'
+    else:
+        return 'Invalid file format'
 
 @app.route('/settings')
 def settings():

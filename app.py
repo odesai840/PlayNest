@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.utils import secure_filename
 import zipfile
 import shutil
@@ -8,7 +8,7 @@ import shutil
 # make sure virtual environment is activated, then run pip install Flask-Bcrypt to install bcrypt
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
-from models import db, User, Forum, Thread, Comment, Review, Game, Profile
+from models import db, User, Forum, Thread, Comment, Review, Game, Profile, Like
 # pip install requests
 import requests
 
@@ -340,8 +340,14 @@ def thread_detail(forum_slug, thread_id):
     for comment in comments:
         comment.depth = get_comment_depth(comment)
         comment.indent_class = f"indent-{comment.depth}"
-        
-    return render_template('thread_detail.html', forum=forum, thread=thread)
+
+    if 'username' in session:
+        user_id = User.query.filter_by(username=session['username']).first().id
+        liked_comments = [like.comment_id for like in Like.query.filter_by(user_id=user_id).all()]
+    else:
+        liked_comments = []
+
+    return render_template('thread_detail.html', forum=forum, thread=thread, liked_comments=liked_comments)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/post_reply', methods=['POST'])
 def post_reply(forum_slug, thread_id):
@@ -420,8 +426,9 @@ def delete_thread(forum_slug, thread_id):
     
     # check if logged in user is the owner of the thread
     if thread.user.username == session['username']:
-        # delete all associated comments first
         for comment in thread.comments:
+            for like in comment.likes:
+                db.session.delete(like)
             db.session.delete(comment)
     
         db.session.delete(thread)
@@ -653,6 +660,29 @@ def view_own_profile():
     else:
         # if the user is not logged in
         return redirect(url_for('login'))
+
+@app.route('/like_comment/<int:comment_id>', methods=['POST'])
+def like_comment(comment_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = User.query.filter_by(username=session['username']).first().id
+    comment = Comment.query.get(comment_id)
+    
+    # check if the user has already liked the comment
+    existing_like = Like.query.filter_by(user_id=user_id, comment_id=comment_id).first()
+
+    if existing_like:
+        # user has already liked the comment so unlike
+        db.session.delete(existing_like)
+        db.session.commit()
+    else:
+        # user has not liked the comment so like
+        like = Like(user_id=user_id, comment_id=comment_id)
+        db.session.add(like)
+        db.session.commit()
+
+    return jsonify({'success': True})
 
 if __name__ == '__main__':
     app.run(debug=True)

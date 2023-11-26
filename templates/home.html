@@ -1,12 +1,16 @@
 {% extends "_layout.html" %}
 
+
 {% block title %}PlayNest | Home{% endblock %}
+
 
 {% block body_attributes %}
     class="home-page"
 {% endblock %}
 
+
 {% block content %}
+
 
 <!-- this code is for truncating the titles and card text on the home page, so that when it gets too long, ellipsis are displayed -->
 <!-- rather than the rest of the content -->
@@ -19,6 +23,7 @@
     {% endif %}
 {% endmacro %}
 
+
 <!-- i'm using inline styles here because I want the cards on the home page to display as a grid, but not anywhere else -->
 <!-- keep in mind that the formatting for the recent user games will be very similar to how the recent threads and recent reviews are formatted -->
 <style>
@@ -26,6 +31,7 @@
     .recent-reviews {
         margin-top: 20px;
     }
+
 
     .forum-threads-grid,
     .recent-reviews .forum-threads-grid {
@@ -38,6 +44,7 @@
         margin-bottom: 20px;
     }
 
+
     .small-card,
     .recent-reviews .small-card {
         border: 2px solid #cae9ea;
@@ -49,11 +56,13 @@
         width: 100%;
     }
 
+
     .small-card:hover,
     .recent-reviews .small-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
+
 
     .recents-home-container {
         display: flex;
@@ -61,16 +70,19 @@
         height: 100%;
     }
 
+
     .card-body {
         display: flex;
         flex-direction: column;
         height: 100%;
     }
 
+
     .small-card .card-body,
     .recent-reviews .small-card .card-body {
         padding: 10px;
     }
+
 
     .small-card-title,
     .recent-reviews .small-card-title {
@@ -79,10 +91,12 @@
         height: 62px;
     }
 
+
     .threads-title:hover {
         color: #8be8b5;
         text-decoration: underline;
     }
+
 
     .small-card-text,
     .recent-reviews .small-card-text,
@@ -93,9 +107,11 @@
         margin-bottom: 10px;
     }
 
+
     .small-card-text, .card-text {
-        margin-top: 30px;
+        margin-bottom: 30px;
     }
+
 
     .card-details,
     .recent-reviews .card-details,
@@ -106,30 +122,36 @@
         margin-top: 10px;
     }
 
+
     .card-details,
     .recent-reviews .card-details {
         margin-top: auto;
     }
 
+
     h2 {
         padding-left: 3px;
     }
+
 
     h6 strong a {
         color: #8be8b5;
         text-decoration: none;
     }
 
+
     h6 strong a:hover {
         color: #8be8b5;
         text-decoration: underline;
     }
+
 
     .none-found {
         font-size: 16px;
         color: white;
     }
 </style>
+
 
     <div class="sidebar-container">
         <div class="row">
@@ -148,10 +170,11 @@
                 </div>
             </div>
 
+
             <div class="col-md-10">
                 <div class="main-content">
                     <header>
-                        <img src="./static/images/game_landscape.jpg">
+                        <img src="./static/images/hero_background_1.png">
                         <section>
                             {% if 'username' in session %}
                                 <h2>PlayNest: Connecting Gamers, Empowering Developers</h2>
@@ -165,10 +188,12 @@
                         </section>
                     </header>
 
+
                     <div class="content-below-hero">
                         <div class="recent-games">
                             <h2>Recent User Games</h2>
                         </div>
+
 
                         <div class="recent-forum-posts">
                             <h2>Recent Forum Threads</h2>
@@ -179,11 +204,11 @@
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     <a href="{{ thread.detail_url }}">
-                                                        <h5 class="card-title small-card-title threads-title">{{ truncate_text(thread.title, max_words=8) }}</h5>
+                                                        <h5 class="card-title small-card-title threads-title">{{ truncate_text(thread.title, max_words=6) }}</h5>
                                                     </a>
                                                     <p class="small-card-text">{{ truncate_text(thread.content) }}</p>
                                                     <p class="card-details">
-                                                        Posted by: 
+                                                        Posted by:
                                                         <span>
                                                             <a href="{{ url_for('view_profile', user_id=thread.user.id) }}" class="usernames">{{ thread.user.username }}</a>
                                                         </span>
@@ -200,6 +225,7 @@
                             </div>
                         </div>
 
+
                         <div class="recent-reviews">
                             <h2>Recent Game Reviews</h2>
                             <div class="forum-threads-grid">
@@ -209,7 +235,7 @@
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
-                                                    <h5 class="card-title small-card-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ truncate_text(review.title, max_words=8) }}</a></h5>
+                                                    <h5 class="card-title small-card-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ truncate_text(review.title, max_words=6) }}</a></h5>
                                                     <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}">{{ game_info.name }}</a></strong></h6>
                                                     <p class="small-card-text">{{ truncate_text(review.content) }}</p>
                                                     <p class="card-details">

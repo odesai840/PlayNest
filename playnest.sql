@@ -74,3 +74,11 @@ CREATE TABLE profiles (
     profile_picture VARCHAR(255),
     user_id INTEGER REFERENCES users(id) UNIQUE NOT NULL
 );
+
+-- likes table:
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) NOT NULL,
+    comment_id INTEGER REFERENCES comment(id) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+);

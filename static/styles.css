@@ -526,7 +526,7 @@ iframe {
 .card-text {
     font-size: 17px;
     width: 100%;
-    max-width: 900px;
+    max-width: 870px;
     white-space: pre-line;
 }
 
@@ -625,7 +625,7 @@ iframe {
     color: white;
     font-size: 17px;
     padding: 15px;
-    max-width: 900px;
+    max-width: 870px;
     border-radius: 4px;
     background-color: #273b40;
 }

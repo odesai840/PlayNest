@@ -22,10 +22,22 @@
         margin-right: 15px;
         height: 100%;
     }
+
+    body {
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("{{ url_for('static', filename='images/' + background_image) }}") no-repeat center center fixed;
+        background-size: cover;
+        z-index: -1;
+    }
 </style>
 
 <div class="container mt-4">
     <h2 class="text-center mb-4 thread-detail-title">{{ thread.title }}</h2>
+    <h4 class="text-center mb-4 small-heading">Posted in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="forum-page-link">{{ thread.forum.title }}</a></h4>
     <div class="card mb-3">
         <div class="thread-op-post">
             <div class="d-flex justify-content-between">
@@ -85,7 +97,7 @@
 <!-- form to add a new comment -->
 <div class="thread-comment-form-container">
     {% if 'username' in session %}
-        <form method="POST">
+        <form id="commentForm" method="POST">
             <div class="form-group">
                 <label for="content">Leave a Comment:</label>
                 <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
@@ -172,7 +184,7 @@
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
                                     <form method="POST" action="{{ url_for('delete_comment', forum_slug=forum.slug, thread_id=thread.id, comment_id=comment.id) }}">
-                                        <button type="submit" class="btn btn-link delete-button">
+                                        <button type="submit" class="btn btn-link delete-button" data-comment-id="{{ comment.id }}">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
                                     </form>
@@ -299,6 +311,47 @@
                 }
             });
         });
+        document.body.classList.add('forum-threads-body');
+
+        const deleteButtons = document.querySelectorAll('.delete-button');
+
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const card = this.closest('.card');
+                const commentId = this.getAttribute('data-comment-id');
+                deleteComment(commentId, card);
+            });
+        });
+
+        const forumSlug = '{{ forum_slug }}';
+        const threadId = '{{ thread.id }}';
+
+        async function deleteComment(commentId, card) {
+            try {            
+                const response = await fetch(`/forum/${forumSlug}/${threadId}/delete_comment/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        card.remove();
+                    } else {
+                        console.error('Failed to delete comment');
+                    }
+                } else {
+                    console.error('Failed to delete comment. Server responded with status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error during deleteComment:', error);
+            }
+        }
     });
 </script>
 {% endblock %}

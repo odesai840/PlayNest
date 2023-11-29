@@ -43,10 +43,11 @@ class Forum(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     slug = db.Column(db.String(50), unique=True, nullable=False)
+    image_filename = db.Column(db.String(255), nullable=False)
 
 class Thread(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(250), nullable=False)
     content = db.Column(db.Text, nullable=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forum.id'), nullable=False)
     forum = db.relationship('Forum', backref=db.backref('threads', lazy=True))

@@ -7,18 +7,20 @@ CREATE TABLE users (
     registration_token VARCHAR(255)
 );
 
--- forum table:
+-- forum table
+-- drop it then add this updated query:
 CREATE TABLE forum (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
-    slug VARCHAR(50) UNIQUE NOT NULL
+    slug VARCHAR(50) UNIQUE NOT NULL,
+    image_filename VARCHAR(255) NOT NULL
 );
 
 -- thread table:
 CREATE TABLE thread (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
+    title VARCHAR(250) NOT NULL,
     content TEXT NOT NULL,
     forum_id INTEGER REFERENCES forum(id) NOT NULL,
     user_id INTEGER REFERENCES users(id),

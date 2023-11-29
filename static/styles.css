@@ -693,7 +693,7 @@ iframe {
     }
 }
 
-.delete-button, .edit-button {
+.delete-button, .edit-button, .delete-thread-button {
     color: #cae9ea;
 
     &:hover {

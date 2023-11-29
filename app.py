@@ -279,11 +279,6 @@ def forum_threads(forum_slug):
 
     return render_template('forum_threads.html', forum=forum, threads=threads, background_image=forum.image_filename)
 
-def get_comment_depth(comment, depth=0):
-    if comment.parent_comment:
-        return get_comment_depth(comment.parent_comment, depth + 1)
-    return depth
-
 @app.route('/forum/<forum_slug>/<int:thread_id>', methods=['GET', 'POST'])
 def thread_detail(forum_slug, thread_id):
     forum = Forum.query.filter_by(slug=forum_slug).first()
@@ -303,12 +298,6 @@ def thread_detail(forum_slug, thread_id):
             new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id)
         db.session.add(new_comment)
         db.session.commit()
-
-    # Get comments with depth information
-    comments = thread.comments
-    for comment in comments:
-        comment.depth = get_comment_depth(comment)
-        comment.indent_class = f"indent-{comment.depth}"
 
     if 'username' in session:
         user_id = User.query.filter_by(username=session['username']).first().id

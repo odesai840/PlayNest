@@ -26,8 +26,6 @@ CREATE TABLE thread (
 );
 
 -- comment table:
--- if you previously made the comment table, drop it and recreate one with this query.
--- i made some changes to it.
 CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
@@ -45,10 +43,10 @@ CREATE TABLE Comment (
 CREATE TABLE games (
     game_id SERIAL NOT NULL,
     title VARCHAR(255) NOT NULL,
-    game_cover_url VARCHAR(255),
+    cover_url VARCHAR(255),
     short_description VARCHAR(255),
     long_description TEXT,
-    release_date VARCHAR(255) NOT NULL,
+    release_date TIMESTAMP DEFAULT current_timestamp NOT NULL,
     game_url VARCHAR(255) NOT NULL,
     author_id INT NOT NULL,
     PRIMARY KEY (game_id),

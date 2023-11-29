@@ -46,8 +46,10 @@ bcrypt = Bcrypt(app)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Allowed file extensions
-ALLOWED_EXTENSIONS = {'zip'}
+# Allowed cover image extensions
+ALLOWED_COVER_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+# Allowed game file extensions
+ALLOWED_GAME_EXTENSIONS = {'zip'}
 
 def get_game_details_from_rawg_api(game_id):
     API_KEY = os.getenv('API_KEY')
@@ -161,24 +163,52 @@ def find_index_html(zip_path):
         
         return None
 
-def allowed_file(filename):
+def allowed_game_file(filename):
     return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_GAME_EXTENSIONS
+
+def allowed_cover_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_COVER_EXTENSIONS
 
 @app.post('/upload_game')
 def upload_game():
-    if 'file' not in request.files:
+    title = request.form['title']
+
+    # Cover image file handler
+    if 'cover-image' not in request.files:
         return redirect(request.url)
     
-    file = request.files['file']
+    cover_file = request.files['cover-image']
 
-    if file.filename == '':
+    if cover_file and allowed_cover_file(cover_file.filename):
+        cover_filename = secure_filename(cover_file.filename)
+        cover_path = os.path.join(app.config['UPLOAD_FOLDER'], cover_filename)
+        cover_file.save(cover_path)
+
+        # Generate a path for the uploaded image
+        cover_url = url_for('static', filename=f'uploads/{cover_filename}')
+        print(f'{cover_url}')
+    
+    else:
+        cover_url='static/images/playnest_logo.png'
+
+    short_description = request.form['short-description']
+    long_description = request.form['long-description']
+
+    # Game file handler
+    if 'game-file' not in request.files:
+        return redirect(request.url)
+    
+    game_file = request.files['game-file']
+
+    if game_file.filename == '':
         return redirect(request.url)
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+    if game_file and allowed_game_file(game_file.filename):
+        filename = secure_filename(game_file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
+        game_file.save(file_path)
 
         # Extract the uploaded ZIP file
         zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -189,18 +219,24 @@ def upload_game():
         # Search for index.html in the extracted files
         index_html_path = find_index_html(zip_path)
         if index_html_path:
-            index_html_url = url_for('static', filename=f'uploads/{filename.split(".")[0]}/{index_html_path}')
-            print(f'{index_html_url}')
+            game_url = url_for('static', filename=f'uploads/{filename.split(".")[0]}/{index_html_path}')
+            print(f'{game_url}')
             os.remove(zip_path)
-            return redirect('/dashboard')
         else:
             # If index.html is not found, delete the uploaded ZIP file and the extracted folder
             os.remove(zip_path)
             if os.path.exists(extracted_folder):
                 shutil.rmtree(extracted_folder)
-            return 'No index.html found in the uploaded ZIP file'
+            return 'No index.html found in the uploaded game file'
     else:
-        return 'Invalid file format'
+        return 'Invalid game file format'
+    
+    author_id = User.query.filter_by(username=session['username']).first().id
+
+    new_game = Game(title=title, cover_url=cover_url, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
+    db.session.add(new_game)
+    db.session.commit()
+    return render_template('dashboard.html', games=Game.query.all())
 
 @app.route('/settings')
 def settings():

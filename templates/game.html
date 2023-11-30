@@ -2,11 +2,11 @@
 
 {% block title %}{% endblock %}
 
-{% block body %}
+{% block content %}
 <div class="container mt-4">
-    <iframe src="..." id="game" allowfullscreen="yes" scrolling="no" frameborder="0" height="550" width="960"></iframe>
+    <iframe src="{{ game.game_url }}" id="game" allowfullscreen="yes" scrolling="no" frameborder="0" height="550" width="960"></iframe>
     <br>
-    <p> This is a game description. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate consectetur pariatur possimus soluta ducimus magni dignissimos ab? Animi consequuntur, nulla quisquam eveniet suscipit, quam perferendis nemo quidem rerum minus autem.</p>
+    <p>{{ game.long_description }}</p>
     <br>
     <!-- Add Comment Form -->
     <div class="mb-4">

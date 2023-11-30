@@ -294,6 +294,14 @@ def delete_account():
         password_verification = request.form['delete-account-pw']
         user = User.query.filter_by(username=session['username']).first()
         if bcrypt.check_password_hash(user.password_hash, password_verification):
+            if user.profile:
+                db.session.delete(user.profile)
+
+            Review.query.filter_by(user_id=user.id).delete()
+            Thread.query.filter_by(user_id=user.id).delete()
+            Like.query.filter(Like.comment_id.in_(db.session.query(Comment.id).filter_by(user_id=user.id))).delete()
+            Comment.query.filter_by(user_id=user.id).delete()
+
             db.session.delete(user)
             db.session.commit()
             # clear username from session
@@ -344,12 +352,7 @@ def forum_threads(forum_slug):
     for thread in threads:
         thread.detail_url = url_for('thread_detail', forum_slug=forum.slug, thread_id=thread.id)
 
-    return render_template('forum_threads.html', forum=forum, threads=threads)
-
-def get_comment_depth(comment, depth=0):
-    if comment.parent_comment:
-        return get_comment_depth(comment.parent_comment, depth + 1)
-    return depth
+    return render_template('forum_threads.html', forum=forum, threads=threads, background_image=forum.image_filename)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>', methods=['GET', 'POST'])
 def thread_detail(forum_slug, thread_id):
@@ -370,12 +373,6 @@ def thread_detail(forum_slug, thread_id):
             new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id)
         db.session.add(new_comment)
         db.session.commit()
-        
-    # Get comments with depth information
-    comments = thread.comments
-    for comment in comments:
-        comment.depth = get_comment_depth(comment)
-        comment.indent_class = f"indent-{comment.depth}"
 
     if 'username' in session:
         user_id = User.query.filter_by(username=session['username']).first().id
@@ -383,7 +380,7 @@ def thread_detail(forum_slug, thread_id):
     else:
         liked_comments = []
 
-    return render_template('thread_detail.html', forum=forum, thread=thread, liked_comments=liked_comments)
+    return render_template('thread_detail.html', forum_slug=forum_slug, forum=forum, thread=thread, liked_comments=liked_comments, background_image=forum.image_filename)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/post_reply', methods=['POST'])
 def post_reply(forum_slug, thread_id):
@@ -403,7 +400,7 @@ def post_reply(forum_slug, thread_id):
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_comment/<int:comment_id>', methods=['POST'])
 def delete_comment(forum_slug, thread_id, comment_id):
     if 'username' not in session:
-        return redirect(url_for('login'))
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
     
     comment = Comment.query.get(comment_id)
     
@@ -415,8 +412,9 @@ def delete_comment(forum_slug, thread_id, comment_id):
             
         db.session.delete(comment)
         db.session.commit()
-    
-    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/edit_comment/<int:comment_id>', methods=['POST'])
 def edit_comment(forum_slug, thread_id, comment_id):

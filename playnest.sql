@@ -28,12 +28,10 @@ CREATE TABLE thread (
 );
 
 -- comment table:
--- if you previously made the comment table, drop it and recreate one with this query.
--- i made some changes to it.
 CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
-    user_id INTEGER REFERENCES users(id) NOT NULL,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     thread_id INTEGER REFERENCES thread(id) NOT NULL,
     parent_comment_id INTEGER REFERENCES comment(id),
     created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
@@ -62,7 +60,7 @@ CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255),
     content TEXT NOT NULL,
-    user_id INTEGER REFERENCES users(id) NOT NULL,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     game_identifier VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
     is_recommendation BOOLEAN NOT NULL DEFAULT TRUE,
@@ -74,13 +72,13 @@ CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
     about_me TEXT,
     profile_picture VARCHAR(255),
-    user_id INTEGER REFERENCES users(id) UNIQUE NOT NULL
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE UNIQUE NOT NULL
 );
 
 -- likes table:
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id) NOT NULL,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     comment_id INTEGER REFERENCES comment(id) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
 );

@@ -227,6 +227,14 @@ def delete_account():
         password_verification = request.form['delete-account-pw']
         user = User.query.filter_by(username=session['username']).first()
         if bcrypt.check_password_hash(user.password_hash, password_verification):
+            if user.profile:
+                db.session.delete(user.profile)
+
+            Review.query.filter_by(user_id=user.id).delete()
+            Thread.query.filter_by(user_id=user.id).delete()
+            Like.query.filter(Like.comment_id.in_(db.session.query(Comment.id).filter_by(user_id=user.id))).delete()
+            Comment.query.filter_by(user_id=user.id).delete()
+
             db.session.delete(user)
             db.session.commit()
             # clear username from session

@@ -2,7 +2,7 @@
 {% block title %}PlayNest | {{ review.user.username }}'s Review{% endblock %}
 {% block content %}
 <div class="container mt-4">
-    <h2 class="text-center mb-4"><a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>'s review</h2>
+    <h2 class="text-center mb-4"><a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames2">{{ review.user.username }}</a>'s review</h2>
     <h4 class="text-center mb-4">for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}" class="single-review-game-name">{{ game.name }}</a></h4>
     <div class="card mb-3">
         <div class="review-container">

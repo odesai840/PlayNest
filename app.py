@@ -51,24 +51,6 @@ ALLOWED_COVER_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 # Allowed game file extensions
 ALLOWED_GAME_EXTENSIONS = {'zip'}
 
-##
-# Do not uncomment this code, it will break the entire site.
-# I only put it here to showcase the issue with enabling unsupported
-# HTTP headers in our web app.
-#
-# The below code defines some HTTP headers that allow Godot games to
-# be run in the browser. Sadly, using these headers breaks APIs and
-# anything that uses JavaScript.
-#
-@app.after_request
-def add_cors_headers(response):
-    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
-    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
-    response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
-
-    return response
-##
-
 def get_game_details_from_rawg_api(game_id):
     API_KEY = os.getenv('API_KEY')
     base_url = f'https://api.rawg.io/api/games/{game_id}'

@@ -60,13 +60,13 @@ ALLOWED_GAME_EXTENSIONS = {'zip'}
 # be run in the browser. Sadly, using these headers breaks APIs and
 # anything that uses JavaScript.
 #
-#@app.after_request
-#def add_cors_headers(response):
-#    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
-#    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
-#    response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
-#
-#    return response
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Cross-Origin-Embedder-Policy'] = 'require-corp'
+    response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+    response.headers['Cross-Origin-Resource-Policy'] = 'cross-origin'
+
+    return response
 ##
 
 def get_game_details_from_rawg_api(game_id):

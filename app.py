@@ -57,7 +57,7 @@ ALLOWED_GAME_EXTENSIONS = {'zip'}
 # HTTP headers in our web app.
 #
 # The below code defines some HTTP headers that allow Godot games to
-# be run in the browser. Sadly, using these headers breaks API and
+# be run in the browser. Sadly, using these headers breaks APIs and
 # anything that uses JavaScript.
 #
 #@app.after_request

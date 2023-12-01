@@ -55,6 +55,8 @@ CREATE TABLE games (
     FOREIGN KEY (author_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+DROP TABLE games;
+
 -- reviews table:
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,

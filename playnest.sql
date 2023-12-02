@@ -8,7 +8,6 @@ CREATE TABLE users (
 );
 
 -- forum table
--- drop it then add this updated query:
 CREATE TABLE forum (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -54,8 +53,6 @@ CREATE TABLE games (
     PRIMARY KEY (game_id),
     FOREIGN KEY (author_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-DROP TABLE games;
 
 -- reviews table:
 CREATE TABLE reviews (

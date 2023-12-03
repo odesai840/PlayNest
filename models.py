@@ -74,7 +74,7 @@ class Review(db.Model):
     user = db.relationship('User', backref=db.backref('reviews', lazy=True))
     game_identifier = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
-    comments = db.relationship('Comment', backref='review_comments', lazy=True, cascade='all, delete-orphan')
+    comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('review_comments', lazy=True, viewonly=True), cascade='all, delete-orphan')
     is_recommendation = db.Column(db.Boolean, nullable=False, default=True)
     rating = db.Column(db.Integer, nullable=True)
 

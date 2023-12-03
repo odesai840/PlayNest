@@ -324,6 +324,12 @@
                     const data = await response.json();
 
                     if (data.status === 'success') {
+                        const childComments = data.child_comments;
+                        if(childComments && childComments.length > 0) {
+                            for (const childCommentId of childComments) {
+                                await deleteReviewComment(childCommentId, card);
+                            }
+                        }
                         card.remove();
                     } else {
                         console.error('Failed to delete review comment');

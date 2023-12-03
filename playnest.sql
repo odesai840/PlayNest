@@ -37,10 +37,11 @@ CREATE TABLE Comment (
     review_id INTEGER REFERENCES reviews(id),
     parent_comment_id INTEGER REFERENCES comment(id),
     created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (thread_id) REFERENCES thread(id),
-    FOREIGN KEY (review_id) REFERENCES reviews(id),
-    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE
+    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
+    CONSTRAINT fk_review FOREIGN KEY (review_id) REFERENCES reviews(id),
+    CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
 );
 
 -- games table:

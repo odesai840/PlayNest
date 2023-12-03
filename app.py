@@ -431,20 +431,17 @@ def post_review_reply(review_id):
 def delete_comment_helper(comment_id, session_username):
     comment = Comment.query.get(comment_id)
 
-    if comment:
-        # check if logged in user is the owner of the comment
-        if comment.user.username == session_username:
-            # delete child comments first
-            for child_comment in comment.child_comments:
-                db.session.delete(child_comment)
-
-            db.session.delete(comment)
-            db.session.commit()
-            return jsonify({'status': 'success'})
-        else:
-            return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
+    # check if logged in user is the owner of the comment
+    if comment.user.username == session['username']:
+        # delete child comments first
+        for child_comment in comment.child_comments:
+            db.session.delete(child_comment)
+            
+        db.session.delete(comment)
+        db.session.commit()
+        return jsonify({'status': 'success'})
     else:
-        return abort(404)
+        return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_comment/<int:comment_id>', methods=['POST'])
 def delete_comment(forum_slug, thread_id, comment_id):
@@ -470,7 +467,7 @@ def edit_comment_helper(comment_id, session_username, new_content):
             db.session.commit()
             return True
         else:
-            abort(403)  # User does not have permission
+            abort(403)
     else:
         abort(404)
 

@@ -428,9 +428,12 @@ def post_review_reply(review_id):
     
     return abort(404)
 
-def delete_comment_helper(comment_id, session_username):
+def delete_comment_helper(comment_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
     comment = Comment.query.get(comment_id)
-
+    
     # check if logged in user is the owner of the comment
     if comment.user.username == session['username']:
         # delete child comments first
@@ -439,23 +442,24 @@ def delete_comment_helper(comment_id, session_username):
             
         db.session.delete(comment)
         db.session.commit()
-        return jsonify({'status': 'success'})
-    else:
-        return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_comment/<int:comment_id>', methods=['POST'])
 def delete_comment(forum_slug, thread_id, comment_id):
     if 'username' not in session:
-        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+        return redirect(url_for('login'))
     
-    return delete_comment_helper(comment_id, session['username'])
+    delete_comment_helper(comment_id)
+
+    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
 
 @app.route('/review_detail/<int:review_id>/delete_comment/<int:comment_id>', methods=['POST'])
 def delete_review_comment(review_id, comment_id):
     if 'username' not in session:
-        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+        return redirect(url_for('login'))
+    
+    delete_comment_helper(comment_id)
 
-    return delete_comment_helper(comment_id, session['username'])
+    return redirect(url_for('review_detail', review_id=review_id))
 
 def edit_comment_helper(comment_id, session_username, new_content):
     comment = Comment.query.get(comment_id)

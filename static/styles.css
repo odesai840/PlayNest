@@ -264,6 +264,10 @@ textarea {
     margin: 0;
 }
 
+.check-out-users {
+    margin-top: 20px;
+}
+
 .recents-home-container {
     border-radius: 5px;
     padding: 15px;

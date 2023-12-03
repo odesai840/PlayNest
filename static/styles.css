@@ -545,6 +545,14 @@ iframe {
     white-space: pre-line;
 }
 
+.comment-text {
+    font-size: 17px;
+    width: 100%;
+    max-width: 860px;
+    white-space: pre-line;
+    margin-top: -20px;
+}
+
 .details {
     margin-top: 20px;
 }
@@ -644,7 +652,9 @@ iframe {
     color: white;
     font-size: 17px;
     padding: 15px;
-    max-width: 870px;
+    margin-bottom: 5px;
+    width: 100vw;
+    max-width: 860px;
     border-radius: 4px;
     background-color: #273b40;
 }
@@ -1132,5 +1142,53 @@ hr {
     .picture-label2 {
         margin-left: 80px;
         margin-right: 20px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .parent-comment-content, .comment-text {
+        max-width: 680px
+    }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+    .parent-comment-content, .comment-text {
+        max-width: 450px
+    }
+}
+
+@media (min-width: 540px) and (max-width: 767px) {
+    .parent-comment-content, .comment-text {
+        max-width: 270px
+    }
+}
+
+@media (min-width: 515px) and (max-width: 539px) {
+    .parent-comment-content, .comment-text {
+        max-width: 260px
+    }
+}
+
+@media (min-width: 491px) and (max-width: 514px) {
+    .parent-comment-content, .comment-text {
+        max-width: 230px
+    }
+}
+
+@media (min-width: 460px) and (max-width: 489px) {
+    .parent-comment-content, .comment-text {
+        max-width: 210px
+    }
+}
+
+@media (min-width: 431px) and (max-width: 490px) {
+    .parent-comment-content, .comment-text {
+        max-width: 180px
+    }
+}
+
+@media (min-width: 300px) and (max-width: 430px) {
+    .parent-comment-content, .comment-text {
+        max-width: 130px
     }
 }

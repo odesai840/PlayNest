@@ -28,17 +28,19 @@ CREATE TABLE thread (
 );
 
 -- comment table:
+-- for more-async-js branch, readd this
 CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    thread_id INTEGER REFERENCES thread(id) NOT NULL,
+    thread_id INTEGER REFERENCES thread(id),
+    review_id INTEGER REFERENCES reviews(id),
     parent_comment_id INTEGER REFERENCES comment(id),
     created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
-    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
-    CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
-    CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (thread_id) REFERENCES thread(id),
+    FOREIGN KEY (review_id) REFERENCES reviews(id),
+    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE
 );
 
 -- games table:

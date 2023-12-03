@@ -1,6 +1,27 @@
 {% extends '_layout.html' %}
 {% block title %}PlayNest | {{ review.user.username }}'s Review{% endblock %}
 {% block content %}
+
+<style>
+    .card-details {
+        margin-top: 35px;
+    }
+
+    .no-margin-bottom {
+        margin-bottom: 3px;
+    }
+
+    .details-container {
+        margin-right: 18px;
+    }
+
+    .profile-pic-container {
+        border-right: 1px solid #fff;
+        margin-right: 15px;
+        height: 100%;
+    }
+</style>
+
 <div class="container mt-4">
     <h2 class="text-center mb-4"><a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames2">{{ review.user.username }}</a>'s review</h2>
     <h4 class="text-center mb-4">for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}" class="single-review-game-name">{{ game.name }}</a></h4>
@@ -58,10 +79,200 @@
             </div>
         </div>
     </div>
+
+    <hr>
+
+    <!-- form to add a new comment -->
+    <div class="thread-comment-form-container">
+        {% if 'username' in session %}
+            <form id="commentForm" method="POST" action="{{ url_for('review_detail', review_id=review.id) }}" data-review-id="{{ review.id }}">
+                <div class="form-group">
+                    <label for="content">Leave a Comment:</label>
+                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                </div>
+                <input type="hidden" name="parent_comment_id" value="">
+                <button type="submit" class="post-comment-button">Post Comment</button>
+            </form>
+        {% else %}
+            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to leave a comment.</p>
+        {% endif %}
+    </div>
+
+    <h3 class="comments-heading">Comments</h3>
+
+{% if review.comments %}
+    {% for comment in review.comments|reverse %}
+        <div class="card mb-3">
+            <div class="comments">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex align-items-start">
+                            <div class="profile-pic-container">
+                                <div class="details-container">
+                                    {% if comment.profile_picture %}
+                                        <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + comment.profile_picture) }}"
+                                            alt="Profile Picture" class="mr-3">
+                                    {% else %}
+                                        <!-- default profile picture if the user doesn't have one -->
+                                        <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                                            alt="Default Profile Picture" class="mr-3">
+                                    {% endif %}
+                                    <div class="details">
+                                        <p class="comment-card-details no-margin-bottom">Comment by:</p>
+                                        <p class="comment-card-details no-margin-bottom">
+                                            <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username }}</a>
+                                        </p>
+                                        <p class="comment-card-details no-margin-bottom">on {{ comment.created_at.strftime('%m-%d-%Y') }}</p>
+                                        <p class="comment-card-details no-margin-bottom">at {{ comment.created_at.strftime('%I:%M %p') }}</p>
+                                        <p class="comment-card-details no-margin-bottom">
+                                            {% if 'username' in session %}
+                                                <a href="#" class="reply-link">Reply</a>
+                                            {% endif %}
+                                        </p>
+                                        <!-- like button and like count display -->
+                                        <div class="card-likes">
+                                            <button
+                                                class="btn btn-link like-button {% if 'username' in session and comment.id in liked_comments %}liked{% endif %}"
+                                                data-comment-id="{{ comment.id }}">
+                                                <i class="fas fa-thumbs-up"></i>
+                                            </button>
+                                            <span class="like-count">
+                                                {{ comment.likes|length }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                {% if comment.parent_comment %}
+                                    <div class="parent-comment-content">
+                                        <span>
+                                            <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
+                                            <strong>said:</strong>
+                                        </span>
+                                        <div class="white-space">
+                                            {{ comment.parent_comment.content }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <p class="comment-text">
+                                    <span>{{ comment.content }}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if comment.user.username == session['username'] %}
+                                <!-- delete/edit buttons if the comment belongs to the logged-in user -->
+                                <div class="comment-buttons">
+                                    <form method="POST" action="{{ url_for('edit_review_comment', review_id=review.id, comment_id=comment.id) }}">
+                                        <button type="submit" class="btn btn-link edit-button" data-comment-id="{{ comment.id }}">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('delete_review_comment', review_id=review.id, comment_id=comment.id) }}">
+                                        <button type="submit" class="btn btn-link delete-button" data-comment-id="{{ comment.id }}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="edit-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('edit_review_comment', review_id=review.id, comment_id=comment.id) }}">
+                            <div class="form-group">
+                                <label for="edit-content">Edit Your Comment:</label>
+                                <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ comment.content }}</textarea>
+                            </div>
+                            <button type="submit" class="post-comment-button">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <div class="reply-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('post_review_reply', review_id=review.id) }}">
+                            <div class="form-group">
+                                <label for="content">Your Reply:</label>
+                                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                            </div>
+                            <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                            <button type="submit" class="post-comment-button">Post Reply</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No comments yet. Start the conversation!</p>
+{% endif %}
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                likeComment(commentId, this)
+            });
+        });
+
+        async function likeComment(commentId, button) {
+            try {
+                const response = await fetch(`/like_comment/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+                const data = await response.json();
+
+                if(data.success) {
+                    // update like count in UI
+                    const likeCountElement = button.parentElement.querySelector('.like-count');
+                    const currentLikes = parseInt(likeCountElement.innerText);
+
+                    if (button.classList.contains('liked')) {
+                        // if its already been liked, unlike
+                        likeCountElement.innerText = currentLikes - 1;
+                    } else {
+                        // if not liked, then like
+                        likeCountElement.innerText = currentLikes + 1;
+                    }
+                    // toggle 'liked' class after updating like count
+                    button.classList.toggle('liked');
+                } else {
+                    console.error('Failed to like comment');
+                }
+            } catch (error) {
+                console.error('Error during likeComment:', error);
+            }
+        }
+
+        // select all reply links
+        const replyLinks = document.querySelectorAll('.reply-link');
+
+        // iterate over each reply link
+        replyLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated reply form
+                const replyForm = this.closest('.card-body').querySelector('.reply-form');
+
+                // toggle the visibility of the reply form
+                if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+                    replyForm.style.display = 'block';
+                } else {
+                    replyForm.style.display = 'none';
+                }
+            });
+        });
+
         // select all edit buttons for reviews
         const editButtons = document.querySelectorAll('.edit-button');
 
@@ -84,6 +295,46 @@
                 }
             });
         });
+
+        const deleteButtons = document.querySelectorAll('.delete-button');
+
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const card = this.closest('.card');
+                const commentId = this.getAttribute('data-comment-id');
+                deleteReviewComment(commentId, card);
+            });
+        });
+
+        const commentForm = document.getElementById('commentForm');
+        const reviewId = commentForm.dataset.reviewId;
+
+        async function deleteReviewComment(commentId, card) {
+            try {
+                const response = await fetch(`/review_detail/${reviewId}/delete_comment/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        card.remove();
+                    } else {
+                        console.error('Failed to delete review comment');
+                    }
+                } else {
+                    console.error('Failed to delete review comment. Server responded with status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error during deleteReviewComment:', error);
+            }
+        }
     });
 </script>
 {% endblock %}

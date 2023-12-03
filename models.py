@@ -65,23 +65,54 @@ class Thread(db.Model):
     def profile_picture(self):
         return self.user.profile.profile_picture if self.user and self.user.profile else None
 
+class Review(db.Model):
+    __tablename__ = 'reviews'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255))
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    user = db.relationship('User', backref=db.backref('reviews', lazy=True))
+    game_identifier = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
+    comments = db.relationship('Comment', backref='review_comments', lazy=True, cascade='all, delete-orphan')
+    is_recommendation = db.Column(db.Boolean, nullable=False, default=True)
+    rating = db.Column(db.Integer, nullable=True)
+
+    def __init__(self, title, content, user_id, game_identifier, is_recommendation=True, rating=None):
+        self.title = title
+        self.content = content
+        self.user_id = user_id
+        self.game_identifier = game_identifier
+        self.is_recommendation = is_recommendation
+        self.rating = rating
+
+    @property
+    def profile_picture(self):
+        return self.user.profile.profile_picture if self.user and self.user.profile else None
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
+
     thread_id = db.Column(db.Integer, db.ForeignKey('thread.id'), nullable=False)
     thread = db.relationship('Thread', backref=db.backref('thread_comments', lazy=True, viewonly=True), overlaps="comments")
+
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'))
+    review = db.relationship('Review', backref=db.backref('review_comments', lazy=True, viewonly=True), overlaps="comments")
+
     parent_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
     child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
 
-    def __init__(self, content, user_id, thread_id, parent_comment_id=None):
+    def __init__(self, content, user_id, thread_id=None, review_id=None, parent_comment_id=None):
         self.content = content
         self.user_id = user_id
         self.thread_id = thread_id
+        self.review_id = review_id
         self.parent_comment_id = parent_comment_id
 
     @property
@@ -99,30 +130,6 @@ class Like(db.Model):
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
     comment = db.relationship('Comment', backref=db.backref('likes', lazy=True, cascade='all, delete-orphan'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-
-class Review(db.Model):
-    __tablename__ = 'reviews'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255))
-    content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship('User', backref=db.backref('reviews', lazy=True))
-    game_identifier = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
-    is_recommendation = db.Column(db.Boolean, nullable=False, default=True)
-    rating = db.Column(db.Integer, nullable=True)
-
-    def __init__(self, title, content, user_id, game_identifier, is_recommendation=True, rating=None):
-        self.title = title
-        self.content = content
-        self.user_id = user_id
-        self.game_identifier = game_identifier
-        self.is_recommendation = is_recommendation
-        self.rating = rating
-
-    @property
-    def profile_picture(self):
-        return self.user.profile.profile_picture if self.user and self.user.profile else None
 
 class Profile(db.Model):
     __tablename__ = 'profiles'

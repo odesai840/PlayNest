@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, abort
 from werkzeug.utils import secure_filename
 import zipfile
 import shutil
@@ -382,56 +382,121 @@ def thread_detail(forum_slug, thread_id):
 
     return render_template('thread_detail.html', forum_slug=forum_slug, forum=forum, thread=thread, liked_comments=liked_comments, background_image=forum.image_filename)
 
+def post_reply_helper(content, user_id, parent_comment_id, thread_id=None, review_id=None, forum_slug=None):
+    if thread_id is not None:
+        new_comment = Comment(content=content, user_id=user_id, thread_id=thread_id, parent_comment_id=parent_comment_id)
+        redirect_route = 'thread_detail'
+        redirect_args = {'forum_slug': forum_slug, 'thread_id': thread_id}
+    elif review_id is not None:
+        new_comment = Comment(content=content, user_id=user_id, review_id=review_id, parent_comment_id=parent_comment_id)
+        redirect_route = 'review_detail'
+        redirect_args = {'review_id': review_id}
+    else:
+        # Handle invalid parameters
+        return abort(404)
+
+    db.session.add(new_comment)
+    db.session.commit()
+    
+    return redirect(url_for(redirect_route, **redirect_args))
+
 @app.route('/forum/<forum_slug>/<int:thread_id>/post_reply', methods=['POST'])
 def post_reply(forum_slug, thread_id):
     if request.method == 'POST':
         content = request.form.get('content')
         parent_comment_id = request.form.get('parent_comment_id')
         
-        user_id = User.query.filter_by(username=session['username']).first().id
-        
-        new_comment = Comment(content=content, user_id=user_id, thread_id=thread_id, parent_comment_id=parent_comment_id)
-        db.session.add(new_comment)
-        db.session.commit()
-    
-        return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+        user = User.query.filter_by(username=session['username']).first()
 
+        if user:
+            user_id = user.id
+            return post_reply_helper(content, user_id, parent_comment_id, thread_id=thread_id, forum_slug=forum_slug)
+    
+    return abort(404)
+
+@app.route('/review_detail/<int:review_id>/post_reply', methods=['POST'])
+def post_review_reply(review_id):
+    if request.method == 'POST':
+        content = request.form.get('content')
+        parent_comment_id = request.form.get('parent_comment_id')
+        
+        user = User.query.filter_by(username=session['username']).first()
+
+        if user:
+            user_id = user.id
+            return post_reply_helper(content, user_id, parent_comment_id, review_id=review_id)
+    
+    return abort(404)
+
+def delete_comment_helper(comment_id, session_username):
+    comment = Comment.query.get(comment_id)
+
+    if comment:
+        # check if logged in user is the owner of the comment
+        if comment.user.username == session_username:
+            # delete child comments first
+            for child_comment in comment.child_comments:
+                db.session.delete(child_comment)
+
+            db.session.delete(comment)
+            db.session.commit()
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
+    else:
+        return abort(404)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_comment/<int:comment_id>', methods=['POST'])
 def delete_comment(forum_slug, thread_id, comment_id):
     if 'username' not in session:
         return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
     
+    return delete_comment_helper(comment_id, session['username'])
+
+@app.route('/review_detail/<int:review_id>/delete_comment/<int:comment_id>', methods=['POST'])
+def delete_review_comment(review_id, comment_id):
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+
+    return delete_comment_helper(comment_id, session['username'])
+
+def edit_comment_helper(comment_id, session_username, new_content):
     comment = Comment.query.get(comment_id)
-    
-    # check if logged in user is the owner of the comment
-    if comment.user.username == session['username']:
-        # delete child comments first
-        for child_comment in comment.child_comments:
-            db.session.delete(child_comment)
-            
-        db.session.delete(comment)
-        db.session.commit()
-        return jsonify({'status': 'success'})
+    if comment:
+        # check if logged in user is owner of the comment
+        if comment.user.username == session_username:
+            # update the comment content in the database
+            comment.content = new_content
+            db.session.commit()
+            return True
+        else:
+            abort(403)  # User does not have permission
     else:
-        return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
+        abort(404)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/edit_comment/<int:comment_id>', methods=['POST'])
 def edit_comment(forum_slug, thread_id, comment_id):
     if 'username' not in session: 
         return redirect(url_for('login'))
-    comment = Comment.query.get(comment_id)
-    
-    # check if logged in user is owner of the comment
-    if comment.user.username == session['username']:
-        if request.method == 'POST':
-            new_content = request.form.get('edit_content')
-            
-            # update the comment content in the database
-            comment.content = new_content
-            db.session.commit()
 
-    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+    if request.method == 'POST':
+        new_content = request.form.get('edit_content')
+        if edit_comment_helper(comment_id, session['username'], new_content):
+            return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+
+    abort(400) 
+
+@app.route('/review_detail/<int:review_id>/edit_comment/<int:comment_id>', methods=['POST'])
+def edit_review_comment(review_id, comment_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        new_content = request.form.get('edit_content')
+        if edit_comment_helper(comment_id, session['username'], new_content):
+            return redirect(url_for('review_detail', review_id=review_id))
+
+    abort(400)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/edit_thread', methods=['POST'])
 def edit_thread(forum_slug, thread_id):
@@ -608,11 +673,34 @@ def edit_single_review(review_id):
 
     return redirect(url_for('review_detail', review_id=review.id))
 
-@app.route('/review_detail/<int:review_id>')
+@app.route('/review_detail/<int:review_id>', methods=['GET', 'POST'])
 def review_detail(review_id):
     review = Review.query.get(review_id)
     game = get_game_details_from_rawg_api(review.game_identifier)
-    return render_template('review_detail.html', review=review, game=game)
+
+    if request.method == 'POST':
+        content = request.form['content']
+        user_id = User.query.filter_by(username=session['username']).first().id
+        parent_comment_id = request.form.get('parent_comment_id')
+
+        if parent_comment_id:
+            new_comment = Comment(content=content, user_id=user_id, review_id=review.id, parent_comment_id=parent_comment_id)
+        else:
+            new_comment = Comment(content=content, user_id=user_id, review_id=review.id)
+
+        db.session.add(new_comment)
+        db.session.commit()
+
+        return redirect(url_for('review_detail', review_id=review_id))
+
+    comments = review.comments
+    if 'username' in session:
+        user_id = User.query.filter_by(username=session['username']).first().id
+        liked_comments = [like.comment_id for like in Like.query.filter_by(user_id=user_id).all()]
+    else:
+        liked_comments = []
+
+    return render_template('review_detail.html', review=review, game=game, comments=comments, liked_comments=liked_comments)
 
 class ProfileEditForm(FlaskForm):
     about_me = TextAreaField('About Me')

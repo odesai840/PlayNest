@@ -439,7 +439,7 @@ def delete_comment_helper(comment_id):
         # delete child comments first
         for child_comment in comment.child_comments:
             db.session.delete(child_comment)
-            
+
         db.session.delete(comment)
         db.session.commit()
 
@@ -584,12 +584,21 @@ def game_reviews():
 
 @app.route('/game_details/<int:game_id>', methods=['GET', 'POST'])
 def game_details(game_id):
+    sort_by = request.args.get('sort', 'default')
+
     game = get_game_details_from_rawg_api(game_id)
-    reviews = Review.query.filter_by(game_identifier=str(game_id)).all()
-    if game:
-        return render_template('game_details.html', game=game, reviews=reviews)
+
+    if sort_by == 'highest_rating':
+        reviews = Review.query.filter_by(game_identifier=str(game_id)).order_by(Review.rating.desc()).all()
+    elif sort_by == 'lowest_rating':
+        reviews = Review.query.filter_by(game_identifier=str(game_id)).order_by(Review.rating).all()
     else:
-        return render_template('game_details.html')
+        reviews = Review.query.filter_by(game_identifier=str(game_id)).order_by(desc(Review.created_at)).all()
+
+    if game:
+        return render_template('game_details.html', game=game, reviews=reviews, sort_by=sort_by)
+    else:
+        return render_template('game_details.html', sort_by=sort_by)
 
 def strip_html_tags(html):
     # using BeautifulSoup to parse the HTML and then get text
@@ -604,6 +613,7 @@ def post_review():
         user_id = User.query.filter_by(username=session['username']).first().id
         game_id = request.form.get('game_id')
         is_recommendation = bool(int(request.form.get('recommendation', 1)))
+        rating = int(request.form.get('rating'))
         
         # associate the review with the corresponding game using game_id
         new_review = Review(
@@ -611,7 +621,8 @@ def post_review():
             content=content, 
             user_id=user_id, 
             game_identifier=game_id,
-            is_recommendation=is_recommendation
+            is_recommendation=is_recommendation,
+            rating=rating
         )
         
         db.session.add(new_review)
@@ -806,6 +817,11 @@ def like_comment(comment_id):
         db.session.commit()
 
     return jsonify({'success': True})
+
+@app.route('/users')
+def display_users():
+    users = User.query.order_by(User.username).all()
+    return render_template('all_users.html', users=users)
 
 if __name__ == '__main__':
     app.run(debug=True)

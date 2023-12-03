@@ -29,6 +29,10 @@ body.home-page {
     background-color: #1d1d1d;
 }
 
+*:focus {
+    outline: 0 !important;
+}
+
 /* -----------------------------------------------------LAYOUT STYLING (NAVBAR, FOOTER, BUTTONS)---------------------------------------------*/
 .custom-navbar {
     background-color: #273b40;
@@ -808,6 +812,19 @@ hr {
     font-size: 18px;
 }
 
+.rating-stars {
+    display: flex;
+    color: gold;
+}
+
+.rating-stars i {
+    margin-right: 2px;
+}
+
+.sorting-form-container {
+    margin-top: 10px;
+}
+
 /* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/
 .edit-profile-container {
     text-align: center;
@@ -968,6 +985,14 @@ hr {
     }
 }
 
+.usernames3 {
+    font-size: 24px;
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
 /* ---------------------------------------------------------------LIKE BUTTON STYLING----------------------------------------------------------*/
 .like-button {
     color: #cae9ea;
@@ -989,6 +1014,29 @@ hr {
 
 .card-likes span {
     color: white;
+}
+
+/* ---------------------------------------------------------------DISPLAY USERS STYLING-------------------------------------------------------*/
+.username-container ul {
+    list-style: none;
+}
+
+.username-container li {
+    margin-bottom: 8px;
+}
+
+.playnest-users {
+    margin-left: 30px;
+}
+
+.users-link {
+    font-size: 15px;
+    text-decoration: underline;
+    color: #8be8b5;
+    &:hover {
+        color: #cae9ea;
+        text-decoration: underline;
+    }
 }
 
 /* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/

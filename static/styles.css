@@ -1,14 +1,12 @@
 body {
     overflow-x: hidden;
     overflow-y: auto;
-    background: linear-gradient(180deg, #141c1c, #284040, #1a2c2c, #2f4646, #223737, #132e2e);
-    background-size: 300% 300%;
     margin: 0;
     padding: 0;
 }
 
 
-body::before {
+body:not(.forum-threads-body)::before {
     content: '';
     position: fixed;
     top: 0;
@@ -281,6 +279,16 @@ textarea {
     }
 }
 
+.forum-page-link {
+    text-decoration: none;
+    color: #cae9ea;
+
+    &:hover {
+        color: #8be8b5;
+        text-decoration: underline;
+    }
+}
+
 .browse-all:hover {
     text-decoration: underline;
 }
@@ -458,10 +466,17 @@ iframe {
     border-radius: 5px;
     margin-bottom: 20px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    background-size: cover;
+    background-position: center;
 }
 
 .col-md-12 p {
     color: white;
+    font-size: 18.5px;
+}
+
+.col-md-12 h4 {
+    color: #c6fdff;
 }
 
 .col-md-12 h4:hover {
@@ -582,6 +597,10 @@ iframe {
     font-size: 35px;
 }
 
+.small-heading {
+    font-size: 18px;
+}
+
 .thread-op-post {
     background-color: #303030;
     padding: 20px;
@@ -639,7 +658,7 @@ iframe {
 }
 
 .edit-form {
-    margin: 0px 20px;
+    margin: 10px 20px;
 }
 
 .reply-form textarea, .edit-form textarea {
@@ -674,7 +693,7 @@ iframe {
     }
 }
 
-.delete-button, .edit-button {
+.delete-button, .edit-button, .delete-thread-button {
     color: #cae9ea;
 
     &:hover {
@@ -927,6 +946,13 @@ hr {
 
 .usernames {
     color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
+.usernames2 {
+    color: #cae9ea;
     &:hover {
         color: #8be8b5;
     }

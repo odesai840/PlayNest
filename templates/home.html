@@ -164,6 +164,7 @@
                         <li><a href="{{ url_for('forum_threads', forum_slug='xbox-corner') }}">Xbox</a></li>
                         <li><a href="{{ url_for('forum_threads', forum_slug='playstation-corner') }}">PlayStation</a></li>
                         <li><a href="{{ url_for('forum_threads', forum_slug='indie-games-corner') }}">Indie Games</a></li>
+                        <li><a href="{{ url_for('forum_threads', forum_slug='random-corner') }}">Random</a></li>
                         <li><a href="{{ url_for('forum_threads', forum_slug='developer-corner') }}">Developer Discussions</a></li>
                         <li class="browse-all"><a href="{{ url_for('forum') }}">Browse All →</a></li>
                     </ul>
@@ -174,7 +175,7 @@
             <div class="col-md-10">
                 <div class="main-content">
                     <header>
-                        <img src="./static/images/hero_background_1.png">
+                        <img src="./static/images/hero_background_1.png" loading="lazy">
                         <section>
                             {% if 'username' in session %}
                                 <h2>PlayNest: Connecting Gamers, Empowering Developers</h2>
@@ -194,7 +195,6 @@
                             <h2>Recent User Games</h2>
                         </div>
 
-
                         <div class="recent-forum-posts">
                             <h2>Recent Forum Threads</h2>
                             <div class="forum-threads-grid">
@@ -204,7 +204,7 @@
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     <a href="{{ thread.detail_url }}">
-                                                        <h5 class="card-title small-card-title threads-title">{{ truncate_text(thread.title, max_words=6) }}</h5>
+                                                        <h5 class="card-title small-card-title threads-title">{{ truncate_text(thread.title, max_words=7) }}</h5>
                                                     </a>
                                                     <p class="small-card-text">{{ truncate_text(thread.content) }}</p>
                                                     <p class="card-details">
@@ -235,7 +235,7 @@
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     {% set game_info = get_game_details_from_rawg_api(review.game_identifier) %}
-                                                    <h5 class="card-title small-card-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ truncate_text(review.title, max_words=6) }}</a></h5>
+                                                    <h5 class="card-title small-card-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ truncate_text(review.title, max_words=7) }}</a></h5>
                                                     <h6><strong>for <a href="{{ url_for('game_details', game_id=review.game_identifier) }}">{{ game_info.name }}</a></strong></h6>
                                                     <p class="small-card-text">{{ truncate_text(review.content) }}</p>
                                                     <p class="card-details">
@@ -252,6 +252,10 @@
                                 {% endif %}
                             </div>
                         </div>
+
+                        <div class="recent-threads-container"></div>
+                        <div class="recent-reviews-container"></div>
+
                     </div>
                 </div>
             </div>

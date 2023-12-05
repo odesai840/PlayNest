@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.utils import secure_filename
-from werkzeug.datastructures import FileStorage
+import zipfile
+import shutil
 # bcrypt is a hashing library used to securely hash passwords
 # instead of storing passwords directly in the database, we store a hash of the password so that if the database is compromised,
 # attackers wont have access to the actual user passwords
@@ -45,8 +46,10 @@ bcrypt = Bcrypt(app)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Allowed file extensions
-ALLOWED_EXTENSIONS = {'zip'}
+# Allowed cover image extensions
+ALLOWED_COVER_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+# Allowed game file extensions
+ALLOWED_GAME_EXTENSIONS = {'zip'}
 
 def get_game_details_from_rawg_api(game_id):
     API_KEY = os.getenv('API_KEY')
@@ -148,28 +151,92 @@ def logout():
 def dashboard():
     return render_template('dashboard.html')
 
-def allowed_file(filename):
+def find_index_html(zip_path):
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        # Get a list of all files in the ZIP archive
+        file_list = zip_ref.namelist()
+        
+        # Search for index.html in all files
+        for file in file_list:
+            if file.lower().endswith('index.html'):
+                return file
+        
+        return None
+
+def allowed_game_file(filename):
     return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_GAME_EXTENSIONS
 
-@app.post('/upload')
+def allowed_cover_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_COVER_EXTENSIONS
+
+@app.post('/upload_game')
 def upload_game():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-    file = request.files['file']
-    # If the user does not select a file, the browser submits an
-    # empty file without a filename.
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
-    if file and allowed_file(file.filename):
-        # If the line below shows up as an error, just ignore it.
-        # It works fine.
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    title = request.form['title']
 
-    return redirect('/dashboard')
+    # Cover image file handler
+    if 'cover-image' not in request.files:
+        return redirect(request.url)
+    
+    cover_file = request.files['cover-image']
+
+    if cover_file and allowed_cover_file(cover_file.filename):
+        cover_filename = secure_filename(cover_file.filename)
+        cover_path = os.path.join(app.config['UPLOAD_FOLDER'], cover_filename)
+        cover_file.save(cover_path)
+
+        # Generate a path for the uploaded image
+        cover_url = url_for('static', filename=f'uploads/{cover_filename}')
+        print(f'{cover_url}')
+    
+    else:
+        cover_url='static/images/playnest_logo.png'
+
+    short_description = request.form['short-description']
+    long_description = request.form['long-description']
+
+    # Game file handler
+    if 'game-file' not in request.files:
+        return redirect(request.url)
+    
+    game_file = request.files['game-file']
+
+    if game_file.filename == '':
+        return redirect(request.url)
+
+    if game_file and allowed_game_file(game_file.filename):
+        filename = secure_filename(game_file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        game_file.save(file_path)
+
+        # Extract the uploaded ZIP file
+        zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(extracted_folder)
+
+        # Search for index.html in the extracted files
+        index_html_path = find_index_html(zip_path)
+        if index_html_path:
+            game_url = url_for('static', filename=f'uploads/{filename.split(".")[0]}/{index_html_path}')
+            print(f'{game_url}')
+            os.remove(zip_path)
+        else:
+            # If index.html is not found, delete the uploaded ZIP file and the extracted folder
+            os.remove(zip_path)
+            if os.path.exists(extracted_folder):
+                shutil.rmtree(extracted_folder)
+            return 'No index.html found in the uploaded game file'
+    else:
+        return 'Invalid game file format'
+    
+    author_id = User.query.filter_by(username=session['username']).first().id
+
+    new_game = Game(title=title, cover_url=cover_url, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
+    db.session.add(new_game)
+    db.session.commit()
+    return render_template('dashboard.html', games=Game.query.all())
 
 @app.route('/settings')
 def settings():
@@ -227,6 +294,14 @@ def delete_account():
         password_verification = request.form['delete-account-pw']
         user = User.query.filter_by(username=session['username']).first()
         if bcrypt.check_password_hash(user.password_hash, password_verification):
+            if user.profile:
+                db.session.delete(user.profile)
+
+            Review.query.filter_by(user_id=user.id).delete()
+            Thread.query.filter_by(user_id=user.id).delete()
+            Like.query.filter(Like.comment_id.in_(db.session.query(Comment.id).filter_by(user_id=user.id))).delete()
+            Comment.query.filter_by(user_id=user.id).delete()
+
             db.session.delete(user)
             db.session.commit()
             # clear username from session
@@ -277,12 +352,7 @@ def forum_threads(forum_slug):
     for thread in threads:
         thread.detail_url = url_for('thread_detail', forum_slug=forum.slug, thread_id=thread.id)
 
-    return render_template('forum_threads.html', forum=forum, threads=threads)
-
-def get_comment_depth(comment, depth=0):
-    if comment.parent_comment:
-        return get_comment_depth(comment.parent_comment, depth + 1)
-    return depth
+    return render_template('forum_threads.html', forum=forum, threads=threads, background_image=forum.image_filename)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>', methods=['GET', 'POST'])
 def thread_detail(forum_slug, thread_id):
@@ -303,12 +373,6 @@ def thread_detail(forum_slug, thread_id):
             new_comment = Comment(content=content, user_id=user_id, thread_id=thread.id)
         db.session.add(new_comment)
         db.session.commit()
-        
-    # Get comments with depth information
-    comments = thread.comments
-    for comment in comments:
-        comment.depth = get_comment_depth(comment)
-        comment.indent_class = f"indent-{comment.depth}"
 
     if 'username' in session:
         user_id = User.query.filter_by(username=session['username']).first().id
@@ -316,7 +380,7 @@ def thread_detail(forum_slug, thread_id):
     else:
         liked_comments = []
 
-    return render_template('thread_detail.html', forum=forum, thread=thread, liked_comments=liked_comments)
+    return render_template('thread_detail.html', forum_slug=forum_slug, forum=forum, thread=thread, liked_comments=liked_comments, background_image=forum.image_filename)
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/post_reply', methods=['POST'])
 def post_reply(forum_slug, thread_id):
@@ -336,7 +400,7 @@ def post_reply(forum_slug, thread_id):
 @app.route('/forum/<forum_slug>/<int:thread_id>/delete_comment/<int:comment_id>', methods=['POST'])
 def delete_comment(forum_slug, thread_id, comment_id):
     if 'username' not in session:
-        return redirect(url_for('login'))
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
     
     comment = Comment.query.get(comment_id)
     
@@ -348,8 +412,9 @@ def delete_comment(forum_slug, thread_id, comment_id):
             
         db.session.delete(comment)
         db.session.commit()
-    
-    return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
+        return jsonify({'status': 'success'})
+    else:
+        return jsonify({'status': 'error', 'message': 'User does not have permission'}), 403
 
 @app.route('/forum/<forum_slug>/<int:thread_id>/edit_comment/<int:comment_id>', methods=['POST'])
 def edit_comment(forum_slug, thread_id, comment_id):

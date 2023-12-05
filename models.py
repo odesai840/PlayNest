@@ -22,19 +22,18 @@ class Game(db.Model):
     __tablename__ = 'games'
     game_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    game_cover_url = db.Column(db.String(255), nullable=True)
+    cover_url = db.Column(db.String(255), nullable=True)
     short_description = db.Column(db.String(255), nullable=True)
     long_description = db.Column(db.Text, nullable=True)
-    release_date = db.Column(db.String(255), nullable=False)
+    release_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     game_url = db.Column(db.String(255), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
 
-    def __init__(self, title, game_cover_url, short_description, long_description, release_date, game_url, author_id):
+    def __init__(self, title, cover_url, short_description, long_description, game_url, author_id):
         self.title = title
-        self.game_cover_url = game_cover_url
+        self.cover_url = cover_url
         self.short_description = short_description
         self.long_description = long_description
-        self.release_date = release_date
         self.game_url = game_url
         self.author_id = author_id
 
@@ -43,10 +42,11 @@ class Forum(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     slug = db.Column(db.String(50), unique=True, nullable=False)
+    image_filename = db.Column(db.String(255), nullable=False)
 
 class Thread(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(250), nullable=False)
     content = db.Column(db.Text, nullable=False)
     forum_id = db.Column(db.Integer, db.ForeignKey('forum.id'), nullable=False)
     forum = db.relationship('Forum', backref=db.backref('threads', lazy=True))
@@ -68,7 +68,7 @@ class Thread(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('comments', lazy=True))
     thread_id = db.Column(db.Integer, db.ForeignKey('thread.id'), nullable=False)
     thread = db.relationship('Thread', backref=db.backref('thread_comments', lazy=True, viewonly=True), overlaps="comments")
@@ -95,7 +95,7 @@ class Like(db.Model):
     __tablename__ = 'likes'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('likes', lazy=True))
+    user = db.relationship('User', backref=db.backref('likes', lazy=True, cascade='all, delete-orphan'))
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'), nullable=False)
     comment = db.relationship('Comment', backref=db.backref('likes', lazy=True, cascade='all, delete-orphan'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -105,7 +105,7 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255))
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User', backref=db.backref('reviews', lazy=True))
     game_identifier = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
@@ -129,5 +129,5 @@ class Profile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     about_me = db.Column(db.Text)
     profile_picture = db.Column(db.String(255))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
-    user = db.relationship('User', backref=db.backref('profile', uselist=False), lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), unique=True, nullable=False)
+    user = db.relationship('User', backref=db.backref('profile', uselist=False), uselist=False)

@@ -16,7 +16,7 @@
 
     <div class="row forum-card-container">
         {% for forum in forums %}
-            <div class="col-md-12">
+            <div class="col-md-12" style="background-image: url('/static/images/{{ forum.image_filename }}');">
                 <a href="{{ url_for('forum_threads', forum_slug=forum.slug) }}" class="forum-card">
                     <h4>{{ forum.title }}</h4>
                 </a>

@@ -596,9 +596,20 @@ def game_details(game_id):
         reviews = Review.query.filter_by(game_identifier=str(game_id)).order_by(desc(Review.created_at)).all()
 
     if game:
-        return render_template('game_details.html', game=game, reviews=reviews, sort_by=sort_by)
+        average_rating, review_count = calculate_average_rating(reviews)
+        return render_template('game_details.html', game=game, reviews=reviews, sort_by=sort_by, average_rating=average_rating, review_count=review_count)
     else:
         return render_template('game_details.html', sort_by=sort_by)
+
+def calculate_average_rating(reviews):
+    total_ratings = 0
+    count = 0
+    for review in reviews:
+        if review.rating is not None: 
+            total_ratings += review.rating
+            count += 1
+    average_rating = total_ratings / count if count > 0 else 0
+    return average_rating, count
 
 def strip_html_tags(html):
     # using BeautifulSoup to parse the HTML and then get text
@@ -645,8 +656,7 @@ def delete_review(review_id):
         db.session.delete(review)
         db.session.commit()
     
-    game_id = review.game_identifier
-    return redirect(url_for('game_details', game_id=game_id))
+    return jsonify({'success': True})
 
 @app.route('/edit_review/<int:review_id>', methods=['POST'])
 def edit_review(review_id):

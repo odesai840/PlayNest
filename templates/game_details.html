@@ -110,7 +110,15 @@
     <hr>
 
     <div class="reviews-line d-flex justify-content-between">
-        <h3 class="comments-heading">Reviews</h3>
+        <div class="reviews-heading-container">
+            <h3 class="comments-heading">
+                Reviews
+                <i class="fas fa-star" style="color: gold;"></i> <span class="number-average" style="color: gold;">{{ "{:.1f}".format(average_rating) }}</span>
+                <span class="review-count">
+                    {{ review_count }} reviews
+                </span>
+            </h3>
+        </div>
 
         <!-- sorting form to organize reviews from highest rated, lowest rated, or default (which is just the most recent reviews posted appearing at the top) -->
         <div class="sorting-form-container">
@@ -125,12 +133,14 @@
         </div>
 
         <!-- display a message if the user is not logged in -->
-        {% if 'username' not in session %}
-            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
-        {% else %}
-            <!-- button to toggle the review form visibility -->
-            <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
-        {% endif %}
+        <div class="write-review-button">
+            {% if 'username' not in session %}
+                <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
+            {% else %}
+                <!-- button to toggle the review form visibility -->
+                <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
+            {% endif %}
+        </div>
     </div>
 
         <!-- form to add a new review (initially hidden) -->
@@ -341,7 +351,7 @@
                         <i class="fa-solid fa-pencil"></i>
                     </button>
                     <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
-                        <button type="submit" class="btn btn-link delete-button">
+                        <button type="submit" class="btn btn-link delete-button" data-review-id = {{ review.id }}>
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </form>
@@ -363,54 +373,99 @@
     {% endfor %}
 </div>
 
-    <!-- JavaScript to toggle review form visibility -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleFormBtn = document.getElementById('toggleFormBtn');
-            const reviewForm = document.getElementById('reviewForm');
-            const sortingForm = document.getElementById('sortingForm');
+<!-- JavaScript to toggle review form visibility -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleFormBtn = document.getElementById('toggleFormBtn');
+        const reviewForm = document.getElementById('reviewForm');
+        const sortingForm = document.getElementById('sortingForm');
 
-            sortingForm.addEventListener('change', function () {
-                // get the selected sorting option
-                const selectedSort = document.getElementById('sort').value;
+        sortingForm.addEventListener('change', function () {
+            // get the selected sorting option
+            const selectedSort = document.getElementById('sort').value;
 
-                // construct the URL with the sorting parameter
-                const url = sortingForm.action + '?sort=' + selectedSort;
+            // construct the URL with the sorting parameter
+            const url = sortingForm.action + '?sort=' + selectedSort;
 
-                // redirect to the updated URL
-                window.location.href = url;
-            });
+            // redirect to the updated URL
+            window.location.href = url;
+        });
 
-            toggleFormBtn.addEventListener('click', function () {
-                if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
-                    reviewForm.style.display = 'block';
+        toggleFormBtn.addEventListener('click', function () {
+            if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
+                reviewForm.style.display = 'block';
+            } else {
+                reviewForm.style.display = 'none';
+            }
+        });
+
+        // select all edit buttons for reviews
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        // iterate over each edit button for reviews
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated card for reviews
+                const card = this.closest('.card');
+
+                // get the associated edit form within the card for reviews
+                const editForm = card.querySelector('.edit-form');
+
+                // toggle the visibility of the edit form for reviews
+                if (editForm.style.display === 'none' || editForm.style.display === '') {
+                    editForm.style.display = 'block';
                 } else {
-                    reviewForm.style.display = 'none';
+                    editForm.style.display = 'none';
                 }
             });
+        });
 
-            // select all edit buttons for reviews
-            const editButtons = document.querySelectorAll('.edit-button');
+        // grabbing all delete buttons
+        const deleteButtons = document.querySelectorAll('.delete-button');
 
-            // iterate over each edit button for reviews
-            editButtons.forEach(function (button) {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
+        // loop through each button and call deleteReview function
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
 
-                    // get the associated card for reviews
-                    const card = this.closest('.card');
-
-                    // get the associated edit form within the card for reviews
-                    const editForm = card.querySelector('.edit-form');
-
-                    // toggle the visibility of the edit form for reviews
-                    if (editForm.style.display === 'none' || editForm.style.display === '') {
-                        editForm.style.display = 'block';
-                    } else {
-                        editForm.style.display = 'none';
-                    }
-                });
+                const card = this.closest('.card');
+                const reviewId = this.getAttribute('data-review-id');
+                deleteReview(reviewId, card);
             });
         });
-    </script>
+
+        // deleteReview function where you can delete reviews without the page reloading
+        async function deleteReview(reviewId, card) {
+            try {
+                const response = await fetch(`/delete_review/${reviewId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+        
+                if (response.ok) {
+                    try {
+                        const data = await response.json();
+        
+                        if (data.success) {
+                            card.remove();
+                        } else {
+                            console.error('Failed to delete review. Server response:', data);
+                        }
+                    } catch (jsonError) {
+                        console.error('Error parsing JSON:', jsonError);
+                    }
+                } else {
+                    console.error('Failed to delete review. Server responded with status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error during deleteReview:', error);
+            }
+        }
+    });
+</script>
 {% endblock %}

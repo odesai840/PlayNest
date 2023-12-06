@@ -826,7 +826,17 @@ hr {
 }
 
 .sorting-form-container {
-    margin-top: 10px;
+    margin-top: 8px;
+    margin-left: 420px;
+}
+
+.review-count {
+    font-size: 20px;
+    color: white;
+}
+
+.write-review-button {
+    margin-top: 6.5px;
 }
 
 /* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/

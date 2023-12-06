@@ -67,7 +67,7 @@
                     <button type="submit" class="btn btn-link edit-button">
                         <i class="fa-solid fa-pencil"></i>
                     </button>
-                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                    <form method="POST" action="{{ url_for('delete_single_review', review_id=review.id) }}">
                         <button type="submit" class="btn btn-link delete-button">
                             <i class="fas fa-trash-alt"></i>
                         </button>

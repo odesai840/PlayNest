@@ -644,19 +644,32 @@ def post_review():
     
     return redirect(url_for('home'))
 
-@app.route('/delete_review/<int:review_id>', methods=['POST'])
-def delete_review(review_id):
+def delete_review_helper(review_id):
     if 'username' not in session:
         return redirect(url_for('login'))
-    
+
     review = Review.query.get(review_id)
-    
+
     # check if logged in user is owner of the review
     if review.user.username == session['username']:
         db.session.delete(review)
         db.session.commit()
-    
+
+@app.route('/delete_review/<int:review_id>', methods=['POST'])
+def delete_review(review_id):
+    delete_review_helper(review_id)
+
     return jsonify({'success': True})
+
+@app.route('/delete_single_review/<int:review_id>', methods=['POST'])
+def delete_single_review(review_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    review = Review.query.get(review_id)
+    delete_review_helper(review_id)
+    game_id = review.game_identifier
+    return redirect(url_for('game_details', game_id=game_id))
 
 @app.route('/edit_review/<int:review_id>', methods=['POST'])
 def edit_review(review_id):

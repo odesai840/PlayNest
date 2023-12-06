@@ -28,7 +28,7 @@ CREATE TABLE thread (
 );
 
 -- comment table:
--- for more-async-js branch, readd this
+-- for more-async-js branch, re-add this
 CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,

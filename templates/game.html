@@ -1,12 +1,34 @@
 {% extends '_layout.html' %}
 
-{% block title %}{% endblock %}
+{% block title %}PlayNest{% endblock %}
 
-{% block body %}
+{% block content %}
+<style>
+    #game-player{
+        z-index: 0;
+    }
+
+    .fullscreen-btn {
+        position: relative;
+        right: 75px;
+        bottom: 37px;
+        background-color: transparent;
+        border: none;
+        float: right;
+    }
+
+    .long-description {
+        white-space: pre-wrap;
+    }
+</style>
+
 <div class="container mt-4">
-    <iframe src="..." id="game" allowfullscreen="yes" scrolling="no" frameborder="0" height="550" width="960"></iframe>
+    <iframe src="{{ game.game_url }}" id="game-player" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" msallowfullscreen="true" scrolling="no" frameborder="0" height="550" width="960"></iframe>
+    <button class="fullscreen-btn" onclick="goFullscreen('game-player'); return false">
+        <img src="/static/images/fullscreen_btn.png" height="30px" width="30px">
+    </button>
     <br>
-    <p> This is a game description. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate consectetur pariatur possimus soluta ducimus magni dignissimos ab? Animi consequuntur, nulla quisquam eveniet suscipit, quam perferendis nemo quidem rerum minus autem.</p>
+    <p class="long-description">{{ game.long_description }}</p>
     <br>
     <!-- Add Comment Form -->
     <div class="mb-4">
@@ -31,4 +53,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function getFullscreenElement() {
+        return document.fullscreenElement
+            || document.webkitFullscreenElement
+            || document.mozFullscreenElement
+            || document.msFullscreenElement;
+    }
+
+    function goFullscreen(id) {
+        var element = document.getElementById(id);
+        element.requestFullscreen().catch((e) => {
+            console.log(e);
+        });
+    }
+</script>
 {% endblock %}

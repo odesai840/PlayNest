@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from werkzeug.utils import secure_filename
 import zipfile
 import shutil
@@ -50,6 +50,16 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_COVER_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 # Allowed game file extensions
 ALLOWED_GAME_EXTENSIONS = {'zip'}
+
+# This stuff is for Godot 4 support, but we're not doing that anymore,
+# so just ignore it
+#
+#@app.after_request
+#def add_cors_headers(response):
+#   response.headers['Cross-Origin-Embedder-Policy'] = 'credentialless'
+#   response.headers['Cross-Origin-Opener-Policy'] = 'same-origin'
+#
+#   return response
 
 def get_game_details_from_rawg_api(game_id):
     API_KEY = os.getenv('API_KEY')
@@ -147,10 +157,6 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('home'))
 
-@app.get('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
-
 def find_index_html(zip_path):
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         # Get a list of all files in the ZIP archive
@@ -171,72 +177,80 @@ def allowed_cover_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_COVER_EXTENSIONS
 
-@app.post('/upload_game')
-def upload_game():
-    title = request.form['title']
+@app.route('/dashboard', methods=['GET','POST'])
+def dashboard():
+    if request.method == 'POST':
+        title = request.form['title']
 
-    # Cover image file handler
-    if 'cover-image' not in request.files:
-        return redirect(request.url)
-    
-    cover_file = request.files['cover-image']
+        # Cover image file handler
+        if 'cover-image' not in request.files:
+            return redirect(request.url)
+        
+        cover_file = request.files['cover-image']
 
-    if cover_file and allowed_cover_file(cover_file.filename):
-        cover_filename = secure_filename(cover_file.filename)
-        cover_path = os.path.join(app.config['UPLOAD_FOLDER'], cover_filename)
-        cover_file.save(cover_path)
+        if cover_file and allowed_cover_file(cover_file.filename):
+            cover_filename = secure_filename(cover_file.filename)
+            cover_path = os.path.join(app.config['UPLOAD_FOLDER'], cover_filename)
+            cover_file.save(cover_path)
 
-        # Generate a path for the uploaded image
-        cover_url = url_for('static', filename=f'uploads/{cover_filename}')
-        print(f'{cover_url}')
-    
-    else:
-        cover_url='static/images/playnest_logo.png'
-
-    short_description = request.form['short-description']
-    long_description = request.form['long-description']
-
-    # Game file handler
-    if 'game-file' not in request.files:
-        return redirect(request.url)
-    
-    game_file = request.files['game-file']
-
-    if game_file.filename == '':
-        return redirect(request.url)
-
-    if game_file and allowed_game_file(game_file.filename):
-        filename = secure_filename(game_file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        game_file.save(file_path)
-
-        # Extract the uploaded ZIP file
-        zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(extracted_folder)
-
-        # Search for index.html in the extracted files
-        index_html_path = find_index_html(zip_path)
-        if index_html_path:
-            game_url = url_for('static', filename=f'uploads/{filename.split(".")[0]}/{index_html_path}')
-            print(f'{game_url}')
-            os.remove(zip_path)
+            # Generate a path for the uploaded image
+            cover_url = url_for('static', filename=f'uploads/{cover_filename}')
+            print(f'{cover_url}')
+        
         else:
-            # If index.html is not found, delete the uploaded ZIP file and the extracted folder
-            os.remove(zip_path)
-            if os.path.exists(extracted_folder):
-                shutil.rmtree(extracted_folder)
-            return 'No index.html found in the uploaded game file'
-    else:
-        return 'Invalid game file format'
-    
-    author_id = User.query.filter_by(username=session['username']).first().id
+            cover_url='static/images/playnest_logo.png'
 
-    new_game = Game(title=title, cover_url=cover_url, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
-    db.session.add(new_game)
-    db.session.commit()
+        short_description = request.form['short-description']
+        long_description = request.form['long-description']
+
+        # Game file handler
+        if 'game-file' not in request.files:
+            return redirect(request.url)
+        
+        game_file = request.files['game-file']
+
+        if game_file.filename == '':
+            return redirect(request.url)
+
+        if game_file and allowed_game_file(game_file.filename):
+            filename = secure_filename(game_file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            game_file.save(file_path)
+
+            # Extract the uploaded ZIP file
+            zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+                zip_ref.extractall(extracted_folder)
+
+            # Search for index.html in the extracted files
+            index_html_path = find_index_html(zip_path)
+            if index_html_path:
+                game_url = url_for('static', filename=f'uploads/{filename.split(".")[0]}/{index_html_path}')
+                print(f'{game_url}')
+                os.remove(zip_path)
+            else:
+                # If index.html is not found, delete the uploaded ZIP file and the extracted folder
+                os.remove(zip_path)
+                if os.path.exists(extracted_folder):
+                    shutil.rmtree(extracted_folder)
+                return 'No index.html found in the uploaded game file'
+        else:
+            return 'Invalid game file format'
+        
+        author_id = User.query.filter_by(username=session['username']).first().id
+
+        new_game = Game(title=title, cover_url=cover_url, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
+        db.session.add(new_game)
+        db.session.commit()
+        return render_template('dashboard.html', games=Game.query.all())
+    
     return render_template('dashboard.html', games=Game.query.all())
+
+@app.get('/game/<int:game_id>')
+def play_game(game_id):
+    game = Game.query.get(game_id)
+    return render_template('game.html', game=game)
 
 @app.route('/settings')
 def settings():
@@ -717,7 +731,3 @@ def like_comment(comment_id):
         db.session.commit()
 
     return jsonify({'success': True})
-
-if __name__ == '__main__':
-    app.run(debug=True)
-

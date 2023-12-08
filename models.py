@@ -27,6 +27,7 @@ class Game(db.Model):
     long_description = db.Column(db.Text, nullable=True)
     release_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     game_url = db.Column(db.String(255), nullable=False)
+    author = db.relationship('User', backref='games')
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('game_comments', lazy=True, viewonly=True), cascade='all, delete-orphan')
 

@@ -91,14 +91,18 @@ def home():
     # retrieve most recent threads from all forums and recent reviews posted
     recent_threads = Thread.query.order_by(desc(Thread.created_at)).limit(4).all()
     recent_reviews = Review.query.order_by(desc(Review.created_at)).limit(4).all()
+    recent_games = Game.query.order_by(desc(Game.release_date)).limit(4).all()
 
     for thread in recent_threads:
         thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
-    
+
     for review in recent_reviews:
         review.detail_url = url_for('game_details', game_id=review.game_identifier)
-    
-    return render_template('home.html', recent_threads=recent_threads, recent_reviews=recent_reviews, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
+
+    for game in recent_games:
+        game.detail_url = url_for('game_detail', game_id=game.game_id)
+
+    return render_template('home.html', recent_threads=recent_threads, recent_reviews=recent_reviews, recent_games=recent_games, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -868,6 +872,7 @@ def view_profile(user_id):
     # retrieve reviews and threads posted by user
     user_reviews = Review.query.filter_by(user_id=user.id).all()
     user_threads = Thread.query.filter_by(user_id=user.id).all()
+    user_games = Game.query.filter_by(author_id=user.id).all()
     
     # attach URLs to reviews and threads for details viewing
     for review in user_reviews:
@@ -876,9 +881,12 @@ def view_profile(user_id):
     for thread in user_threads:
         thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
 
-    return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
+    for game in user_games:
+        game.detail_url = url_for('game_detail', game_id=game.game_id)
 
-@app.route('/profile/view')
+    return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, user_games=user_games, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
+
+@app.route('/profile/view', methods=['GET'])
 def view_own_profile():
     if 'username' in session:
         user = User.query.filter_by(username=session['username']).first()
@@ -886,15 +894,19 @@ def view_own_profile():
         # retrieve reviews and threads posted by the user
         user_reviews = Review.query.filter_by(user_id=user.id).all()
         user_threads = Thread.query.filter_by(user_id=user.id).all()
+        user_games = Game.query.filter_by(author_id=user.id).all()
 
-        # attach URLs to reviews and threads for details viewing
+        # attach URLs to reviews, threads and games for details viewing
         for review in user_reviews:
             review.detail_url = url_for('game_details', game_id=review.game_identifier)
 
         for thread in user_threads:
             thread.detail_url = url_for('thread_detail', forum_slug=thread.forum.slug, thread_id=thread.id)
 
-        return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
+        for game in user_games:
+            game.detail_url = url_for('game_detail', game_id=game.game_id)
+
+        return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, user_games=user_games, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
     else:
         # if the user is not logged in
         return redirect(url_for('login'))
@@ -926,6 +938,14 @@ def like_comment(comment_id):
 def display_users():
     users = User.query.order_by(User.username).all()
     return render_template('all_users.html', users=users)
+
+@app.route('/user_games')
+def user_games():
+    games = Game.query.order_by(desc(Game.release_date)).all()
+    for game in games:
+        game.detail_url = url_for('game_detail', game_id=game.game_id)
+
+    return render_template('user_games.html', games=games)
 
 if __name__ == '__main__':
     app.run(debug=True)

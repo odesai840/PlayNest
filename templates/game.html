@@ -18,8 +18,19 @@
     }
 
     .long-description {
-        white-space: pre-wrap;
+        font-size: 17px;
+        width: 100%;
+        max-width: 961px;
+        white-space: pre-line;
+    }
+
+    .user-game-desc-container {
         margin-left: 53px;
+    }
+
+    .game-desc-card {
+        background-color: #303030;
+        border: none;
     }
 
     .card-details {
@@ -48,7 +59,22 @@
             <img src="/static/images/fullscreen_btn.png" height="30px" width="30px">
         </button>
         <br>
-        <p class="long-description">{{ game.long_description }}</p>
+        <div class="card game-desc-card mb-3">
+            <div class="user-game-desc-container">
+                {% if game.long_description %}
+                    <p class="long-description">{{ game.long_description }}</p>
+                {% else %}
+                    <p class="none-found">No recent threads found.</p>
+                {% endif %}
+                <p class="card-details">Released by: 
+                    <span>
+                        <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
+                    </span>
+                    on
+                    {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
+                </p>
+            </div>
+        </div>
     </div>
 
     <hr>

@@ -28,6 +28,7 @@ class Game(db.Model):
     release_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
     game_url = db.Column(db.String(255), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('game_comments', lazy=True, viewonly=True), cascade='all, delete-orphan')
 
     def __init__(self, title, cover_url, short_description, long_description, game_url, author_id):
         self.title = title
@@ -102,17 +103,21 @@ class Comment(db.Model):
     review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'))
     review = db.relationship('Review', backref=db.backref('review_comments', lazy=True, viewonly=True), overlaps="comments")
 
+    game_id = db.Column(db.Integer, db.ForeignKey('games.game_id'))
+    game = db.relationship('Game', backref=db.backref('game_comments', lazy=True, viewonly=True), overlaps="comments")
+
     parent_comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
     child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')
 
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
 
-    def __init__(self, content, user_id, thread_id=None, review_id=None, parent_comment_id=None):
+    def __init__(self, content, user_id, thread_id=None, review_id=None, game_id=None, parent_comment_id=None):
         self.content = content
         self.user_id = user_id
         self.thread_id = thread_id
         self.review_id = review_id
+        self.game_id = game_id
         self.parent_comment_id = parent_comment_id
 
     @property

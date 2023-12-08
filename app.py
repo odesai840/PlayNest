@@ -396,7 +396,7 @@ def thread_detail(forum_slug, thread_id):
 
     return render_template('thread_detail.html', forum_slug=forum_slug, forum=forum, thread=thread, liked_comments=liked_comments, background_image=forum.image_filename)
 
-def post_reply_helper(content, user_id, parent_comment_id, thread_id=None, review_id=None, forum_slug=None):
+def post_reply_helper(content, user_id, parent_comment_id, thread_id=None, review_id=None, game_id=None, forum_slug=None):
     if thread_id is not None:
         new_comment = Comment(content=content, user_id=user_id, thread_id=thread_id, parent_comment_id=parent_comment_id)
         redirect_route = 'thread_detail'
@@ -405,6 +405,10 @@ def post_reply_helper(content, user_id, parent_comment_id, thread_id=None, revie
         new_comment = Comment(content=content, user_id=user_id, review_id=review_id, parent_comment_id=parent_comment_id)
         redirect_route = 'review_detail'
         redirect_args = {'review_id': review_id}
+    elif game_id is not None:
+        new_comment = Comment(content=content, user_id=user_id, game_id=game_id, parent_comment_id=parent_comment_id)
+        redirect_route = 'game_detail'
+        redirect_args = {'game_id': game_id}
     else:
         # Handle invalid parameters
         return abort(404)
@@ -442,6 +446,20 @@ def post_review_reply(review_id):
     
     return abort(404)
 
+@app.route('/game_detail/<int:game_id>/post_reply', methods=['POST'])
+def post_game_reply(game_id):
+    if request.method == 'POST':
+        content = request.form.get('content')
+        parent_comment_id = request.form.get('parent_comment_id')
+        
+        user = User.query.filter_by(username=session['username']).first()
+
+        if user:
+            user_id = user.id
+            return post_reply_helper(content, user_id, parent_comment_id, game_id=game_id)
+    
+    return abort(404)
+
 def delete_comment_helper(comment_id):
     if 'username' not in session:
         return redirect(url_for('login'))
@@ -474,6 +492,15 @@ def delete_review_comment(review_id, comment_id):
     delete_comment_helper(comment_id)
 
     return redirect(url_for('review_detail', review_id=review_id))
+
+@app.route('/game_detail/<int:game_id>/delete_comment/<int:comment_id>', methods=['POST'])
+def delete_game_comment(game_id, comment_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    delete_comment_helper(comment_id)
+
+    return redirect(url_for('game_detail', game_id=game_id))
 
 def edit_comment_helper(comment_id, session_username, new_content):
     comment = Comment.query.get(comment_id)
@@ -510,6 +537,18 @@ def edit_review_comment(review_id, comment_id):
         new_content = request.form.get('edit_content')
         if edit_comment_helper(comment_id, session['username'], new_content):
             return redirect(url_for('review_detail', review_id=review_id))
+
+    abort(400)
+
+@app.route('/game_detail/<int:game_id>/edit_comment/<int:comment_id>', methods=['POST'])
+def edit_game_comment(game_id, comment_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        new_content = request.form.get('edit_content')
+        if edit_comment_helper(comment_id, session['username'], new_content):
+            return redirect(url_for('game_detail', game_id=game_id))
 
     abort(400)
 
@@ -721,6 +760,34 @@ def edit_single_review(review_id):
             db.session.commit()
 
     return redirect(url_for('review_detail', review_id=review.id))
+
+@app.route('/game_detail/<int:game_id>', methods=['GET', 'POST'])
+def game_detail(game_id):
+    game = Game.query.get(game_id)
+
+    if request.method == 'POST':
+        content = request.form['content']
+        user_id = User.query.filter_by(username=session['username']).first().id
+        parent_comment_id = request.form.get('parent_comment_id')
+
+        if parent_comment_id:
+            new_comment = Comment(content=content, user_id=user_id, game_id=game.game_id, parent_comment_id=parent_comment_id)
+        else:
+            new_comment = Comment(content=content, user_id=user_id,  game_id=game.game_id)
+
+        db.session.add(new_comment)
+        db.session.commit()
+
+        return redirect(url_for('game_detail',  game_id=game.game_id))
+
+    comments = game.comments
+    if 'username' in session:
+        user_id = User.query.filter_by(username=session['username']).first().id
+        liked_comments = [like.comment_id for like in Like.query.filter_by(user_id=user_id).all()]
+    else:
+        liked_comments = []
+
+    return render_template('game.html', game=game, comments=comments, liked_comments=liked_comments)
 
 @app.route('/review_detail/<int:review_id>', methods=['GET', 'POST'])
 def review_detail(review_id):

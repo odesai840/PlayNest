@@ -474,6 +474,14 @@ p {
     color: #a5bcbd;
 }
 
+.play-game-container {
+    background-color: #303030;
+    padding: 20px;
+    padding-top: 35px;
+    border: 2px solid #cae9ea;
+    border-radius: 4px;
+}
+
 /* ---------------------------------------------------------------FORUM PAGE STYLING----------------------------------------------------------*/
 .col-md-12 {
     background-color: #39595f;

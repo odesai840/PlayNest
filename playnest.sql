@@ -34,12 +34,14 @@ CREATE TABLE Comment (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
     thread_id INTEGER REFERENCES thread(id),
     review_id INTEGER REFERENCES reviews(id),
+    game_id INTEGER REFERENCES games(game_id),
     parent_comment_id INTEGER REFERENCES comment(id),
     created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
     FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE,
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
     CONSTRAINT fk_review FOREIGN KEY (review_id) REFERENCES reviews(id),
+    CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES games(game_id),
     CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
 );
 

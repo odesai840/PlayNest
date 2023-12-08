@@ -8,7 +8,6 @@ CREATE TABLE users (
 );
 
 -- forum table
--- drop it then add this updated query:
 CREATE TABLE forum (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,

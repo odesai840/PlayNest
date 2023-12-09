@@ -202,7 +202,7 @@ def dashboard():
             print(f'{cover_url}')
         
         else:
-            cover_url='static/images/playnest_logo.png'
+            cover_url='/static/images/playnest_logo.png'
 
         short_description = request.form['short-description']
         long_description = request.form['long-description']

@@ -135,6 +135,20 @@
                 <p class="none-found">This user has not posted any games.</p>
             {% endif %}
 
+            <h4 class="activity-labels">Threads:</h4>
+            {% if user_threads %}
+                {% for thread in user_threads %}
+                <div class="card activity-cards">
+                    <div class="card-body">
+                        <p class="profile-card-title">Thread in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="big-activity-link">{{ thread.forum.title }}</a></p>
+                        <a href="{{ thread.detail_url }}" class="activity-link">{{ thread.title }}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="none-found">This user has not posted any threads.</p>
+            {% endif %}
+
             <h4 class="activity-labels">Reviews:</h4>
             {% if user_reviews %}
                 {% for review in user_reviews %}
@@ -152,20 +166,6 @@
                 {% endfor %}
             {% else %}
                 <p class="none-found">This user has not posted any reviews.</p>
-            {% endif %}
-
-            <h4 class="activity-labels">Threads:</h4>
-            {% if user_threads %}
-                {% for thread in user_threads %}
-                <div class="card activity-cards">
-                    <div class="card-body">
-                        <p class="profile-card-title">Thread in <a href="{{ url_for('forum_threads', forum_slug=thread.forum.slug) }}" class="big-activity-link">{{ thread.forum.title }}</a></p>
-                        <a href="{{ thread.detail_url }}" class="activity-link">{{ thread.title }}</a>
-                    </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <p class="none-found">This user has not posted any threads.</p>
             {% endif %}
         </div>
     </div>

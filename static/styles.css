@@ -29,6 +29,10 @@ body.home-page {
     background-color: #1d1d1d;
 }
 
+*:focus {
+    outline: 0 !important;
+}
+
 /* -----------------------------------------------------LAYOUT STYLING (NAVBAR, FOOTER, BUTTONS)---------------------------------------------*/
 .custom-navbar {
     background-color: #273b40;
@@ -260,6 +264,10 @@ textarea {
     margin: 0;
 }
 
+.check-out-users {
+    margin-top: 20px;
+}
+
 .recents-home-container {
     border-radius: 5px;
     padding: 15px;
@@ -466,6 +474,19 @@ p {
     color: #a5bcbd;
 }
 
+.play-game-container {
+    background-color: #303030;
+    padding: 20px;
+    padding-top: 35px;
+    border: 2px solid #cae9ea;
+    border-radius: 4px;
+}
+
+.game-cover-image {
+    max-width: 190px;
+    height: 180px;
+}
+
 /* ---------------------------------------------------------------FORUM PAGE STYLING----------------------------------------------------------*/
 .col-md-12 {
     background-color: #39595f;
@@ -551,6 +572,14 @@ p {
     width: 100%;
     max-width: 870px;
     white-space: pre-line;
+}
+
+.comment-text {
+    font-size: 17px;
+    width: 100%;
+    max-width: 860px;
+    white-space: pre-line;
+    margin-top: -20px;
 }
 
 .details {
@@ -652,7 +681,9 @@ p {
     color: white;
     font-size: 17px;
     padding: 15px;
-    max-width: 870px;
+    margin-bottom: 5px;
+    width: 100vw;
+    max-width: 860px;
     border-radius: 4px;
     background-color: #273b40;
 }
@@ -800,10 +831,34 @@ hr {
 .review-title {
     font-size: 24px;
     color: #cae9ea;
+    max-width: 865px;
 }
 
 .review-recommendation {
     font-size: 18px;
+}
+
+.rating-stars {
+    display: flex;
+    color: gold;
+}
+
+.rating-stars i {
+    margin-right: 2px;
+}
+
+.sorting-form-container {
+    margin-top: 8px;
+    margin-left: 420px;
+}
+
+.review-count {
+    font-size: 20px;
+    color: white;
+}
+
+.write-review-button {
+    margin-top: 6.5px;
 }
 
 /* ---------------------------------------------------------------EDIT PROFILE STYLING---------------------------------------------------------*/
@@ -966,6 +1021,14 @@ hr {
     }
 }
 
+.usernames3 {
+    font-size: 24px;
+    color: #8be8b5;
+    &:hover {
+        color: #8be8b5;
+    }
+}
+
 /* ---------------------------------------------------------------LIKE BUTTON STYLING----------------------------------------------------------*/
 .like-button {
     color: #cae9ea;
@@ -987,6 +1050,29 @@ hr {
 
 .card-likes span {
     color: white;
+}
+
+/* ---------------------------------------------------------------DISPLAY USERS STYLING-------------------------------------------------------*/
+.username-container ul {
+    list-style: none;
+}
+
+.username-container li {
+    margin-bottom: 8px;
+}
+
+.playnest-users {
+    margin-left: 30px;
+}
+
+.users-link {
+    font-size: 15px;
+    text-decoration: underline;
+    color: #8be8b5;
+    &:hover {
+        color: #cae9ea;
+        text-decoration: underline;
+    }
 }
 
 /* ---------------------------------------------------------------MEDIA QUERIES---------------------------------------------------------------*/
@@ -1140,5 +1226,91 @@ hr {
     .picture-label2 {
         margin-left: 80px;
         margin-right: 20px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .thread-title, .review-title {
+        max-width: 870px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .thread-title, .review-title {
+        max-width: 730px;
+    }
+
+    .parent-comment-content, .comment-text {
+        max-width: 680px
+    }
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+    .parent-comment-content, .comment-text {
+        max-width: 450px
+    }
+
+    .thread-title, .review-title {
+        max-width: 480px;
+    }
+}
+
+@media (min-width: 540px) and (max-width: 767px) {
+    .parent-comment-content, .comment-text {
+        max-width: 270px
+    }
+
+    .thread-title, .review-title {
+        max-width: 300px;
+    }
+}
+
+@media (min-width: 515px) and (max-width: 539px) {
+    .parent-comment-content, .comment-text {
+        max-width: 260px
+    }
+
+    .thread-title, .review-title {
+        max-width: 280px;
+    }
+}
+
+@media (min-width: 491px) and (max-width: 514px) {
+    .parent-comment-content, .comment-text {
+        max-width: 230px
+    }
+
+    .thread-title, .review-title {
+        max-width: 250px;
+    }
+}
+
+@media (min-width: 460px) and (max-width: 490px) {
+    .parent-comment-content, .comment-text {
+        max-width: 210px
+    }
+
+    .thread-title, .review-title {
+        max-width: 230px;
+    }
+}
+
+@media (min-width: 431px) and (max-width: 490px) {
+    .parent-comment-content, .comment-text {
+        max-width: 180px
+    }
+
+    .thread-title, .review-title {
+        max-width: 200px;
+    }
+}
+
+@media (min-width: 300px) and (max-width: 430px) {
+    .parent-comment-content, .comment-text {
+        max-width: 130px
+    }
+
+    .thread-title, .review-title {
+        max-width: 180px;
     }
 }

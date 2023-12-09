@@ -110,14 +110,37 @@
     <hr>
 
     <div class="reviews-line d-flex justify-content-between">
-        <h3 class="comments-heading">Reviews</h3>
+        <div class="reviews-heading-container">
+            <h3 class="comments-heading">
+                Reviews
+                <i class="fas fa-star" style="color: gold;"></i> <span class="number-average" style="color: gold;">{{ "{:.1f}".format(average_rating) }}</span>
+                <span class="review-count">
+                    {{ review_count }} reviews
+                </span>
+            </h3>
+        </div>
+
+        <!-- sorting form to organize reviews from highest rated, lowest rated, or default (which is just the most recent reviews posted appearing at the top) -->
+        <div class="sorting-form-container">
+            <form id="sortingForm" method="GET" action="{{ url_for('game_details', game_id=game.id) }}">
+                <label for="sort">Sort By:</label>
+                <select name="sort" id="sort">
+                    <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Default</option>
+                    <option value="highest_rating" {% if sort_by == 'highest_rating' %}selected{% endif %}>Highest Rating</option>
+                    <option value="lowest_rating" {% if sort_by == 'lowest_rating' %}selected{% endif %}>Lowest Rating</option>
+                </select>
+            </form>
+        </div>
+
         <!-- display a message if the user is not logged in -->
-        {% if 'username' not in session %}
-            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
-        {% else %}
-            <!-- button to toggle the review form visibility -->
-            <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
-        {% endif %}
+        <div class="write-review-button">
+            {% if 'username' not in session %}
+                <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to post a review.</p>
+            {% else %}
+                <!-- button to toggle the review form visibility -->
+                <button id="toggleFormBtn" class="toggleFormBtn"><i class="fas fa-pencil-alt"></i> Write a Review</button>
+            {% endif %}
+        </div>
     </div>
 
         <!-- form to add a new review (initially hidden) -->
@@ -135,6 +158,16 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <select class="form-control" id="rating" name="rating" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <input type="hidden" name="game_id" value="{{ game.id }}">
                     <label for="title">Review Title:</label>
                     <input type="text" class="form-control" id="title" name="title" required>
@@ -150,6 +183,7 @@
 
     <!-- display existing reviews -->
     {% for review in reviews %}
+    {% if sort_by == 'highest_rating' and review.rating %}
     <div class="card mb-3">
         <div class="review-container">
             <div class="card-body d-flex justify-content-between">
@@ -169,6 +203,13 @@
                                 <span style="color: rgb(167, 224, 167);"> Recommended <i class="fas fa-thumbs-up"></i></span>
                             {% else %}
                                 <span style="color: rgb(240, 134, 134);"> Not Recommended <i class="fas fa-thumbs-down"></i></span>
+                            {% endif %}
+                        </p>
+                        <p class="rating-stars">
+                            {% if review.rating %}
+                                {% for _ in range(review.rating) %}
+                                    <i class="fas fa-star" style="color: gold;"></i>
+                                {% endfor %}
                             {% endif %}
                         </p>
                         <p class="card-text">{{ review.content[:550] + '...' if review.content|length > 550 else review.content }}</p>
@@ -204,47 +245,227 @@
             </div>
         </div>
     </div>
+    {% elif sort_by == 'lowest_rating' and review.rating %}
+    <div class="card mb-3">
+        <div class="review-container">
+            <div class="card-body d-flex justify-content-between">
+                <div class="d-flex align-items-start">
+                    {% if review.profile_picture %}
+                        <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + review.profile_picture) }}"
+                            alt="Profile Picture" class="mr-3">
+                    {% else %}
+                        <!-- default profile picture if the user doesn't have one -->
+                        <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                            alt="Default Profile Picture" class="mr-3">
+                    {% endif %}
+                    <div>
+                        <h5 class="review-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ review.title }}</a></h5>
+                        <p class="review-recommendation">
+                            {% if review.is_recommendation %}
+                                <span style="color: rgb(167, 224, 167);"> Recommended <i class="fas fa-thumbs-up"></i></span>
+                            {% else %}
+                                <span style="color: rgb(240, 134, 134);"> Not Recommended <i class="fas fa-thumbs-down"></i></span>
+                            {% endif %}
+                        </p>
+                        <p class="rating-stars">
+                            {% if review.rating %}
+                                {% for _ in range(review.rating) %}
+                                    <i class="fas fa-star" style="color: gold;"></i>
+                                {% endfor %}
+                            {% endif %}
+                        </p>
+                        <p class="card-text">{{ review.content[:550] + '...' if review.content|length > 550 else review.content }}</p>
+                        <p class="card-details">
+                            Review by:
+                            <a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>
+                            on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                        </p>
+                    </div>
+                </div>
+                {% if 'username' in session and review.user and review.user.username == session['username'] %}
+                <!-- delete/edit buttons if the review belongs to the logged-in user -->
+                <div class="review-buttons">
+                    <button type="submit" class="btn btn-link edit-button">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                        <button type="submit" class="btn btn-link delete-button">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <div class="edit-form" style="display: none;">
+                <form method="POST" action="{{ url_for('edit_review', review_id=review.id) }}">
+                    <div class="form-group">
+                        <label for="edit-content">Edit Your Review:</label>
+                        <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ review.content }}</textarea>
+                    </div>
+                    <button type="submit" class="post-comment-button">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% elif sort_by == 'default' %}
+    <div class="card mb-3">
+        <div class="review-container">
+            <div class="card-body d-flex justify-content-between">
+                <div class="d-flex align-items-start">
+                    {% if review.profile_picture %}
+                        <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + review.profile_picture) }}"
+                            alt="Profile Picture" class="mr-3">
+                    {% else %}
+                        <!-- default profile picture if the user doesn't have one -->
+                        <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                            alt="Default Profile Picture" class="mr-3">
+                    {% endif %}
+                    <div>
+                        <h5 class="review-title"><a href="{{ url_for('review_detail', review_id=review.id) }}" class="single-review-title">{{ review.title }}</a></h5>
+                        <p class="review-recommendation">
+                            {% if review.is_recommendation %}
+                                <span style="color: rgb(167, 224, 167);"> Recommended <i class="fas fa-thumbs-up"></i></span>
+                            {% else %}
+                                <span style="color: rgb(240, 134, 134);"> Not Recommended <i class="fas fa-thumbs-down"></i></span>
+                            {% endif %}
+                        </p>
+                        <p class="rating-stars">
+                            {% if review.rating %}
+                                {% for _ in range(review.rating) %}
+                                    <i class="fas fa-star" style="color: gold;"></i>
+                                {% endfor %}
+                            {% endif %}
+                        </p>
+                        <p class="card-text">{{ review.content[:550] + '...' if review.content|length > 550 else review.content }}</p>
+                        <p class="card-details">
+                            Review by:
+                            <a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>
+                            on {{ review.created_at.strftime('%m-%d-%Y • %I:%M %p') }}
+                        </p>
+                    </div>
+                </div>
+                {% if 'username' in session and review.user and review.user.username == session['username'] %}
+                <!-- delete/edit buttons if the review belongs to the logged-in user -->
+                <div class="review-buttons">
+                    <button type="submit" class="btn btn-link edit-button">
+                        <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <form method="POST" action="{{ url_for('delete_review', review_id=review.id) }}">
+                        <button type="submit" class="btn btn-link delete-button" data-review-id = {{ review.id }}>
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <div class="edit-form" style="display: none;">
+                <form method="POST" action="{{ url_for('edit_review', review_id=review.id) }}">
+                    <div class="form-group">
+                        <label for="edit-content">Edit Your Review:</label>
+                        <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ review.content }}</textarea>
+                    </div>
+                    <button type="submit" class="post-comment-button">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     {% endfor %}
 </div>
 
-    <!-- JavaScript to toggle review form visibility -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const toggleFormBtn = document.getElementById('toggleFormBtn');
-            const reviewForm = document.getElementById('reviewForm');
+<!-- JavaScript to toggle review form visibility -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleFormBtn = document.getElementById('toggleFormBtn');
+        const reviewForm = document.getElementById('reviewForm');
+        const sortingForm = document.getElementById('sortingForm');
 
-            toggleFormBtn.addEventListener('click', function () {
-                if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
-                    reviewForm.style.display = 'block';
+        sortingForm.addEventListener('change', function () {
+            // get the selected sorting option
+            const selectedSort = document.getElementById('sort').value;
+
+            // construct the URL with the sorting parameter
+            const url = sortingForm.action + '?sort=' + selectedSort;
+
+            // redirect to the updated URL
+            window.location.href = url;
+        });
+
+        toggleFormBtn.addEventListener('click', function () {
+            if (reviewForm.style.display === 'none' || reviewForm.style.display === '') {
+                reviewForm.style.display = 'block';
+            } else {
+                reviewForm.style.display = 'none';
+            }
+        });
+
+        // select all edit buttons for reviews
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        // iterate over each edit button for reviews
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated card for reviews
+                const card = this.closest('.card');
+
+                // get the associated edit form within the card for reviews
+                const editForm = card.querySelector('.edit-form');
+
+                // toggle the visibility of the edit form for reviews
+                if (editForm.style.display === 'none' || editForm.style.display === '') {
+                    editForm.style.display = 'block';
                 } else {
-                    reviewForm.style.display = 'none';
+                    editForm.style.display = 'none';
                 }
             });
+        });
 
-            // select all edit buttons for reviews
-            const editButtons = document.querySelectorAll('.edit-button');
+        // grabbing all delete buttons
+        const deleteButtons = document.querySelectorAll('.delete-button');
 
-            // iterate over each edit button for reviews
-            editButtons.forEach(function (button) {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
+        // loop through each button and call deleteReview function
+        deleteButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
 
-                    // get the associated card for reviews
-                    const card = this.closest('.card');
-
-                    // get the associated edit form within the card for reviews
-                    const editForm = card.querySelector('.edit-form');
-
-                    // toggle the visibility of the edit form for reviews
-                    if (editForm.style.display === 'none' || editForm.style.display === '') {
-                        editForm.style.display = 'block';
-                    } else {
-                        editForm.style.display = 'none';
-                    }
-                });
+                const card = this.closest('.card');
+                const reviewId = this.getAttribute('data-review-id');
+                deleteReview(reviewId, card);
             });
         });
-    </script>
 
-</div>
+        // deleteReview function where you can delete reviews without the page reloading
+        async function deleteReview(reviewId, card) {
+            try {
+                const response = await fetch(`/delete_review/${reviewId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+        
+                if (response.ok) {
+                    try {
+                        const data = await response.json();
+        
+                        if (data.success) {
+                            card.remove();
+                        } else {
+                            console.error('Failed to delete review. Server response:', data);
+                        }
+                    } catch (jsonError) {
+                        console.error('Error parsing JSON:', jsonError);
+                    }
+                } else {
+                    console.error('Failed to delete review. Server responded with status:', response.status);
+                }
+            } catch (error) {
+                console.error('Error during deleteReview:', error);
+            }
+        }
+    });
+</script>
 {% endblock %}

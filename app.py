@@ -868,12 +868,12 @@ def edit_profile():
 @app.route('/view_profile/<int:user_id>', methods=['GET'])
 def view_profile(user_id):
     user = User.query.get(user_id)
-    
+
     # retrieve reviews and threads posted by user
     user_reviews = Review.query.filter_by(user_id=user.id).all()
     user_threads = Thread.query.filter_by(user_id=user.id).all()
     user_games = Game.query.filter_by(author_id=user.id).all()
-    
+
     # attach URLs to reviews and threads for details viewing
     for review in user_reviews:
         review.detail_url = url_for('game_details', game_id=review.game_identifier)

@@ -865,7 +865,7 @@ def edit_profile():
 
     return render_template('profile_edit.html', form=form, user=user)
 
-@app.route('/view_profile/<int:user_id>')
+@app.route('/view_profile/<int:user_id>', methods=['GET'])
 def view_profile(user_id):
     user = User.query.get(user_id)
     

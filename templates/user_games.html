@@ -24,6 +24,11 @@
         width: 100%;
     }
 
+    .recents-home-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
 
     .card-body {
         display: flex;
@@ -31,13 +36,23 @@
         height: 100%;
     }
 
-    .card-title:hover {
-        color: #8be8b5;
-        text-decoration: underline;
-    }
-
     .small-card .card-body {
         padding: 10px;
+    }
+
+    .small-card-title,
+    .recent-reviews .small-card-title {
+        font-size: 20px;
+        color: #cae9ea;
+        height: 43px;
+    }
+
+    .game-title {
+        height: 30px;
+        &:hover {
+            color: #8be8b5;
+            text-decoration: underline;
+        }
     }
 
     .small-card-text,
@@ -87,7 +102,7 @@
                     <div class="recents-home-container">
                         <div class="card-body">
                             <a href="{{ game.detail_url }}">
-                                <h5 class="card-title small-card-title">{{ game.title[:27] + '...' if game.title|length > 27 else game.title }}</h5>
+                                <h5 class="card-title small-card-title game-title">{{ game.title[:27] + '...' if game.title|length > 27 else game.title }}</h5>
                             </a>
                             <p class="small-card-text">
                                 {% if game.short_description %}

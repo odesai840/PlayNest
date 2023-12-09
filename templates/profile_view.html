@@ -4,8 +4,80 @@
 
 {% block content %}
 <style>
+    .game-cover-image {
+        max-width: 200px;
+        height: 200px;
+    }
+
     .game-card-body {
-        margin-left: 10px;
+        margin-left: 20px;
+    }
+
+    .recents-home-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+
+    .small-card .card-body {
+        padding: 10px;
+    }
+
+
+    .small-card-title {
+        font-size: 20px;
+        color: #cae9ea;
+        height: 43px;
+    }
+
+    .game-title {
+        height: 30px;
+        color: #8be8b5;
+        cursor: pointer;
+        &:hover {
+            color: #8be8b5;
+            text-decoration: underline;
+        }
+    }
+
+    .small-card-text,
+    .card-text {
+        font-size: 14px;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+
+    .small-card-text, .card-text {
+        margin-bottom: 30px;
+    }
+
+    .card-details,
+    p {
+        font-size: 12px;
+        color: #c8c6c6;
+        margin-bottom: 5px;
+    }
+
+    .game-desc {
+        margin-top: 10px;
+    }
+
+    .card-details {
+        margin-top: auto;
+    }
+
+    .none-found {
+        font-size: 16px;
+        color: white;
     }
 </style>
 
@@ -35,6 +107,34 @@
 
         <div class="user-activity">
             <h3 class="text-center mb-4 user-activity-heading">User Activity</h3>
+
+            <h4 class="activity-labels">Games:</h4>
+            {% if user_games %}
+            {% for game in user_games %}
+            <div class="card activity-cards mb-3" onclick="window.location.href='/game/{{ game.game_id }}'">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body game-card-body">
+                            <h5 class="card-title game-title">{{ game.title }}</h5>
+                            <p class="small-card-text game-desc">
+                                {% if game.short_description %}
+                                    {{ game.short_description }}
+                                {% else %}
+                                    No short description available.
+                                {% endif %}
+                            </p>
+                            <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+                <p class="none-found">This user has not posted any games.</p>
+            {% endif %}
 
             <h4 class="activity-labels">Reviews:</h4>
             {% if user_reviews %}
@@ -67,34 +167,6 @@
                 {% endfor %}
             {% else %}
                 <p class="none-found">This user has not posted any threads.</p>
-            {% endif %}
-
-            <h4 class="activity-labels">Games:</h4>
-            {% if user_games %}
-            {% for game in user_games %}
-            <div class="card activity-cards mb-3" onclick="window.location.href='/game/{{ game.game_id }}'">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
-                    </div>
-                    <div class="col-md-8">
-                        <div class="card-body game-card-body">
-                            <h5 class="card-title">{{ game.title }}</h5>
-                            <p class="small-card-text">
-                                {% if game.short_description %}
-                                    {{ game.short_description }}
-                                {% else %}
-                                    No short description available.
-                                {% endif %}
-                            </p>
-                            <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-            {% else %}
-                <p class="none-found">This user has not posted any games.</p>
             {% endif %}
         </div>
     </div>

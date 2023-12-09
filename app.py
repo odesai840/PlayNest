@@ -865,7 +865,7 @@ def edit_profile():
 
     return render_template('profile_edit.html', form=form, user=user)
 
-@app.route('/profile/view/<int:user_id>')
+@app.route('/view_profile/<int:user_id>')
 def view_profile(user_id):
     user = User.query.get(user_id)
     
@@ -886,7 +886,7 @@ def view_profile(user_id):
 
     return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, user_games=user_games, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
 
-@app.route('/profile/view', methods=['GET'])
+@app.route('/view_own_profile', methods=['GET'])
 def view_own_profile():
     if 'username' in session:
         user = User.query.filter_by(username=session['username']).first()

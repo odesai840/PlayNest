@@ -759,9 +759,15 @@ def edit_single_review(review_id):
     # check if logged in user is the owner of the review
     if review.user.username == session['username']:
         if request.method == 'POST':
+            new_title = request.form.get('edit_title')
+            new_recommendation = int(request.form.get('edit_recommendation', review.is_recommendation))
+            new_rating = int(request.form.get('edit_rating', review.rating))
             new_content = request.form.get('edit_content')
             
             # update the review content in the database
+            review.title = new_title
+            review.is_recommendation = new_recommendation
+            review.rating = new_rating
             review.content = new_content
             db.session.commit()
 

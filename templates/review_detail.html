@@ -78,6 +78,29 @@
             <div class="edit-form" style="display: none;">
                 <form method="POST" action="{{ url_for('edit_single_review', review_id=review.id) }}">
                     <div class="form-group">
+                        <label for="edit-title">Edit Review Title:</label>
+                        <input type="text" class="form-control" id="edit-title" name="edit_title" value="{{ review.title }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Do you recommend this game?</label>
+                        <div>
+                            <label class="radio-inline">
+                                <input type="radio" name="edit_recommendation" value="1" {% if review.is_recommendation == 1 %}checked{% endif %} required> Yes
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="edit_recommendation" value="0" {% if review.is_recommendation == 0 %}checked{% endif %}> No
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rating">Edit Rating:</label>
+                        <select class="form-control" id="edit-rating" name="edit_rating" required>
+                            {% for i in range(1, 6) %}
+                                <option value="{{ i }}" {% if review.rating == i %}selected{% endif %}>{{ i }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="edit-content">Edit Your Review:</label>
                         <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ review.content }}</textarea>
                     </div>

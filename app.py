@@ -259,11 +259,13 @@ def play_game(game_id):
 @app.route('/settings')
 def settings():
     # retrieve user ID of current session user
+    user = User.query.filter_by(username=session['username']).first()
     user_email = User.query.filter_by(username=session['username']).first().email
-
+    num_games = Game.query.filter_by(author_id=user.id).count()
+    
     if request.method == 'POST':
         pass
-    return render_template('settings.html', user_email=user_email)
+    return render_template('settings.html', user_email=user_email, num_games=num_games)
 
 @app.route('/change-username', methods=['GET', 'POST'])
 def change_username():

@@ -566,9 +566,11 @@ def edit_thread(forum_slug, thread_id):
     # check if logged in user is the owner of the reply
     if thread.user.username == session['username']:
         if request.method == 'POST':
+            new_title = request.form.get('edit_title')
             new_content = request.form.get('edit_content')
             
             # update the reply content in the database
+            thread.title = new_title
             thread.content = new_content
             db.session.commit()
 

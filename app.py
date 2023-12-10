@@ -955,6 +955,24 @@ def user_games():
 
     return render_template('user_games.html', games=games)
 
+@app.route('/edit_game_desc/<int:game_id>', methods=['GET', 'POST'])
+def edit_game_desc(game_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+
+    game = Game.query.get(game_id)
+
+    # check if logged in user is the owner of the game
+    if game.author.username == session['username']:
+        if request.method == 'POST':
+            new_long_description = request.form.get('edit_long_description')
+
+            # update the game long description in the database
+            game.long_description = new_long_description
+            db.session.commit()
+
+    return render_template('game.html', game=game)
+
 if __name__ == '__main__':
     app.run(debug=True)
 

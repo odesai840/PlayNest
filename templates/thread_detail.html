@@ -33,6 +33,10 @@
         background-size: cover;
         z-index: -1;
     }
+
+    .user-said {
+        margin-bottom: 10px;
+    }
 </style>
 
 <div class="container mt-4">
@@ -164,13 +168,14 @@
                             <div>
                                 {% if comment.parent_comment %}
                                     <div class="parent-comment-content">
-                                        <span>
-                                            <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
-                                            <strong>said:</strong>
-                                        </span>
-                                        <div class="white-space">
-                                            {{ comment.parent_comment.content }}
+                                        <div class="user-said">
+                                            <span>
+                                                <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
+                                                <strong>said:</strong>
+                                                <br>
+                                            </span>
                                         </div>
+                                        {{ comment.parent_comment.content }}
                                     </div>
                                 {% endif %}
                                 <p class="comment-text">

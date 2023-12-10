@@ -506,13 +506,14 @@ def delete_game_comment(game_id, comment_id):
 
     return redirect(url_for('game_detail', game_id=game_id))
 
-def edit_comment_helper(comment_id, session_username, new_content):
+def edit_comment_helper(comment_id, session_username, new_content, new_rating):
     comment = Comment.query.get(comment_id)
     if comment:
         # check if logged in user is owner of the comment
         if comment.user.username == session_username:
             # update the comment content in the database
             comment.content = new_content
+            comment.rating = new_rating
             db.session.commit()
             return True
         else:
@@ -550,8 +551,9 @@ def edit_game_comment(game_id, comment_id):
         return redirect(url_for('login'))
 
     if request.method == 'POST':
+        new_rating = request.form.get('edit_rating')
         new_content = request.form.get('edit_content')
-        if edit_comment_helper(comment_id, session['username'], new_content):
+        if edit_comment_helper(comment_id, session['username'], new_content, new_rating):
             return redirect(url_for('game_detail', game_id=game_id))
 
     abort(400)
@@ -782,10 +784,12 @@ def game_detail(game_id):
         user_id = User.query.filter_by(username=session['username']).first().id
         parent_comment_id = request.form.get('parent_comment_id')
 
+        rating = int(request.form['rating']) if request.form['rating'] else None
+
         if parent_comment_id:
-            new_comment = Comment(content=content, user_id=user_id, game_id=game.game_id, parent_comment_id=parent_comment_id)
+            new_comment = Comment(content=content, user_id=user_id, game_id=game.game_id, parent_comment_id=parent_comment_id, rating=rating)
         else:
-            new_comment = Comment(content=content, user_id=user_id,  game_id=game.game_id)
+            new_comment = Comment(content=content, user_id=user_id,  game_id=game.game_id, rating=rating)
 
         db.session.add(new_comment)
         db.session.commit()

@@ -27,7 +27,6 @@ CREATE TABLE thread (
 );
 
 -- comment table:
--- for more-async-js branch, re-add this
 CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
     content TEXT NOT NULL,
@@ -44,6 +43,10 @@ CREATE TABLE Comment (
     CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES games(game_id),
     CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
 );
+
+-- for the last-touches branch, add this to your DB console
+ALTER TABLE Comment
+ADD COLUMN rating INTEGER;
 
 -- games table:
 CREATE TABLE games (

@@ -970,9 +970,11 @@ def edit_game_desc(game_id):
     if game.author.username == session['username']:
         if request.method == 'POST':
             new_long_description = request.form.get('edit_long_description')
+            new_game_title = request.form.get('edit_title')
 
             # update the game long description in the database
             game.long_description = new_long_description
+            game.title = new_game_title
             db.session.commit()
 
     return render_template('game.html', game=game)

@@ -688,10 +688,6 @@ p {
     background-color: #273b40;
 }
 
-.white-space {
-    white-space: pre-line;
-}
-
 .strong-color {
     color: #8be8b5;
 }
@@ -806,6 +802,10 @@ hr {
         border: 2px solid #cae9ea;
         color: #273b40;
     }
+}
+
+.searchbar-container {
+    margin-bottom: 30px;
 }
 
 /* ---------------------------------------------------------------REVIEW DETAIL STYLING--------------------------------------------------------*/

@@ -10,7 +10,6 @@
         gap: 20px;
         margin-right: 40px;
         margin-left: 5px;
-        margin-top: 20px;
         margin-bottom: 20px;
     }
 
@@ -96,7 +95,7 @@
 <div class="container mt-4">
     <h2 class="text-center mb-4">User Games</h2>
 
-    <div class="forum-threads-grid">
+    <div class="forum-threads-grid" id="games-container">
         {% if games %}
             {% for game in games %}
                 <div class="card small-card">
@@ -112,7 +111,7 @@
                                 {% if game.short_description %}
                                     {{ game.short_description }}
                                 {% else %}
-                                    No short description available.
+                                    No description available.
                                 {% endif %}
                             </p>
                             <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}

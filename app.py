@@ -528,7 +528,7 @@ def edit_comment(forum_slug, thread_id, comment_id):
 
     if request.method == 'POST':
         new_content = request.form.get('edit_content')
-        if edit_comment_helper(comment_id, session['username'], new_content):
+        if edit_comment_helper(comment_id, session['username'], new_content, new_rating=None):
             return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
 
     abort(400) 
@@ -540,7 +540,7 @@ def edit_review_comment(review_id, comment_id):
 
     if request.method == 'POST':
         new_content = request.form.get('edit_content')
-        if edit_comment_helper(comment_id, session['username'], new_content):
+        if edit_comment_helper(comment_id, session['username'], new_content, new_rating=None):
             return redirect(url_for('review_detail', review_id=review_id))
 
     abort(400)

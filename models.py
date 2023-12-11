@@ -23,6 +23,7 @@ class Game(db.Model):
     game_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
     cover_url = db.Column(db.String(255), nullable=True)
+    filepath = db.Column(db.String(255), nullable=False)
     short_description = db.Column(db.String(255), nullable=True)
     long_description = db.Column(db.Text, nullable=True)
     release_date = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
@@ -31,9 +32,10 @@ class Game(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     comments = db.relationship('Comment', order_by='Comment.created_at', backref=db.backref('game_comments', lazy=True, viewonly=True), cascade='all, delete-orphan')
 
-    def __init__(self, title, cover_url, short_description, long_description, game_url, author_id):
+    def __init__(self, title, cover_url, filepath, short_description, long_description, game_url, author_id):
         self.title = title
         self.cover_url = cover_url
+        self.filepath = filepath
         self.short_description = short_description
         self.long_description = long_description
         self.game_url = game_url

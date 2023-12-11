@@ -32,6 +32,11 @@
                             <h5 class="card-title">{{ game.title }}</h5>
                             <p class="card-text">{% if game.short_description %}{{ game.short_description }}{% endif %}</p>
                             <p class="card-text"><small class="text-body-secondary">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}</small></p>
+                            <form method="POST" action="{{ url_for('delete_user_game', game_id=game.game_id) }}">
+                                <button type="submit" class="btn btn-link delete-user-game">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -44,7 +49,7 @@
             <h6>Upload a game:</h6>
             <div class="card">
                 <div class="card-body">
-                    <form action="/dashboard" method="post" enctype="multipart/form-data">
+                    <form action="/dashboard" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="title">Title:</label>
                             <input name="title" type="text" class="form-control" id="title" placeholder="Enter game title" required>

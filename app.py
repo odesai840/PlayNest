@@ -183,6 +183,12 @@ def allowed_cover_file(filename):
 
 @app.route('/dashboard', methods=['GET','POST'])
 def dashboard():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    else:
+        user = User.query.filter_by(username=session['username']).first()
+
     if request.method == 'POST':
         title = request.form['title']
 
@@ -224,6 +230,7 @@ def dashboard():
             # Extract the uploaded ZIP file
             zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+            print(f'{extracted_folder}')
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(extracted_folder)
 
@@ -244,12 +251,41 @@ def dashboard():
         
         author_id = User.query.filter_by(username=session['username']).first().id
 
-        new_game = Game(title=title, cover_url=cover_url, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
+        new_game = Game(title=title, cover_url=cover_url, filepath=extracted_folder, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
         db.session.add(new_game)
         db.session.commit()
-        return render_template('dashboard.html', games=Game.query.all())
+        return render_template('dashboard.html', games=Game.query.filter_by(author_id=user.id).all())
     
-    return render_template('dashboard.html', games=Game.query.all())
+    return render_template('dashboard.html', games=Game.query.filter_by(author_id=user.id).all())
+
+@app.post('/dashboard/delete/<int:game_id>')
+def delete_user_game(game_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    else:
+        user = User.query.filter_by(username=session['username']).first()
+
+    game = Game.query.get(game_id)
+
+    if game.cover_url == 'static/images/playnest_logo.png':
+        game_folder = game.filepath
+        print(f'{game_folder}')
+        shutil.rmtree(game_folder)
+
+    else:
+        game_folder = game.filepath
+        print(f'{game_folder}')
+        shutil.rmtree(game_folder)
+
+        cover_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(game.cover_url))
+        print(f'{cover_path}')
+        os.remove(cover_path)
+
+    db.session.delete(game)
+    db.session.commit()
+
+    return redirect(url_for('dashboard', games=Game.query.filter_by(author_id=user.id).all()))
 
 @app.get('/game/<int:game_id>')
 def play_game(game_id):
@@ -840,6 +876,9 @@ class ProfileEditForm(FlaskForm):
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+
     user = User.query.filter_by(username=session['username']).first()
     profile = user.profile
     

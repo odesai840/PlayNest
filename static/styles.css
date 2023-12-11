@@ -732,7 +732,7 @@ p {
     }
 }
 
-.delete-button, .edit-button, .delete-thread-button {
+.delete-button, .edit-button, .delete-thread-button, .delete-user-game {
     color: #cae9ea;
 
     &:hover {

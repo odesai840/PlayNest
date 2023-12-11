@@ -163,8 +163,9 @@
     }
 
     .game-cover-image {
+        width: 100%;
         max-width: 300px;
-        height: auto;
+        height: 230px;
     }
 </style>
 
@@ -218,7 +219,9 @@
                                 {% if recent_games %}
                                     {% for game in recent_games %}
                                         <div class="card small-card">
-                                            <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
+                                            <div class="game-image">
+                                                <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
+                                            </div>
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     <a href="{{ game.detail_url }}">

@@ -92,11 +92,11 @@
                 <div class="edit-form" style="display: none;">
                     <form method="POST" action="{{ url_for('edit_game_desc', game_id=game.game_id) }}">
                         <div class="form-group">
-                            <label for="edit-title">Edit Your Game Title:</label>
+                            <label for="edit-title">Edit Your Creation's Title:</label>
                             <input type="text" class="form-control" id="edit-title" name="edit_title" value="{{ game.title }}" required>
                         </div>
                         <div class="form-group">
-                            <label for="edit-content">Edit Your Game Description:</label>
+                            <label for="edit-content">Edit Your Creation's Description:</label>
                             <textarea class="form-control" id="edit-long-description" name="edit_long_description" rows="5">{{ game.long_description }}</textarea>
                         </div>
                         <button type="submit" class="post-comment-button">Save Changes</button>
@@ -116,8 +116,46 @@
         <div class="download-game-container">
             {% if game.long_description %}
                 <p class="long-description">{{ game.long_description }}</p>
+            {% else %}
+                <p class="none-found">No description available.</p>
             {% endif %}
-            <a href="{{ url_for('download_game', name=game.filepath) }}" class="download-btn">Download Game</a>
+            <a href="{{ url_for('download_game', name=game.filepath) }}" class="download-btn">Download</a>
+            <div class="card game-desc-card mb-3">
+                <div class="user-game-desc-container">
+                    <div class="d-flex justify-content-between">
+                        <div class="align-self-start">
+                            {% if 'username' in session and game.author.username == session['username'] %}
+                                <!-- edit button if the game belongs to the logged-in user -->
+                                <div class="thread-buttons">
+                                    <button type="submit" class="btn btn-link edit-button">
+                                        <i class="fa-solid fa-pencil"></i>
+                                    </button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="edit-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('edit_game_desc', game_id=game.game_id) }}">
+                            <div class="form-group">
+                                <label for="edit-title">Edit Your Creation's Title:</label>
+                                <input type="text" class="form-control" id="edit-title" name="edit_title" value="{{ game.title }}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-content">Edit Your Creation's Description:</label>
+                                <textarea class="form-control" id="edit-long-description" name="edit_long_description" rows="5">{{ game.long_description }}</textarea>
+                            </div>
+                            <button type="submit" class="post-comment-button">Save Changes</button>
+                        </form>
+                    </div>
+                    <p class="card-details">Released by: 
+                        <span>
+                            <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
+                        </span>
+                        on
+                        {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
+                    </p>
+                </div>
+            </div>
         </div>
     {% endif %}
 

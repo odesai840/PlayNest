@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort, send_from_directory
 from werkzeug.utils import secure_filename
 import zipfile
 import shutil
@@ -229,10 +229,10 @@ def dashboard():
 
             # Extract the uploaded ZIP file
             zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
-            print(f'{extracted_folder}')
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+            print(f'{path}')
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(extracted_folder)
+                zip_ref.extractall(path)
 
             # Search for index.html in the extracted files
             index_html_path = find_index_html(zip_path)
@@ -241,17 +241,18 @@ def dashboard():
                 print(f'{game_url}')
                 os.remove(zip_path)
             else:
-                # If index.html is not found, delete the uploaded ZIP file and the extracted folder
-                os.remove(zip_path)
-                if os.path.exists(extracted_folder):
-                    shutil.rmtree(extracted_folder)
-                return 'No index.html found in the uploaded game file'
+                # If index.html is not found, make the file downloadable and delete the extracted folder
+                game_url = zip_path
+                if os.path.exists(path):
+                    shutil.rmtree(path)
+                path = filename
+                print(f'{path}')
         else:
             return 'Invalid game file format'
         
         author_id = User.query.filter_by(username=session['username']).first().id
 
-        new_game = Game(title=title, cover_url=cover_url, filepath=extracted_folder, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
+        new_game = Game(title=title, cover_url=cover_url, filepath=path, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
         db.session.add(new_game)
         db.session.commit()
         return render_template('dashboard.html', games=Game.query.filter_by(author_id=user.id).all())
@@ -269,18 +270,34 @@ def delete_user_game(game_id):
     game = Game.query.get(game_id)
 
     if game.cover_url == 'static/images/playnest_logo.png':
-        game_folder = game.filepath
-        print(f'{game_folder}')
-        shutil.rmtree(game_folder)
+        if game.game_url.lower().endswith('index.html'):
+            game_folder = game.filepath
+            print(f'{game_folder}')
+            shutil.rmtree(game_folder)
+        
+        else:
+            game_file = game.game_url
+            print(f'{game_file}')
+            os.remove(game_file)
 
     else:
-        game_folder = game.filepath
-        print(f'{game_folder}')
-        shutil.rmtree(game_folder)
+        if game.game_url.lower().endswith('index.html'):
+            game_folder = game.filepath
+            print(f'{game_folder}')
+            shutil.rmtree(game_folder)
 
-        cover_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(game.cover_url))
-        print(f'{cover_path}')
-        os.remove(cover_path)
+            cover_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(game.cover_url))
+            print(f'{cover_path}')
+            os.remove(cover_path)
+
+        else:
+            game_file = game.game_url
+            print(f'{game_file}')
+            os.remove(game_file)
+
+            cover_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(game.cover_url))
+            print(f'{cover_path}')
+            os.remove(cover_path)
 
     db.session.delete(game)
     db.session.commit()
@@ -291,6 +308,10 @@ def delete_user_game(game_id):
 def play_game(game_id):
     game = Game.query.get(game_id)
     return render_template('game.html', game=game)
+
+@app.get('/game/download/<name>')
+def download_game(name):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], name)
 
 @app.route('/settings')
 def settings():

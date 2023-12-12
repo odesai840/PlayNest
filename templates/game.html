@@ -53,6 +53,7 @@
 </style>
 
 <div class="container mt-4">
+    {% if game.game_url.lower().endswith('index.html') %}
     <div class="play-game-container">
         <iframe src="{{ game.game_url }}" id="game-player" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" msallowfullscreen="true" scrolling="no" frameborder="0" height="550" width="960"></iframe>
         <button class="fullscreen-btn" onclick="goFullscreen('game-player'); return false">
@@ -63,8 +64,6 @@
             <div class="user-game-desc-container">
                 {% if game.long_description %}
                     <p class="long-description">{{ game.long_description }}</p>
-                {% else %}
-                    <p class="none-found">No recent threads found.</p>
                 {% endif %}
                 <p class="card-details">Released by: 
                     <span>
@@ -76,6 +75,14 @@
             </div>
         </div>
     </div>
+    {% else %}
+        <div class="download-game-container">
+            {% if game.long_description %}
+                <p class="long-description">{{ game.long_description }}</p>
+            {% endif %}
+            <a href="{{ url_for('download_game', name=game.filepath) }}" class="download-btn">Download Game</a>
+        </div>
+    {% endif %}
 
     <hr>
 

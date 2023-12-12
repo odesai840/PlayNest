@@ -20,7 +20,7 @@
     .long-description {
         font-size: 17px;
         width: 100%;
-        max-width: 961px;
+        max-width: 920px;
         white-space: pre-line;
     }
 
@@ -50,9 +50,19 @@
         margin-right: 15px;
         height: 100%;
     }
+
+    .rating-stars {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .user-said {
+        margin-bottom: 10px;
+    }
 </style>
 
 <div class="container mt-4">
+    <h2 class="text-center mb-4">{{ game.title }}</h2>
     <div class="play-game-container">
         <iframe src="{{ game.game_url }}" id="game-player" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" msallowfullscreen="true" scrolling="no" frameborder="0" height="550" width="960"></iframe>
         <button class="fullscreen-btn" onclick="goFullscreen('game-player'); return false">
@@ -61,11 +71,36 @@
         <br>
         <div class="card game-desc-card mb-3">
             <div class="user-game-desc-container">
-                {% if game.long_description %}
-                    <p class="long-description">{{ game.long_description }}</p>
-                {% else %}
-                    <p class="none-found">No recent threads found.</p>
-                {% endif %}
+                <div class="d-flex justify-content-between">
+                    {% if game.long_description %}
+                        <p class="long-description">{{ game.long_description }}</p>
+                    {% else %}
+                        <p class="none-found">No description available.</p>
+                    {% endif %}
+                    <div class="align-self-start">
+                        {% if 'username' in session and game.author.username == session['username'] %}
+                            <!-- edit button if the game belongs to the logged-in user -->
+                            <div class="thread-buttons">
+                                <button type="submit" class="btn btn-link edit-button">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="edit-form" style="display: none;">
+                    <form method="POST" action="{{ url_for('edit_game_desc', game_id=game.game_id) }}">
+                        <div class="form-group">
+                            <label for="edit-title">Edit Your Game Title:</label>
+                            <input type="text" class="form-control" id="edit-title" name="edit_title" value="{{ game.title }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-content">Edit Your Game Description:</label>
+                            <textarea class="form-control" id="edit-long-description" name="edit_long_description" rows="5">{{ game.long_description }}</textarea>
+                        </div>
+                        <button type="submit" class="post-comment-button">Save Changes</button>
+                    </form>
+                </div>
                 <p class="card-details">Released by: 
                     <span>
                         <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
@@ -86,6 +121,19 @@
                 <div class="form-group">
                     <label for="content">Leave a Comment:</label>
                     <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="rating">Rating (Optional):</label>
+                    
+                    <!-- use a dropdown only if the user wants to leave a rating -->
+                    <select class="form-control" id="rating" name="rating">
+                        <option value="">-- Select Rating --</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
                 </div>
                 <button type="submit" class="post-comment-button">Post Comment</button>
             </form>
@@ -144,14 +192,30 @@
                             <div>
                                 {% if comment.parent_comment %}
                                     <div class="parent-comment-content">
-                                        <span>
-                                            <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
-                                            <strong>said:</strong>
-                                        </span>
-                                        <div class="white-space">
-                                            {{ comment.parent_comment.content }}
+                                        <div class="user-said">
+                                            <span>
+                                                <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
+                                                <strong>said:</strong>
+                                                <br>
+                                            </span>
                                         </div>
+                                        {% if comment.parent_comment.rating %}
+                                            <!-- Display parent comment rating -->
+                                            <p class="rating-stars">
+                                                {% for _ in range(comment.parent_comment.rating) %}
+                                                    <i class="fas fa-star" style="color: gold;"></i>
+                                                {% endfor %}
+                                            </p>
+                                        {% endif %}
+                                        {{ comment.parent_comment.content }}
                                     </div>
+                                {% endif %}
+                                {% if comment.rating %}
+                                    <p class="rating-stars">
+                                        {% for _ in range(comment.rating) %}
+                                            <i class="fas fa-star" style="color: gold;"></i>
+                                        {% endfor %}
+                                    </p>
                                 {% endif %}
                                 <p class="comment-text">
                                     <span>{{ comment.content }}</span>
@@ -186,6 +250,16 @@
                                 <label for="edit-content">Edit Your Comment:</label>
                                 <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ comment.content }}</textarea>
                             </div>
+                            {% if comment.rating %}
+                                <div class="form-group">
+                                    <label for="edit-rating">Edit Rating:</label>
+                                    <select class="form-control" id="edit-rating" name="edit_rating" required>
+                                        {% for i in range(1, 6) %}
+                                            <option value="{{ i }}" {% if comment.rating == i %}selected{% endif %}>{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
                             <button type="submit" class="post-comment-button">Save Changes</button>
                         </form>
                     </div>

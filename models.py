@@ -111,15 +111,18 @@ class Comment(db.Model):
     parent_comment = db.relationship('Comment', remote_side=[id], back_populates='child_comments')
     child_comments = db.relationship('Comment', back_populates='parent_comment', cascade='all, delete-orphan')
 
+    rating = db.Column(db.Integer)
+
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone(timedelta(hours=-5))), nullable=False)
 
-    def __init__(self, content, user_id, thread_id=None, review_id=None, game_id=None, parent_comment_id=None):
+    def __init__(self, content, user_id, thread_id=None, review_id=None, game_id=None, parent_comment_id=None, rating=None):
         self.content = content
         self.user_id = user_id
         self.thread_id = thread_id
         self.review_id = review_id
         self.game_id = game_id
         self.parent_comment_id = parent_comment_id
+        self.rating = rating
 
     @property
     def profile_picture(self):

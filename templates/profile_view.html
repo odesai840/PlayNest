@@ -108,7 +108,7 @@
         <div class="user-activity">
             <h3 class="text-center mb-4 user-activity-heading">User Activity</h3>
 
-            <h4 class="activity-labels">Games:</h4>
+            <h4 class="activity-labels">Creations:</h4>
             {% if user_games %}
             {% for game in user_games %}
             <div class="card activity-cards mb-3" onclick="window.location.href='/game/{{ game.game_id }}'">
@@ -133,7 +133,7 @@
             </div>
             {% endfor %}
             {% else %}
-                <p class="none-found">This user has not posted any games.</p>
+                <p class="none-found">This user has not posted any creations.</p>
             {% endif %}
 
             <h4 class="activity-labels">Threads:</h4>

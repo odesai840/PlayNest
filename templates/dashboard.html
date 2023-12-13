@@ -119,6 +119,11 @@
                                 {% endif %}
                             </p>
                             <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}</p>
+                            <form method="POST" action="{{ url_for('delete_user_game', game_id=game.game_id) }}">
+                                <button type="submit" class="btn btn-link delete-user-game">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -128,34 +133,37 @@
 
         <!-- Right Column with Form Card -->
         <div class="col-md-6">
-            <h6>Upload a game:</h6>
+            <h6>Upload a creation:</h6>
             <div class="card">
                 <div class="card-body">
-                    <form action="/dashboard" method="post" enctype="multipart/form-data">
+                    <form action="/dashboard" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="title">Title:</label>
-                            <input name="title" type="text" class="form-control" id="title" placeholder="Enter game title" required>
+                            <input name="title" type="text" class="form-control" id="title" placeholder="Enter creation title" required>
+                            <small id="helper" class="form-text">Give your creation a title.</small>
                         </div>
                         <div class="form-group">
                             <label for="short-description">Short Description:</label>
                             <input name="short-description" type="short-description" class="form-control" id="short-description" placeholder="Optional">
-                            <small id="helper" class="form-text">Shown when we link your game. Avoid duplicating your project's title.</small>
+                            <small id="helper" class="form-text">Shown when we link your creation on other pages. Avoid duplicating your title.</small>
                         </div>
                         <div class="form-group">
                             <label for="long-description">Long Description:</label>
                             <textarea name="long-description" class="form-control" id="long-description" rows="4"></textarea>
-                            <small id="helper" class="form-text">This description will be shown on your game's page.</small>
+                            <small id="helper" class="form-text">This description will be shown on your creation's page (Optional).</small>
                         </div>
                         <div class="form-group">
                             <label for="cover" class="form-label">Upload Cover Image:</label>
                             <input name="cover-image" type="file" id="cover" class="form-control">
+                            <small id="helper" class="form-text">Upload a cover image for your creation (Optional).</small>
                         </div>
                         <div class="form-group">
-                            <label for="game" class="form-label">Upload Game:</label>
+                            <label for="game" class="form-label">Upload Creation:</label>
                             <input name="game-file" type="file" id="game" class="form-control">
+                            <small id="helper" class="form-text">Upload a zip file with your creation here. If it's a game, the files must contain an index.html file in order to be played in the browser.</small>
                         </div>
                         <br>
-                        <button type="submit" class="publish-game-button">Publish Game</button>
+                        <button type="submit" class="publish-game-button">Publish</button>
                     </form>
                 </div>
             </div>

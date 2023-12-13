@@ -53,6 +53,7 @@ CREATE TABLE games (
     game_id SERIAL NOT NULL,
     title VARCHAR(255) NOT NULL,
     cover_url VARCHAR(255),
+    filepath VARCHAR(255) NOT NULL,
     short_description VARCHAR(255),
     long_description TEXT,
     release_date TIMESTAMP DEFAULT current_timestamp NOT NULL,

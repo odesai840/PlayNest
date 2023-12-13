@@ -453,7 +453,7 @@ p {
     border: none;
 }
 
-.publish-game-button {
+.publish-game-button, .download-btn {
     background: linear-gradient(180deg, #cae9ea, #7ebda5);
     font-weight: bold;
     color: #273b40;
@@ -478,6 +478,20 @@ p {
     background-color: #303030;
     padding: 20px;
     padding-top: 35px;
+    border: 2px solid #cae9ea;
+    border-radius: 4px;
+}
+
+.download-game-container {
+    background-color: #303030;
+    padding: 20px;
+    border: 2px solid #cae9ea;
+    border-radius: 4px;
+}
+
+.download-game-container {
+    background-color: #303030;
+    padding: 20px;
     border: 2px solid #cae9ea;
     border-radius: 4px;
 }
@@ -728,7 +742,7 @@ p {
     }
 }
 
-.delete-button, .edit-button, .delete-thread-button {
+.delete-button, .edit-button, .delete-thread-button, .delete-user-game {
     color: #cae9ea;
 
     &:hover {

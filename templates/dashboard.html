@@ -110,20 +110,24 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card-body game-card-body">
-                            <h5 class="card-title">{{ game.title }}</h5>
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ game.title }}</h5>
+                                <div class="align-self-start">
+                                    <form method="POST" action="{{ url_for('delete_user_game', game_id=game.game_id) }}">
+                                        <button type="submit" class="btn btn-link delete-user-game">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                             <p class="small-card-text">
                                 {% if game.short_description %}
                                     {{ game.short_description }}
                                 {% else %}
-                                    No short description available.
+                                    No description available.
                                 {% endif %}
                             </p>
                             <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}</p>
-                            <form method="POST" action="{{ url_for('delete_user_game', game_id=game.game_id) }}">
-                                <button type="submit" class="btn btn-link delete-user-game">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
                         </div>
                     </div>
                 </div>

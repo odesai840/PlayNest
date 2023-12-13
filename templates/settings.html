@@ -33,18 +33,18 @@
             <div class="mt-3">
                 <h4 class="activity-labels mb-0">Personal Details</h4>
                 <form method="POST" action="{{ url_for('change_username') }}">
-                    <label for="username">Username</label>
-                    <input type="text" placeholder="Username" id="username" name="username" class="form-control">
-                    <button type="submit" class="btn btn-primary save-changes-button mt-2">Save Changes</button>
+                    <label for="username">Change Username</label>
+                    <input type="text" placeholder="New Username" id="username" name="username" class="form-control">
+                    <button type="submit" class="btn btn-primary save-changes-button mt-2">Update Username</button>
                 </form>
             </div>
-            <div class="mt-3">
+            <div class="mt-0">
                 <h4 class="activity-labels mb-0">Update Email</h4>
                 <form method="POST" action="{{ url_for('change_email') }}">
                     <label for="oldemail">Old Email Address</label>
-                    <input type="text" placeholder="Email" id="oldemail" name="oldemail" class="form-control">
+                    <input type="text" placeholder="Old Email" id="oldemail" name="oldemail" class="form-control">
                     <label for="newemail">New Email Address</label>
-                    <input type="text" placeholder="Email" id="newemail" name="newemail" class="form-control">
+                    <input type="text" placeholder="New Email" id="newemail" name="newemail" class="form-control">
                     <button type="submit" class="btn btn-primary save-changes-button mt-2">Update Email</button>
                 </form>
             </div>
@@ -58,8 +58,8 @@
                         <input type="password" placeholder="Old Password" id="old-password" name="old-password" class="form-control">
                         <label for="new-password">New Password</label>
                         <input type="password" placeholder="New Password" id="new-password" name="new-password" class="form-control">
-                        <label for="renew-password">Re-type New Password</label>
-                        <input type="password" placeholder="Re-type New Password" id="renew-password" name="renew-password" class="form-control">
+                        <label for="renew-password">Confirm New Password</label>
+                        <input type="password" placeholder="Confirm New Password" id="renew-password" name="renew-password" class="form-control">
                         <button type="submit" class="btn btn-primary save-changes-button mt-2">Update Password</button>
                     </form>
                 </div>

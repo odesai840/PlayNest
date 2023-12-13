@@ -8,8 +8,10 @@ def tests_signup_page(test_app: FlaskClient):
   
   # Create a test account
   response = test_app.post('/signup', data ={
-      'username': 'test',
-      'email': 'test@gmail.com',
-      'password': 'password',
-      'confirm_password': 'password'
+      "username": "test",
+      "email": "test@gmail.com",
+      "password": "password",
+      "confirm-password": "password"
   }, follow_redirects=True)
+
+  assert response.status_code == 200

@@ -33,8 +33,9 @@
     }
 
 
-    .forum-threads-grid,
-    .recent-reviews .forum-threads-grid {
+
+
+    .forum-threads-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
@@ -45,8 +46,9 @@
     }
 
 
-    .small-card,
-    .recent-reviews .small-card {
+
+
+    .small-card {
         border: 2px solid #cae9ea;
         border-radius: 5px;
         overflow: hidden;
@@ -57,11 +59,15 @@
     }
 
 
+
+
     .small-card:hover,
     .recent-reviews .small-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
+
+
 
 
     .recents-home-container {
@@ -71,6 +77,8 @@
     }
 
 
+
+
     .card-body {
         display: flex;
         flex-direction: column;
@@ -78,10 +86,14 @@
     }
 
 
+
+
     .small-card .card-body,
     .recent-reviews .small-card .card-body {
         padding: 10px;
     }
+
+
 
 
     .small-card-title,
@@ -91,9 +103,11 @@
         height: 43px;
     }
 
+
     .threads-title {
         height: 38px;
     }
+
 
     .game-title {
         height: 30px;
@@ -103,10 +117,13 @@
         }
     }
 
+
     .threads-title:hover {
         color: #8be8b5;
         text-decoration: underline;
     }
+
+
 
 
     .small-card-text,
@@ -119,9 +136,13 @@
     }
 
 
+
+
     .small-card-text, .card-text {
         margin-bottom: 30px;
     }
+
+
 
 
     .card-details,
@@ -134,15 +155,21 @@
     }
 
 
+
+
     .card-details,
     .recent-reviews .card-details {
         margin-top: auto;
     }
 
 
+
+
     h2 {
         padding-left: 3px;
     }
+
+
 
 
     h6 strong a {
@@ -151,10 +178,14 @@
     }
 
 
+
+
     h6 strong a:hover {
         color: #8be8b5;
         text-decoration: underline;
     }
+
+
 
 
     .none-found {
@@ -162,13 +193,32 @@
         color: white;
     }
 
+
     .game-cover-image {
         width: 100%;
         max-width: 300px;
         height: 230px;
     }
-</style>
 
+    @media screen and (min-width: 1920px) {
+        .small-card {
+            width: 370px;
+        }
+
+
+        .forum-threads-grid {
+            gap: 90px;
+            margin-right: 115px;
+        }
+
+
+        .game-cover-image {
+            width: 100%;
+            max-width: 500px;
+            height: 270px;
+        }
+    }
+</style>
 
     <div class="sidebar-container">
         <div class="row">
@@ -229,7 +279,7 @@
                                                     </a>
                                                     <p class="small-card-text">
                                                         {% if game.short_description %}
-                                                            {{ truncate_text(game.short_description) }}
+                                                            {{ game.short_description[:100] + '...' if game.short_description|length > 100 else game.short_description }}
                                                         {% else %}
                                                             No description available.
                                                         {% endif %}
@@ -262,7 +312,7 @@
                                                     <a href="{{ thread.detail_url }}">
                                                         <h5 class="card-title small-card-title threads-title">{{ thread.title[:27] + '...' if thread.title|length > 27 else thread.title }}</h5>
                                                     </a>
-                                                    <p class="small-card-text">{{ truncate_text(thread.content) }}</p>
+                                                    <p class="small-card-text">{{ thread.content[:300] + '...' if thread.content|length > 300 else thread.content }}</p>
                                                     <p class="card-details">
                                                         Posted by:
                                                         <span>
@@ -300,7 +350,7 @@
                                                             {% endfor %}
                                                         {% endif %}
                                                     </p>
-                                                    <p class="small-card-text">{{ truncate_text(review.content) }}</p>
+                                                    <p class="small-card-text">{{ review.content[:300] + '...' if review.content|length > 300 else review.content }}</p>
                                                     <p class="card-details">
                                                         Review by:
                                                         <a href="{{ url_for('view_profile', user_id=review.user.id) }}" class="usernames">{{ review.user.username }}</a>

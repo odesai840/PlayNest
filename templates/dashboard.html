@@ -122,7 +122,7 @@
                             </div>
                             <p class="small-card-text">
                                 {% if game.short_description %}
-                                    {{ game.short_description }}
+                                    {{ game.short_description[:100] + '...' if game.short_description|length > 100 else game.short_description }}
                                 {% else %}
                                     No description available.
                                 {% endif %}

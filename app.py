@@ -269,7 +269,7 @@ def delete_user_game(game_id):
 
     game = Game.query.get(game_id)
 
-    if game.cover_url == 'static/images/playnest_logo.png':
+    if game.cover_url == '/static/images/playnest_logo.png':
         if game.game_url.lower().endswith('index.html'):
             game_folder = game.filepath
             print(f'{game_folder}')

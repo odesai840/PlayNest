@@ -11,6 +11,7 @@
 
     .card {
         border: 2px solid #cae9ea;
+        cursor: pointer;
     }
 </style>
 
@@ -21,10 +22,10 @@
         <div class="col-md-6">
             <h6>Your Creations:</h6>
             {% for game in games %}
-            <div class="card mb-3">
+            <div class="card mb-3" onclick="window.location.href='/game/{{ game.game_id }}'">
                 <div class="row g-0">
                     <div class="col-md-4">
-                        <img src="{{ game.cover_url }}" class="img-fluid" alt="game cover image">
+                        <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -43,7 +44,7 @@
             <h6>Upload a game:</h6>
             <div class="card">
                 <div class="card-body">
-                    <form action="/upload_game" method="post" enctype="multipart/form-data">
+                    <form action="/dashboard" method="post" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="title">Title:</label>
                             <input name="title" type="text" class="form-control" id="title" placeholder="Enter game title" required>
@@ -59,11 +60,11 @@
                             <small id="helper" class="form-text">This description will be shown on your game's page.</small>
                         </div>
                         <div class="form-group">
-                            <label for="cover" class="form-label">Cover Image:</label>
+                            <label for="cover" class="form-label">Upload Cover Image:</label>
                             <input name="cover-image" type="file" id="cover" class="form-control">
                         </div>
                         <div class="form-group">
-                            <label for="game" class="form-label">Upload:</label>
+                            <label for="game" class="form-label">Upload Game:</label>
                             <input name="game-file" type="file" id="game" class="form-control">
                         </div>
                         <br>

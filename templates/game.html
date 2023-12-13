@@ -1,34 +1,312 @@
 {% extends '_layout.html' %}
 
-{% block title %}{% endblock %}
+{% block title %}PlayNest{% endblock %}
 
-{% block body %}
+{% block content %}
+<style>
+    #game-player{
+        z-index: 0;
+    }
+
+    .fullscreen-btn {
+        position: relative;
+        right: 75px;
+        bottom: 37px;
+        background-color: transparent;
+        border: none;
+        float: right;
+    }
+
+    .long-description {
+        font-size: 17px;
+        width: 100%;
+        max-width: 961px;
+        white-space: pre-line;
+    }
+
+    .user-game-desc-container {
+        margin-left: 53px;
+    }
+
+    .game-desc-card {
+        background-color: #303030;
+        border: none;
+    }
+
+    .card-details {
+        margin-top: 35px;
+    }
+
+    .no-margin-bottom {
+        margin-bottom: 3px;
+    }
+
+    .details-container {
+        margin-right: 18px;
+    }
+
+    .profile-pic-container {
+        border-right: 1px solid #fff;
+        margin-right: 15px;
+        height: 100%;
+    }
+</style>
+
 <div class="container mt-4">
-    <iframe src="..." id="game" allowfullscreen="yes" scrolling="no" frameborder="0" height="550" width="960"></iframe>
-    <br>
-    <p> This is a game description. Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate consectetur pariatur possimus soluta ducimus magni dignissimos ab? Animi consequuntur, nulla quisquam eveniet suscipit, quam perferendis nemo quidem rerum minus autem.</p>
-    <br>
-    <!-- Add Comment Form -->
-    <div class="mb-4">
-        <h3>Comments</h3>
-        <form>
-            <div class="form-group">
-                <label for="comment">Comment:</label>
-                <textarea class="form-control" id="comment" rows="3" placeholder="Your Comment"></textarea>
-                <small id="helper">You must be logged in to comment</small>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
-
-    <!-- Comments -->
-    <div class="comments">
-        <div class="card mb-2">
-            <div class="card-body">
-                <h5 class="card-title">John Doe</h5>
-                <p class="card-text">This is a sample comment. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <div class="play-game-container">
+        <iframe src="{{ game.game_url }}" id="game-player" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" msallowfullscreen="true" scrolling="no" frameborder="0" height="550" width="960"></iframe>
+        <button class="fullscreen-btn" onclick="goFullscreen('game-player'); return false">
+            <img src="/static/images/fullscreen_btn.png" height="30px" width="30px">
+        </button>
+        <br>
+        <div class="card game-desc-card mb-3">
+            <div class="user-game-desc-container">
+                {% if game.long_description %}
+                    <p class="long-description">{{ game.long_description }}</p>
+                {% else %}
+                    <p class="none-found">No recent threads found.</p>
+                {% endif %}
+                <p class="card-details">Released by: 
+                    <span>
+                        <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
+                    </span>
+                    on
+                    {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
+                </p>
             </div>
         </div>
     </div>
+
+    <hr>
+
+    <!-- form to add a new comment -->
+    <div class="thread-comment-form-container">
+        {% if 'username' in session %}
+            <form id="commentForm" method="POST" action="{{ url_for('game_detail', game_id=game.game_id) }}">
+                <div class="form-group">
+                    <label for="content">Leave a Comment:</label>
+                    <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="post-comment-button">Post Comment</button>
+            </form>
+        {% else %}
+            <p><a href="{{ url_for('login') }}" class="login-link">Log in</a> to leave a comment.</p>
+        {% endif %}
+    </div>
+
+
+    <!-- display comments -->
+    <h3 class="comments-heading">Comments</h3>
+
+    {% if game.comments %}
+    {% for comment in game.comments|reverse %}
+        <div class="card mb-3">
+            <div class="comments">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex align-items-start">
+                            <div class="profile-pic-container">
+                                <div class="details-container">
+                                    {% if comment.profile_picture %}
+                                <img id="profile-pic" src="{{ url_for('static', filename='images/picture_options/' + comment.profile_picture) }}"
+                                    alt="Profile Picture" class="mr-3">
+                                {% else %}
+                                    <!-- default profile picture if the user doesn't have one -->
+                                    <img id="profile-pic" src="{{ url_for('static', filename='images/default.jpg') }}"
+                                        alt="Default Profile Picture" class="mr-3">
+                                {% endif %}
+                                <div class="details">
+                                    <p class="comment-card-details no-margin-bottom">Comment by:</p>
+                                    <p class="comment-card-details no-margin-bottom">
+                                        <a href="{{ url_for('view_profile', user_id=comment.user.id) }}" class="usernames">{{ comment.user.username}}</a>
+                                    </p>
+                                    <p class="comment-card-details no-margin-bottom">on {{ comment.created_at.strftime('%m-%d-%Y') }}</p>
+                                    <p class="comment-card-details no-margin-bottom">at {{ comment.created_at.strftime('%I:%M %p') }}</p>
+                                    <p class="comment-card-details no-margin-bottom">
+                                        {% if 'username' in session %}
+                                            <a href="#" class="reply-link">Reply</a>
+                                        {% endif %}
+                                    </p>
+                                    <!-- like button and like count display -->
+                                    <div class="card-likes">
+                                        <button
+                                            class="btn btn-link like-button {% if 'username' in session and comment.id in liked_comments %}liked{% endif %}"
+                                            data-comment-id="{{ comment.id }}">
+                                            <i class="fas fa-thumbs-up"></i>
+                                        </button>
+                                        <span class="like-count">
+                                            {{ comment.likes|length }}
+                                        </span>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            <div>
+                                {% if comment.parent_comment %}
+                                    <div class="parent-comment-content">
+                                        <span>
+                                            <a href="{{ url_for('view_profile', user_id=comment.parent_comment.user.id) }}" class="usernames"><strong>{{ comment.parent_comment.user.username}}</strong></a> 
+                                            <strong>said:</strong>
+                                        </span>
+                                        <div class="white-space">
+                                            {{ comment.parent_comment.content }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <p class="comment-text">
+                                    <span>{{ comment.content }}</span>
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            {% if comment.user.username == session['username'] %}
+                                <!-- delete/edit buttons if the comment belongs to the logged-in user -->
+                                <div class="comment-buttons">
+                                    <form method="POST" action="{{ url_for('edit_game_comment', comment_id=comment.id, game_id=game.game_id) }}">
+                                        <button type="submit" class="btn btn-link edit-button" data-comment-id="{{ comment.id }}">
+                                            <i class="fa-solid fa-pencil"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('delete_game_comment', comment_id=comment.id, game_id=game.game_id) }}">
+                                        <button type="submit" class="btn btn-link delete-button" data-comment-id="{{ comment.id }}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+                    <div class="edit-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('edit_game_comment', comment_id=comment.id, game_id=game.game_id) }}">
+                            <div class="form-group">
+                                <label for="edit-content">Edit Your Comment:</label>
+                                <textarea class="form-control" id="edit-content" name="edit_content" rows="5" required>{{ comment.content }}</textarea>
+                            </div>
+                            <button type="submit" class="post-comment-button">Save Changes</button>
+                        </form>
+                    </div>
+
+
+                    <div class="reply-form" style="display: none;">
+                        <form method="POST" action="{{ url_for('post_game_reply', comment_id=comment.id, game_id=game.game_id) }}">
+                            <div class="form-group">
+                                <label for="content">Your Reply:</label>
+                                <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                            </div>
+                            <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                            <button type="submit" class="post-comment-button">Post Reply</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No comments yet. Start the conversation!</p>
+{% endif %}
 </div>
+
+<script>
+    const likeButtons = document.querySelectorAll('.like-button');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                likeComment(commentId, this)
+            });
+        });
+
+        async function likeComment(commentId, button) {
+            try {
+                const response = await fetch(`/like_comment/${commentId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin',
+                });
+                const data = await response.json();
+
+                if(data.success) {
+                    // update like count in UI
+                    const likeCountElement = button.parentElement.querySelector('.like-count');
+                    const currentLikes = parseInt(likeCountElement.innerText);
+
+                    if (button.classList.contains('liked')) {
+                        // if its already been liked, unlike
+                        likeCountElement.innerText = currentLikes - 1;
+                    } else {
+                        // if not liked, then like
+                        likeCountElement.innerText = currentLikes + 1;
+                    }
+                    // toggle 'liked' class after updating like count
+                    button.classList.toggle('liked');
+                } else {
+                    console.error('Failed to like comment');
+                }
+            } catch (error) {
+                console.error('Error during likeComment:', error);
+            }
+        }
+
+        // select all reply links
+        const replyLinks = document.querySelectorAll('.reply-link');
+
+        // iterate over each reply link
+        replyLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated reply form
+                const replyForm = this.closest('.card-body').querySelector('.reply-form');
+
+                // toggle the visibility of the reply form
+                if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+                    replyForm.style.display = 'block';
+                } else {
+                    replyForm.style.display = 'none';
+                }
+            });
+        });
+
+        // select all edit buttons
+        const editButtons = document.querySelectorAll('.edit-button');
+
+        // iterate over each edit button
+        editButtons.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                // get the associated card
+                const card = this.closest('.card');
+
+                // get the associated edit form within the card
+                const editForm = card.querySelector('.edit-form');
+
+                // toggle the visibility of the edit form
+                if (editForm.style.display === 'none' || editForm.style.display === '') {
+                    editForm.style.display = 'block';
+                } else {
+                    editForm.style.display = 'none';
+                }
+            });
+        });
+
+    function getFullscreenElement() {
+        return document.fullscreenElement
+            || document.webkitFullscreenElement
+            || document.mozFullscreenElement
+            || document.msFullscreenElement;
+    }
+
+    function goFullscreen(id) {
+        var element = document.getElementById(id);
+        element.requestFullscreen().catch((e) => {
+            console.log(e);
+        });
+    }
+</script>
 {% endblock %}

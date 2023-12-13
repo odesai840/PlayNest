@@ -1,0 +1,115 @@
+{% extends '_layout.html' %}
+
+{% block title %}PlayNest | Creator Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .forum-threads-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-right: 40px;
+        margin-left: 5px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .small-card {
+        border: none;
+        border-radius: 5px;
+        overflow: hidden;
+        transition: transform 0.3s;
+        background-color: #39595f;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+
+
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-title:hover {
+        color: #8be8b5;
+        text-decoration: underline;
+    }
+
+    .small-card .card-body {
+        padding: 10px;
+    }
+
+    .small-card-text,
+    .card-text {
+        font-size: 14px;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+
+    .small-card-text, .card-text {
+        margin-bottom: 30px;
+    }
+
+
+    .card-details,
+    p {
+        font-size: 12px;
+        color: #c8c6c6;
+        margin-bottom: 5px;
+        margin-top: 10px;
+    }
+
+
+    .card-details {
+        margin-top: auto;
+    }
+
+    .none-found {
+        font-size: 16px;
+        color: white;
+    }
+
+    .game-cover-image {
+        max-width: 300px;
+        height: auto;
+    }
+</style>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">User Games</h2>
+
+    <div class="forum-threads-grid">
+        {% if games %}
+            {% for game in games %}
+                <div class="card small-card">
+                    <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
+                    <div class="recents-home-container">
+                        <div class="card-body">
+                            <a href="{{ game.detail_url }}">
+                                <h5 class="card-title small-card-title">{{ game.title[:27] + '...' if game.title|length > 27 else game.title }}</h5>
+                            </a>
+                            <p class="small-card-text">
+                                {% if game.short_description %}
+                                    {{ game.short_description }}
+                                {% else %}
+                                    No short description available.
+                                {% endif %}
+                            </p>
+                            <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
+                                <br>
+                                Posted by:
+                                <span>
+                                    <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="none-found">No user games found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

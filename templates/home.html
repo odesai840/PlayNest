@@ -312,7 +312,7 @@
                                                     <a href="{{ thread.detail_url }}">
                                                         <h5 class="card-title small-card-title threads-title">{{ thread.title[:27] + '...' if thread.title|length > 27 else thread.title }}</h5>
                                                     </a>
-                                                    <p class="small-card-text">{{ thread.content[:300] + '...' if thread.content|length > 300 else thread.content }}</p>
+                                                    <p class="small-card-text">{{ thread.content[:320] + '...' if thread.content|length > 320 else thread.content }}</p>
                                                     <p class="card-details">
                                                         Posted by:
                                                         <span>

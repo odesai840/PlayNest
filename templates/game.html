@@ -24,6 +24,13 @@
         white-space: pre-line;
     }
 
+    .long-description2 {
+        font-size: 17px;
+        width: 100%;
+        white-space: pre-line;
+        margin-bottom: 0;
+    }
+
     .user-game-desc-container {
         margin-left: 53px;
     }
@@ -58,6 +65,11 @@
 
     .user-said {
         margin-bottom: 10px;
+    }
+
+    .file-name {
+        color: white;
+        margin-left: 5px;
     }
 </style>
 
@@ -102,7 +114,7 @@
                         <button type="submit" class="post-comment-button">Save Changes</button>
                     </form>
                 </div>
-                <p class="card-details">Released by: 
+                <p class="card-details">Posted by: 
                     <span>
                         <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
                     </span>
@@ -114,15 +126,13 @@
     </div>
     {% else %}
         <div class="download-game-container">
-            {% if game.long_description %}
-                <p class="long-description">{{ game.long_description }}</p>
-            {% else %}
-                <p class="none-found">No description available.</p>
-            {% endif %}
-            <a href="{{ url_for('download_game', name=game.filepath) }}" class="download-btn">Download</a>
             <div class="card game-desc-card mb-3">
-                <div class="user-game-desc-container">
                     <div class="d-flex justify-content-between">
+                        {% if game.long_description %}
+                            <p class="long-description2">{{ game.long_description }}</p>
+                        {% else %}
+                            <p class="none-found">No description available.</p>
+                        {% endif %}
                         <div class="align-self-start">
                             {% if 'username' in session and game.author.username == session['username'] %}
                                 <!-- edit button if the game belongs to the logged-in user -->
@@ -147,15 +157,16 @@
                             <button type="submit" class="post-comment-button">Save Changes</button>
                         </form>
                     </div>
-                    <p class="card-details">Released by: 
-                        <span>
-                            <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
-                        </span>
-                        on
-                        {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
-                    </p>
-                </div>
             </div>
+            <a href="{{ url_for('download_game', name=game.filepath) }}" class="download-btn">Download</a>
+            <span class="file-name">{{ game.filepath }}</span>
+            <p class="card-details">Posted by: 
+                <span>
+                    <a href="{{ url_for('view_profile', user_id=game.author.id) }}" class="usernames">{{ game.author.username }}</a>
+                </span>
+                on
+                {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
+            </p>
         </div>
     {% endif %}
 

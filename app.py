@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort, send_from_directory
 from werkzeug.utils import secure_filename
 import zipfile
 import shutil
@@ -183,6 +183,12 @@ def allowed_cover_file(filename):
 
 @app.route('/dashboard', methods=['GET','POST'])
 def dashboard():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    else:
+        user = User.query.filter_by(username=session['username']).first()
+
     if request.method == 'POST':
         title = request.form['title']
 
@@ -202,7 +208,7 @@ def dashboard():
             print(f'{cover_url}')
         
         else:
-            cover_url='static/images/playnest_logo.png'
+            cover_url='/static/images/playnest_logo.png'
 
         short_description = request.form['short-description']
         long_description = request.form['long-description']
@@ -223,9 +229,10 @@ def dashboard():
 
             # Extract the uploaded ZIP file
             zip_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            extracted_folder = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename.split('.')[0])
+            print(f'{path}')
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                zip_ref.extractall(extracted_folder)
+                zip_ref.extractall(path)
 
             # Search for index.html in the extracted files
             index_html_path = find_index_html(zip_path)
@@ -234,36 +241,88 @@ def dashboard():
                 print(f'{game_url}')
                 os.remove(zip_path)
             else:
-                # If index.html is not found, delete the uploaded ZIP file and the extracted folder
-                os.remove(zip_path)
-                if os.path.exists(extracted_folder):
-                    shutil.rmtree(extracted_folder)
-                return 'No index.html found in the uploaded game file'
+                # If index.html is not found, make the file downloadable and delete the extracted folder
+                game_url = zip_path
+                if os.path.exists(path):
+                    shutil.rmtree(path)
+                path = filename
+                print(f'{path}')
         else:
             return 'Invalid game file format'
         
         author_id = User.query.filter_by(username=session['username']).first().id
 
-        new_game = Game(title=title, cover_url=cover_url, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
+        new_game = Game(title=title, cover_url=cover_url, filepath=path, short_description=short_description, long_description=long_description, game_url=game_url, author_id=author_id)
         db.session.add(new_game)
         db.session.commit()
-        return render_template('dashboard.html', games=Game.query.all())
+        return render_template('dashboard.html', games=Game.query.filter_by(author_id=user.id).all())
     
-    return render_template('dashboard.html', games=Game.query.all())
+    return render_template('dashboard.html', games=Game.query.filter_by(author_id=user.id).all())
+
+@app.post('/dashboard/delete/<int:game_id>')
+def delete_user_game(game_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    else:
+        user = User.query.filter_by(username=session['username']).first()
+
+    game = Game.query.get(game_id)
+
+    if game.cover_url == '/static/images/playnest_logo.png':
+        if game.game_url.lower().endswith('index.html'):
+            game_folder = game.filepath
+            print(f'{game_folder}')
+            shutil.rmtree(game_folder)
+        
+        else:
+            game_file = game.game_url
+            print(f'{game_file}')
+            os.remove(game_file)
+
+    else:
+        if game.game_url.lower().endswith('index.html'):
+            game_folder = game.filepath
+            print(f'{game_folder}')
+            shutil.rmtree(game_folder)
+
+            cover_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(game.cover_url))
+            print(f'{cover_path}')
+            os.remove(cover_path)
+
+        else:
+            game_file = game.game_url
+            print(f'{game_file}')
+            os.remove(game_file)
+
+            cover_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(game.cover_url))
+            print(f'{cover_path}')
+            os.remove(cover_path)
+
+    db.session.delete(game)
+    db.session.commit()
+
+    return redirect(url_for('dashboard', games=Game.query.filter_by(author_id=user.id).all()))
 
 @app.get('/game/<int:game_id>')
 def play_game(game_id):
     game = Game.query.get(game_id)
     return render_template('game.html', game=game)
 
+@app.get('/game/download/<name>')
+def download_game(name):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], name)
+
 @app.route('/settings')
 def settings():
     # retrieve user ID of current session user
+    user = User.query.filter_by(username=session['username']).first()
     user_email = User.query.filter_by(username=session['username']).first().email
-
+    num_games = Game.query.filter_by(author_id=user.id).count()
+    
     if request.method == 'POST':
         pass
-    return render_template('settings.html', user_email=user_email)
+    return render_template('settings.html', user_email=user_email, num_games=num_games)
 
 @app.route('/change-username', methods=['GET', 'POST'])
 def change_username():
@@ -506,13 +565,14 @@ def delete_game_comment(game_id, comment_id):
 
     return redirect(url_for('game_detail', game_id=game_id))
 
-def edit_comment_helper(comment_id, session_username, new_content):
+def edit_comment_helper(comment_id, session_username, new_content, new_rating):
     comment = Comment.query.get(comment_id)
     if comment:
         # check if logged in user is owner of the comment
         if comment.user.username == session_username:
             # update the comment content in the database
             comment.content = new_content
+            comment.rating = new_rating
             db.session.commit()
             return True
         else:
@@ -527,7 +587,7 @@ def edit_comment(forum_slug, thread_id, comment_id):
 
     if request.method == 'POST':
         new_content = request.form.get('edit_content')
-        if edit_comment_helper(comment_id, session['username'], new_content):
+        if edit_comment_helper(comment_id, session['username'], new_content, new_rating=None):
             return redirect(url_for('thread_detail', forum_slug=forum_slug, thread_id=thread_id))
 
     abort(400) 
@@ -539,7 +599,7 @@ def edit_review_comment(review_id, comment_id):
 
     if request.method == 'POST':
         new_content = request.form.get('edit_content')
-        if edit_comment_helper(comment_id, session['username'], new_content):
+        if edit_comment_helper(comment_id, session['username'], new_content, new_rating=None):
             return redirect(url_for('review_detail', review_id=review_id))
 
     abort(400)
@@ -550,8 +610,9 @@ def edit_game_comment(game_id, comment_id):
         return redirect(url_for('login'))
 
     if request.method == 'POST':
+        new_rating = request.form.get('edit_rating')
         new_content = request.form.get('edit_content')
-        if edit_comment_helper(comment_id, session['username'], new_content):
+        if edit_comment_helper(comment_id, session['username'], new_content, new_rating):
             return redirect(url_for('game_detail', game_id=game_id))
 
     abort(400)
@@ -566,9 +627,11 @@ def edit_thread(forum_slug, thread_id):
     # check if logged in user is the owner of the reply
     if thread.user.username == session['username']:
         if request.method == 'POST':
+            new_title = request.form.get('edit_title')
             new_content = request.form.get('edit_content')
             
             # update the reply content in the database
+            thread.title = new_title
             thread.content = new_content
             db.session.commit()
 
@@ -757,9 +820,15 @@ def edit_single_review(review_id):
     # check if logged in user is the owner of the review
     if review.user.username == session['username']:
         if request.method == 'POST':
+            new_title = request.form.get('edit_title')
+            new_recommendation = int(request.form.get('edit_recommendation', review.is_recommendation))
+            new_rating = int(request.form.get('edit_rating', review.rating))
             new_content = request.form.get('edit_content')
             
             # update the review content in the database
+            review.title = new_title
+            review.is_recommendation = new_recommendation
+            review.rating = new_rating
             review.content = new_content
             db.session.commit()
 
@@ -774,10 +843,12 @@ def game_detail(game_id):
         user_id = User.query.filter_by(username=session['username']).first().id
         parent_comment_id = request.form.get('parent_comment_id')
 
+        rating = int(request.form['rating']) if request.form['rating'] else None
+
         if parent_comment_id:
-            new_comment = Comment(content=content, user_id=user_id, game_id=game.game_id, parent_comment_id=parent_comment_id)
+            new_comment = Comment(content=content, user_id=user_id, game_id=game.game_id, parent_comment_id=parent_comment_id, rating=rating)
         else:
-            new_comment = Comment(content=content, user_id=user_id,  game_id=game.game_id)
+            new_comment = Comment(content=content, user_id=user_id,  game_id=game.game_id, rating=rating)
 
         db.session.add(new_comment)
         db.session.commit()
@@ -840,6 +911,9 @@ class ProfileEditForm(FlaskForm):
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+
     user = User.query.filter_by(username=session['username']).first()
     profile = user.profile
     
@@ -865,15 +939,15 @@ def edit_profile():
 
     return render_template('profile_edit.html', form=form, user=user)
 
-@app.route('/profile/view/<int:user_id>')
+@app.route('/view_profile/<int:user_id>', methods=['GET'])
 def view_profile(user_id):
     user = User.query.get(user_id)
-    
+
     # retrieve reviews and threads posted by user
     user_reviews = Review.query.filter_by(user_id=user.id).all()
     user_threads = Thread.query.filter_by(user_id=user.id).all()
     user_games = Game.query.filter_by(author_id=user.id).all()
-    
+
     # attach URLs to reviews and threads for details viewing
     for review in user_reviews:
         review.detail_url = url_for('game_details', game_id=review.game_identifier)
@@ -886,7 +960,7 @@ def view_profile(user_id):
 
     return render_template('profile_view.html', user=user, user_reviews=user_reviews, user_threads=user_threads, user_games=user_games, get_game_details_from_rawg_api=get_game_details_from_rawg_api)
 
-@app.route('/profile/view', methods=['GET'])
+@app.route('/view_own_profile', methods=['GET'])
 def view_own_profile():
     if 'username' in session:
         user = User.query.filter_by(username=session['username']).first()
@@ -946,6 +1020,26 @@ def user_games():
         game.detail_url = url_for('game_detail', game_id=game.game_id)
 
     return render_template('user_games.html', games=games)
+
+@app.route('/edit_game_desc/<int:game_id>', methods=['GET', 'POST'])
+def edit_game_desc(game_id):
+    if 'username' not in session: 
+        return redirect(url_for('login'))
+
+    game = Game.query.get(game_id)
+
+    # check if logged in user is the owner of the game
+    if game.author.username == session['username']:
+        if request.method == 'POST':
+            new_long_description = request.form.get('edit_long_description')
+            new_game_title = request.form.get('edit_title')
+
+            # update the game long description in the database
+            game.long_description = new_long_description
+            game.title = new_game_title
+            db.session.commit()
+
+    return render_template('game.html', game=game)
 
 if __name__ == '__main__':
     app.run(debug=True)

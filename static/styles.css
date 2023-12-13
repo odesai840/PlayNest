@@ -453,7 +453,7 @@ p {
     border: none;
 }
 
-.publish-game-button {
+.publish-game-button, .download-btn {
     background: linear-gradient(180deg, #cae9ea, #7ebda5);
     font-weight: bold;
     color: #273b40;
@@ -482,10 +482,24 @@ p {
     border-radius: 4px;
 }
 
-.game-cover-image {
+.download-game-container {
+    background-color: #303030;
+    padding: 20px;
+    border: 2px solid #cae9ea;
+    border-radius: 4px;
+}
+
+.download-game-container {
+    background-color: #303030;
+    padding: 20px;
+    border: 2px solid #cae9ea;
+    border-radius: 4px;
+}
+
+/* .game-cover-image {
     max-width: 190px;
     height: 180px;
-}
+} */
 
 /* ---------------------------------------------------------------FORUM PAGE STYLING----------------------------------------------------------*/
 .col-md-12 {
@@ -688,10 +702,6 @@ p {
     background-color: #273b40;
 }
 
-.white-space {
-    white-space: pre-line;
-}
-
 .strong-color {
     color: #8be8b5;
 }
@@ -732,7 +742,7 @@ p {
     }
 }
 
-.delete-button, .edit-button, .delete-thread-button {
+.delete-button, .edit-button, .delete-thread-button, .delete-user-game {
     color: #cae9ea;
 
     &:hover {
@@ -806,6 +816,10 @@ hr {
         border: 2px solid #cae9ea;
         color: #273b40;
     }
+}
+
+.searchbar-container {
+    margin-bottom: 30px;
 }
 
 /* ---------------------------------------------------------------REVIEW DETAIL STYLING--------------------------------------------------------*/

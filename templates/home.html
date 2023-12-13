@@ -163,8 +163,9 @@
     }
 
     .game-cover-image {
+        width: 100%;
         max-width: 300px;
-        height: auto;
+        height: 230px;
     }
 </style>
 
@@ -213,12 +214,14 @@
 
                     <div class="content-below-hero">
                         <div class="recent-games">
-                            <h2>Recent User Games</h2>
+                            <h2>Recent User Creations</h2>
                             <div class="forum-threads-grid">
                                 {% if recent_games %}
                                     {% for game in recent_games %}
                                         <div class="card small-card">
-                                            <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
+                                            <div class="game-image">
+                                                <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
+                                            </div>
                                             <div class="recents-home-container">
                                                 <div class="card-body">
                                                     <a href="{{ game.detail_url }}">
@@ -228,7 +231,7 @@
                                                         {% if game.short_description %}
                                                             {{ truncate_text(game.short_description) }}
                                                         {% else %}
-                                                            No short description available.
+                                                            No description available.
                                                         {% endif %}
                                                     </p>
                                                     <p class="card-details">Release Date: {{ game.release_date.strftime('%m-%d-%Y • %I:%M %p') }}
@@ -243,7 +246,7 @@
                                         </div>
                                     {% endfor %}
                                 {% else %}
-                                    <p class="none-found">No recent games found.</p>
+                                    <p class="none-found">No recent creations found.</p>
                                 {% endif %}
                             </div>
                         </div>

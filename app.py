@@ -1039,6 +1039,3 @@ def edit_game_desc(game_id):
             db.session.commit()
 
     return render_template('game.html', game=game)
-
-if __name__ == '__main__':
-    app.run(debug=True)

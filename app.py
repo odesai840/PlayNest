@@ -397,8 +397,8 @@ def delete_games():
         if bcrypt.check_password_hash(user.password_hash, password_verification):
             db.session.query(Game).filter_by(author_id=user.id).delete()
             db.session.commit()
-    else:
-        return "Password incorrect."
+        else:
+            return "Password incorrect."
     return redirect(url_for('settings'))
 
 @app.get('/forum')

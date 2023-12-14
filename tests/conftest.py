@@ -8,11 +8,3 @@ def test_app():
     ctx.push()
     yield testing_client
     ctx.pop()
-
-@pytest.fixture(scope='module', autouse=True)
-def clear_db():
-    with app.app_context():
-        db.create_all()
-        yield db
-        db.session.remove()
-        db.drop_all()

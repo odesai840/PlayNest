@@ -335,7 +335,7 @@ header h2 {
 
 header p {
     color: #cae9ea;
-    font-size: 18px;
+    font-size: 22px;
     padding-bottom: 30px;
 }
 
@@ -377,8 +377,8 @@ header p {
 }
 
 .content-below-hero {
-    margin-top: 2%;
-    margin-left: 20px;
+    margin-top: 1.5%;
+    margin-left: 23px;
 }
 
 .content-below-hero h2 {

@@ -18,3 +18,4 @@ def test_profile_edit(test_app: FlaskClient):
   # Test that the page loads
   response = test_app.get('/profile/edit')
   assert response.request.path == "/profile/edit"
+

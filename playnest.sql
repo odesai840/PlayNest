@@ -72,7 +72,6 @@ CREATE TABLE Comment (
     CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
 );
 
--- for the last-touches branch, add this to your DB console
 ALTER TABLE Comment
 ADD COLUMN rating INTEGER;
 

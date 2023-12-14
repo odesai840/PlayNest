@@ -23,7 +23,7 @@ def tests_login_page(test_app: FlaskClient):
   assert b"Invalid credentials" in response.data
 
   # Test that log in works as expected with expected credentials.
-  test_app.post('/login', data ={
+  response = test_app.post('/login', data ={
   'username': 'test',
   'password': 'password'
   }, follow_redirects=True)

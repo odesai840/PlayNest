@@ -64,3 +64,12 @@ def test_dashboard(test_app: FlaskClient):
   # This should return status code 200 if the route
   # sets the game cover to the default image
   assert response.status_code == 200
+
+  # Check if game was added to database
+  games = Game.query.all()
+  for game in games:
+    assert game.title == 'test'
+    assert game.short_description == 'test'
+    assert game.long_description == 'test'
+    assert game.cover_url == '/static/uploads/test.png'
+    assert game.game_url == '/static/uploads/test'

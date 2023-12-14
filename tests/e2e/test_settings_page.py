@@ -24,6 +24,16 @@ def tests_settings_page(test_app: FlaskClient):
     response = test_app.get('/settings')
     assert response.status_code == 200
 
+    response = test_app.post('/change-username', data ={
+        "username": "test1",
+    }, follow_redirects=True)
+    assert response.status_code == 200
+
+    response = test_app.post('/change-username', data ={
+        "username": "test",
+    }, follow_redirects=True)
+    assert response.status_code == 200
+
     # test change-email functionality
     response = test_app.post('/change-email', data ={
         "oldemail": "test@gmail.com",
@@ -34,6 +44,12 @@ def tests_settings_page(test_app: FlaskClient):
     # test delete-account functionality
     response = test_app.post('/delete-account', data ={
         "delete-account-pw": "password",
+    }, follow_redirects=True)
+    assert response.status_code == 200
+
+    # test delete-game functionality
+    response = test_app.post('/delete-games', data ={
+        "delete-games-pw": "password",
     }, follow_redirects=True)
     assert response.status_code == 200
 

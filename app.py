@@ -395,11 +395,8 @@ def delete_games():
         password_verification = request.form['delete-games-pw']
         user = User.query.filter_by(username=session['username']).first()
         if bcrypt.check_password_hash(user.password_hash, password_verification):
-            user_game = Game.query.filter_by(author_id=user._id).first()
-            while user_game != None:
-                db.session.delete(user_game)
-                db.session.commit()
-                user_game = Game.query.filter_by(author_id=user._id).first()
+            db.session.query(Game).filter_by(author_id=user.id).delete()
+            db.session.commit()
     else:
         return "Password incorrect."
     return redirect(url_for('settings'))

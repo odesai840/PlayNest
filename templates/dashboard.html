@@ -94,6 +94,46 @@
     .game-card-body {
         margin-left: 12px;
     }
+
+    @media screen and (min-width: 575px) and (max-width: 767px) {
+        .game-cover-image {
+            width: 506px;
+            max-width: 506px;
+            height: 300px;
+        }
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+        .creation-cards {
+            width: 340px;
+            height: 190px;
+        }
+
+        .game-cover-image {
+            width: 140px;
+            max-width: 140px;
+            height: 185px;
+        }
+
+        .card-title {
+            max-width: 100px;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .small-card-text {
+            margin-top: 3px;
+            margin-bottom: 3px;
+        }
+    }
+
+    @media screen and (min-width: 992px) and (max-width: 1199px) {
+        .game-cover-image {
+            width: 180px;
+            max-width: 180px;
+            height: 200px;
+        }
+    }
 </style>
 
 <div class="container mt-4">
@@ -103,7 +143,7 @@
         <div class="col-md-6">
             <h6>Your Creations:</h6>
             {% for game in games %}
-            <div class="card mb-3" onclick="window.location.href='/game/{{ game.game_id }}'">
+            <div class="card creation-cards mb-3" onclick="window.location.href='/game/{{ game.game_id }}'">
                 <div class="row g-0">
                     <div class="col-md-4">
                         <img src="{{ game.cover_url }}" class="img-fluid game-cover-image" alt="game cover image">
@@ -122,7 +162,7 @@
                             </div>
                             <p class="small-card-text">
                                 {% if game.short_description %}
-                                    {{ game.short_description }}
+                                    {{ game.short_description[:100] + '...' if game.short_description|length > 100 else game.short_description }}
                                 {% else %}
                                     No description available.
                                 {% endif %}

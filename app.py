@@ -315,6 +315,8 @@ def download_game(name):
 
 @app.route('/settings')
 def settings():
+    if 'username' not in session: 
+        return redirect(url_for('login'))
     # retrieve user ID of current session user
     user = User.query.filter_by(username=session['username']).first()
     user_email = User.query.filter_by(username=session['username']).first().email
@@ -1043,4 +1045,3 @@ def edit_game_desc(game_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-

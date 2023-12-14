@@ -22,31 +22,22 @@ CREATE TABLE thread (
     title VARCHAR(250) NOT NULL,
     content TEXT NOT NULL,
     forum_id INTEGER REFERENCES forum(id) NOT NULL,
-    user_id INTEGER REFERENCES users(id),
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- comment table:
-CREATE TABLE Comment (
+
+-- reviews table:
+CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
     content TEXT NOT NULL,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    thread_id INTEGER REFERENCES thread(id),
-    review_id INTEGER REFERENCES reviews(id),
-    game_id INTEGER REFERENCES games(game_id),
-    parent_comment_id INTEGER REFERENCES comment(id),
-    created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
-    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE,
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id),
-    CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
-    CONSTRAINT fk_review FOREIGN KEY (review_id) REFERENCES reviews(id),
-    CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES games(game_id),
-    CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
+    game_identifier VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    is_recommendation BOOLEAN NOT NULL DEFAULT TRUE,
+    rating INTEGER DEFAULT NULL
 );
-
--- for the last-touches branch, add this to your DB console
-ALTER TABLE Comment
-ADD COLUMN rating INTEGER;
 
 -- games table:
 CREATE TABLE games (
@@ -63,17 +54,27 @@ CREATE TABLE games (
     FOREIGN KEY (author_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- reviews table:
-CREATE TABLE reviews (
+-- comment table:
+CREATE TABLE Comment (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(255),
     content TEXT NOT NULL,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE NOT NULL,
-    game_identifier VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    is_recommendation BOOLEAN NOT NULL DEFAULT TRUE,
-    rating INTEGER DEFAULT NULL
+    thread_id INTEGER REFERENCES thread(id),
+    review_id INTEGER REFERENCES reviews(id),
+    game_id INTEGER REFERENCES games(game_id),
+    parent_comment_id INTEGER REFERENCES comment(id),
+    created_at TIMESTAMP DEFAULT current_timestamp NOT NULL,
+    FOREIGN KEY (parent_comment_id) REFERENCES comment(id) ON DELETE CASCADE,
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_thread FOREIGN KEY (thread_id) REFERENCES thread(id),
+    CONSTRAINT fk_review FOREIGN KEY (review_id) REFERENCES reviews(id),
+    CONSTRAINT fk_game FOREIGN KEY (game_id) REFERENCES games(game_id),
+    CONSTRAINT fk_parent_comment FOREIGN KEY (parent_comment_id) REFERENCES comment(id)
 );
+
+-- for the last-touches branch, add this to your DB console
+ALTER TABLE Comment
+ADD COLUMN rating INTEGER;
 
 -- profiles table:
 CREATE TABLE profiles (

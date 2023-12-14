@@ -73,8 +73,8 @@
                         Delete Uploaded Creations
                     </div>
                     <div class="card-body">
-                        <form method="POST">
-                            <div class="input-group" action="{{ url_for('delete_games') }}">
+                        <form method="POST" action="{{ url_for('delete_games') }}">
+                            <div class="input-group">
                                 <input type="password" placeholder="Enter Password" name="delete-games-pw" class="form-control">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </div>

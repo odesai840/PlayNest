@@ -1,7 +1,12 @@
 from flask.testing import FlaskClient
 from flask import session
+from models import Profile
 
 def test_profile_edit(test_app: FlaskClient):
+    # Test that the page redirects when not logged in
+    response = test_app.get('/profile/edit')
+    assert response.status_code != 200
+
     # Create a test account
     response = test_app.post('/signup', data ={
         "username": "test",
@@ -18,3 +23,4 @@ def test_profile_edit(test_app: FlaskClient):
     # Test that the page loads
     response = test_app.get('/profile/edit')
     assert response.request.path == "/profile/edit"
+    assert response.status_code == 200

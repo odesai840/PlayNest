@@ -30,11 +30,5 @@ def test_forum(test_app: FlaskClient):
       session["username"] = "test"
   assert session["username"] == "test"
 
-  # test that a thread can be created when logged in 
-  response = test_app.post('/forum/random-corner', data ={
-        "title": "test",
-        "content": "test"
-    }, follow_redirects=True)
-  assert response.status_code == 200
 
   

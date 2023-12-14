@@ -15,6 +15,12 @@ def tests_login_page(test_app: FlaskClient):
       "confirm-password": "password"
   }, follow_redirects=True)
 
+  # Test that user got added to database
+  users = User.query.all()
+  for user in users:
+    assert user.username == 'test'
+    assert user.email == 'test@gmail.com'
+
   # Test that log in does not work with incorrect credentials
   response = test_app.post('/login', data ={
     'username': 'wrong',

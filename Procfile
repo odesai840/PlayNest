@@ -1,0 +1,1 @@
+web: python add_forum_data.py && gunicorn your_flask_app:app

@@ -10,7 +10,7 @@ def test_profile_edit(test_app: FlaskClient):
       "confirm-password": "password"
   }, follow_redirects=True)
   assert response.status_code == 200
-  
+  # log in
   with test_app.session_transaction() as session:
       session["username"] = "test"
   assert session["username"] == "test"

@@ -11,6 +11,7 @@ def tests_settings_page(test_app: FlaskClient):
       "confirm-password": "password"
   }, follow_redirects=True)
 
+  # log in
   with test_app.session_transaction() as session:
       session["username"] = "test"
   assert session["username"] == "test"

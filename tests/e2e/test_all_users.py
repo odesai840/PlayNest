@@ -10,10 +10,11 @@ def test_all_users(test_app: FlaskClient):
       "confirm-password": "password"
   }, follow_redirects=True)
 
+  # log in
   with test_app.session_transaction() as session:
       session["username"] = "test"
   assert session["username"] == "test"
-  
+
   # Test that the page loads
   response = test_app.get('/users')
   assert response.status_code == 200

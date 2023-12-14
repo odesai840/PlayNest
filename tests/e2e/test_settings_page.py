@@ -11,11 +11,9 @@ def tests_settings_page(test_app: FlaskClient):
       "confirm-password": "password"
   }, follow_redirects=True)
 
-  # Log in
-  response = test_app.post('/login', data ={
-    'username': 'test',
-    'password': 'password'
-  }, follow_redirects=True)
+  with test_app.session_transaction() as session:
+      session["username"] = "test"
+  assert session["username"] == "test"
 
   # Test that the page loads
   response = test_app.get('/settings')

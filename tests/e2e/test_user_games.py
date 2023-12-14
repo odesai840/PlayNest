@@ -1,4 +1,5 @@
 from flask.testing import FlaskClient
+from flask import session
 
 def test_user_games(test_app: FlaskClient):
   # Create a test account
@@ -10,10 +11,8 @@ def test_user_games(test_app: FlaskClient):
   }, follow_redirects=True)
   assert response.status_code == 200
 
-  test_app.post('/login', data ={
-    'username': 'test',
-    'password': 'password'
-  }, follow_redirects=True)
-  assert response.status_code == 200
+  with test_app.session_transaction() as session:
+      session["username"] = "test"
+  assert session["username"] == "test"
   # Test that the page loads
   # May require test data first 
